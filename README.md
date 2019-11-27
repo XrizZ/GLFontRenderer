@@ -4,11 +4,11 @@ This font rendering library was designed with ease of use and render performance
 
 # Overview
 The font library is divided into the following files, which originate from its logical splitting, the three parts the three files:
- • FontLibrary.cpp/.h - main lib with rendering functionality
- • FontFileParser.cpp/.h - helper files for reading fonts from file
- • Font.cpp/.h - helper files
- • Texture.cpp/.h - helper files for loading a texture into GL memory
- • acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
+ - FontLibrary.cpp/.h - main lib with rendering functionality
+ - FontFileParser.cpp/.h - helper files for reading fonts from file
+ - Font.cpp/.h - helper files
+ - Texture.cpp/.h - helper files for loading a texture into GL memory
+ - acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
  
 # Working Principle
 The DrawString function call does the following: receives string → parses string → creates list of quads → draws list of quads. All this is done in the fixed function pipeline of OpenGL. Thanks to "draw lists" this is of similar performance as the OpenGL 2.0+ way of rendering (benchmarked).
