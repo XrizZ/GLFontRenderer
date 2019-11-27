@@ -131,12 +131,12 @@ Now that all settings are made, its time to export the font. Click on Options â†
 The filename you specify here will affect the name for the font in the font library, so choose it wisely. For convenience and readability reasons, I suggest the following naming convention: <br>
 <fontFaceName><_italic?_><_bold_><_outlined?size?><size> <br>
 here are a few examples: <br>
-    - Arial8
-    - Arial20
-    - Arial_italic_12
-    - Arial_bold_italic_23
-    - Arial_outline2_10
-    - Helvetica_italic_outline1_12
+- Arial8
+- Arial20
+- Arial_italic_12
+- Arial_bold_italic_23
+- Arial_outline2_10
+- Helvetica_italic_outline1_12
 etc.
 
 Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
