@@ -46,20 +46,19 @@ The header of the draw call reads:
 
 ```C++
 void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, float scale = 1.0f);
-The parameters are described hereinafter.
 ```
+The parameters are described below in the table.
 
 | Parameter        | Description |
 | ------------- |:-------------:|
 | CString textToDraw     | The string to draw as CString, not recognized characters are drawn as '?'. Which characters are valid depends on the font used and can be defined when creating the font-bitmap, more here: 3. |
 | int x      | X-Position of the beginning of the string in screen coordinates.     |
 | int y | Y-Position of the beginning of the string in screen coordinates.     |
-| float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order:
-{R, G, B, Alpha} obviously.. |
+| float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order: {R, G, B, Alpha} obviously.. |
 |CString font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that, read more about this top in chapter 3. |
 | float scale | It is highly recommended to use the default: 1.0f. If you want to scale the font, you may also use glScalef.. but again, it is not recommended! Instead create font files that have the correct pixel height, e.g. If you want to use Arial with 24pixel height, use Arial24 and NOT Arial12 with scale 2.0 or equally worse: Arial48 with scale 0.5. However, sometimes it is inevitable to use a scale function. For future development it may be useful to choose the correct font according to the scale parameter instead of just scaling the quads for the existing font, but it is not implemented as of writing this document. |
 
-//TODO add image of lib in use
+![Example Image](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/example.png "Example from a production software using a version of this library.")
 
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
@@ -141,7 +140,7 @@ here are a few examples:
     • etc.
 As shown by the following image.
   
-![Example Image](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/example.png "Example from a production software using a version of this library.")
+![Save As](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/SaveAs.png "Save As.")
 
 Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the program folder of your software under “Fonts\”.
 
