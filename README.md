@@ -58,7 +58,7 @@ The parameters are described below in the table.
 |CString font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that, read more about this top in chapter 3. |
 | float scale | It is highly recommended to use the default: 1.0f. If you want to scale the font, you may also use glScalef.. but again, it is not recommended! Instead create font files that have the correct pixel height, e.g. If you want to use Arial with 24pixel height, use Arial24 and NOT Arial12 with scale 2.0 or equally worse: Arial48 with scale 0.5. However, sometimes it is inevitable to use a scale function. For future development it may be useful to choose the correct font according to the scale parameter instead of just scaling the quads for the existing font, but it is not implemented as of writing this document. |
 
-![Example Image](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/example.png "Example from a production software using a version of this library.")
+![Example Image](Documentation/example.png "Example from a production software using a version of this library.")
 
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
@@ -74,12 +74,12 @@ In the following section, the use of BM-Font Generator is described in detail, b
 For producing the font-config as well as the actual font bitmap, I use the “Bitmap Font Generator” from AngelCode. Which can be obtained from their website: http://angelcode.com/products/bmfont/
 After installation, open the program, it should look like in the following figure.
 
-![Main Menu](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/main_menu.png "Main Menu")
+![Main Menu](Documentation/main_menu.png "Main Menu")
 
 ### Font Settings Menu
 As a first step, open the Font-Settings, by clicking on Options → Font Settings or by hitting [F], which will open a new window, as shown by the next figure.
 
-![Font Settings](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/FontSettings.png "Font Settings Menu")
+![Font Settings](Documentation/FontSettings.png "Font Settings Menu")
 
 1. select the font type(or “face”). If the font type is not in the list, you need to install it on your windows system by adding the true type font file for it to the system font folder, all fonts in that folder will be accessible by the BM-font generator.
 2. Charset: for most cases “Unicode” should do.
@@ -96,7 +96,7 @@ After you made these setups, close the Font Settings window and proceed to the n
 ### Character Selection
 Back in the main window of the program, you can now select the character sets you'd like to include. You can either select full sets or select only specific characters of a set. As an example see next figure.
 
-![Character Sets](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/CharacterSets.png "Character Selection")
+![Character Sets](Documentation/CharacterSets.png "Character Selection")
 
 As a basic rule, only select the characters that you are likely to use, this saves processing time and most of all memory, not just one character, but a lot more(kerning, bitmap size, array sizes in our code, etc.).
 After you selected all characters your font shall include, proceed to the next section.
@@ -106,7 +106,7 @@ After you selected all characters your font shall include, proceed to the next s
 It is now time to export the font as a bitmap and a create a config file for it.
 Open the Export Options my hitting either [T], or clicking Options → Export Options. A new window should pop up, looking like in the following figure.
 
-![Export Options](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/ExportOptions.png "Export Options")
+![Export Options](Documentation/ExportOptions.png "Export Options")
 
 1. Leave Padding and Spacing at default.
 2. Set the width of the texture to something big enough to hold all your selected characters, but also not too large, you don't want to waste space in the bitmap for emptyness. How you determine whether the texture has the right size or not will be discussed in the next subsection.
@@ -140,7 +140,7 @@ here are a few examples:
     • etc.
 As shown by the following image.
   
-![Save As](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/SaveAs.png "Save As.")
+![Save As](Documentation/SaveAs.png "Save As.")
 
 Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the program folder of your software under “Fonts\”.
 
