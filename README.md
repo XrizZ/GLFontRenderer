@@ -144,16 +144,18 @@ Hit Save to complete the process. All there is to do now, is to copy the two fil
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
 
+```C++
 //font type defines, string must match the filename without extension in your fonts folder!
-#define GLFONT_ARIAL_OUTLINE2_64 "Arial_outline2_64" <br>
-#define GLFONT_ARIAL20 "Arial20" <br>
-#define GLFONT_ARIAL24 "Arial24" <br>
-#define GLFONT_ARIAL32 "Arial32" <br>
-#define GLFONT_CALIBRI_24 "Calibri24" <br>
-#define GLFONT_CAMBRIA_24 "Cambria24"<br>
-#define GLFONT_COURIER_8 "Courier8"<br>
-#define GLFONT_TAHOMA_32 "Tahoma32"<br>
-#define GLFONT_TIMES_NEW_ROMAN_ITALIC_24 "TimesNewRoman_italic_24"<br>
-#define GLFONT_TIMES_NEW_ROMAN_24 "TimesNewRoman24"<br>
+#define GLFONT_ARIAL_OUTLINE2_64 "Arial_outline2_64"
+#define GLFONT_ARIAL20 "Arial20"
+#define GLFONT_ARIAL24 "Arial24"
+#define GLFONT_ARIAL32 "Arial32"
+#define GLFONT_CALIBRI_24 "Calibri24"
+#define GLFONT_CAMBRIA_24 "Cambria24"
+#define GLFONT_COURIER_8 "Courier8"
+#define GLFONT_TAHOMA_32 "Tahoma32"
+#define GLFONT_TIMES_NEW_ROMAN_ITALIC_24 "TimesNewRoman_italic_24"
+#define GLFONT_TIMES_NEW_ROMAN_24 "TimesNewRoman24"
+```
 .. add your own defines here!
 
