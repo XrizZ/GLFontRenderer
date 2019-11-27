@@ -138,11 +138,8 @@ here are a few examples:
     • Arial_outline2_10
     • Helvetica_italic_outline1_12
     • etc.
-As shown by the following image.
-  
-![Save As](Documentation/SaveAs.png "Save As.")
 
-Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the program folder of your software under “Fonts\”.
+Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
