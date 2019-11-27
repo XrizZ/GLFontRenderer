@@ -128,9 +128,9 @@ Once you are satisfied with the texture space usage, proceed to the next step.
 
 ### Exporting the Font
 Now that all settings are made, its time to export the font. Click on Options → Save Bitmap-Font as.. .
-The filename you specify here will affect the name for the font in the font library, so choose it wisely. For convenience and readability reasons, I suggest the following naming convention:
-<fontFaceName><_italic?_><_bold_><_outlined?size?><size>
-here are a few examples:
+The filename you specify here will affect the name for the font in the font library, so choose it wisely. For convenience and readability reasons, I suggest the following naming convention: <br>
+<fontFaceName><_italic?_><_bold_><_outlined?size?><size> <br>
+here are a few examples: <br>
     - Arial8
     - Arial20
     - Arial_italic_12
