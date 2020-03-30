@@ -3,12 +3,12 @@
 This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. When changing the MFC specific types to more generic STL it should be easy to change it to a more platform agnostic library. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same.
 
 # Overview
-The font library is divided into the following files, which originate from its logical splitting, the three parts the three files:
- • FontLibrary.cpp/.h - main lib with rendering functionality
- • FontFileParser.cpp/.h - helper files for reading fonts from file
- • Font.cpp/.h - helper files
- • Texture.cpp/.h - helper files for loading a texture into GL memory
- • acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
+The font library is divided into the following files:
+ - FontLibrary.cpp/.h - main lib with rendering functionality
+ - FontFileParser.cpp/.h - helper files for reading fonts from file
+ - Font.cpp/.h - helper files
+ - Texture.cpp/.h - helper files for loading a texture into GL memory
+ - acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
  
 # Working Principle
 The DrawString function call does the following: receives string → parses string → creates list of quads → draws list of quads. All this is done in the fixed function pipeline of OpenGL. Thanks to "draw lists" this is of similar performance as the OpenGL 2.0+ way of rendering (benchmarked).
@@ -46,20 +46,19 @@ The header of the draw call reads:
 
 ```C++
 void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, float scale = 1.0f);
-The parameters are described hereinafter.
 ```
+The parameters are described below in the table.
 
 | Parameter        | Description |
 | ------------- |:-------------:|
 | CString textToDraw     | The string to draw as CString, not recognized characters are drawn as '?'. Which characters are valid depends on the font used and can be defined when creating the font-bitmap, more here: 3. |
 | int x      | X-Position of the beginning of the string in screen coordinates.     |
 | int y | Y-Position of the beginning of the string in screen coordinates.     |
-| float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order:
-{R, G, B, Alpha} obviously.. |
+| float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order: {R, G, B, Alpha} obviously.. |
 |CString font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that, read more about this top in chapter 3. |
 | float scale | It is highly recommended to use the default: 1.0f. If you want to scale the font, you may also use glScalef.. but again, it is not recommended! Instead create font files that have the correct pixel height, e.g. If you want to use Arial with 24pixel height, use Arial24 and NOT Arial12 with scale 2.0 or equally worse: Arial48 with scale 0.5. However, sometimes it is inevitable to use a scale function. For future development it may be useful to choose the correct font according to the scale parameter instead of just scaling the quads for the existing font, but it is not implemented as of writing this document. |
 
-//TODO add image of lib in use
+![Example Image](Documentation/example.png "Example from a production software using a version of this library.")
 
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
@@ -75,12 +74,12 @@ In the following section, the use of BM-Font Generator is described in detail, b
 For producing the font-config as well as the actual font bitmap, I use the “Bitmap Font Generator” from AngelCode. Which can be obtained from their website: http://angelcode.com/products/bmfont/
 After installation, open the program, it should look like in the following figure.
 
-![Main Menu](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/main_menu.png "Main Menu")
+![Main Menu](Documentation/main_menu.png "Main Menu")
 
 ### Font Settings Menu
 As a first step, open the Font-Settings, by clicking on Options → Font Settings or by hitting [F], which will open a new window, as shown by the next figure.
 
-![Font Settings](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/FontSettings.png "Font Settings Menu")
+![Font Settings](Documentation/FontSettings.png "Font Settings Menu")
 
 1. select the font type(or “face”). If the font type is not in the list, you need to install it on your windows system by adding the true type font file for it to the system font folder, all fonts in that folder will be accessible by the BM-font generator.
 2. Charset: for most cases “Unicode” should do.
@@ -97,7 +96,7 @@ After you made these setups, close the Font Settings window and proceed to the n
 ### Character Selection
 Back in the main window of the program, you can now select the character sets you'd like to include. You can either select full sets or select only specific characters of a set. As an example see next figure.
 
-![Character Sets](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/CharacterSets.png "Character Selection")
+![Character Sets](Documentation/CharacterSets.png "Character Selection")
 
 As a basic rule, only select the characters that you are likely to use, this saves processing time and most of all memory, not just one character, but a lot more(kerning, bitmap size, array sizes in our code, etc.).
 After you selected all characters your font shall include, proceed to the next section.
@@ -107,7 +106,7 @@ After you selected all characters your font shall include, proceed to the next s
 It is now time to export the font as a bitmap and a create a config file for it.
 Open the Export Options my hitting either [T], or clicking Options → Export Options. A new window should pop up, looking like in the following figure.
 
-![Export Options](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/ExportOptions.png "Export Options")
+![Export Options](Documentation/ExportOptions.png "Export Options")
 
 1. Leave Padding and Spacing at default.
 2. Set the width of the texture to something big enough to hold all your selected characters, but also not too large, you don't want to waste space in the bitmap for emptyness. How you determine whether the texture has the right size or not will be discussed in the next subsection.
@@ -129,25 +128,23 @@ Once you are satisfied with the texture space usage, proceed to the next step.
 
 ### Exporting the Font
 Now that all settings are made, its time to export the font. Click on Options → Save Bitmap-Font as.. .
-The filename you specify here will affect the name for the font in the font library, so choose it wisely. For convenience and readability reasons, I suggest the following naming convention:
-<fontFaceName><_italic?_><_bold_><_outlined?size?><size>
-here are a few examples:
-    • Arial8
-    • Arial20
-    • Arial_italic_12
-    • Arial_bold_italic_23
-    • Arial_outline2_10
-    • Helvetica_italic_outline1_12
-    • etc.
-As shown by the following image.
-  
-![Example Image](https://https://github.com/XrizZ/GLFontLibrary/tree/master/Documentation/example.png "Example from a production software using a version of this library.")
+The filename you specify here will affect the name for the font in the font library, so choose it wisely. For convenience and readability reasons, I suggest the following naming convention: <br>
+<fontFaceName><_italic?_><_bold_><_outlined?size?><size> <br>
+here are a few examples: <br>
+- Arial8
+- Arial20
+- Arial_italic_12
+- Arial_bold_italic_23
+- Arial_outline2_10
+- Helvetica_italic_outline1_12
+etc.
 
-Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the program folder of your software under “Fonts\”.
+Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
 
+```C++
 //font type defines, string must match the filename without extension in your fonts folder!
 #define GLFONT_ARIAL_OUTLINE2_64 "Arial_outline2_64"
 #define GLFONT_ARIAL20 "Arial20"
@@ -159,5 +156,6 @@ This is optional: Make a define for each new font you add to the FontLibrary.h, 
 #define GLFONT_TAHOMA_32 "Tahoma32"
 #define GLFONT_TIMES_NEW_ROMAN_ITALIC_24 "TimesNewRoman_italic_24"
 #define GLFONT_TIMES_NEW_ROMAN_24 "TimesNewRoman24"
+```
 .. add your own defines here!
 
