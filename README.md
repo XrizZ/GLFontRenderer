@@ -1,6 +1,15 @@
 # GLFontLibrary
 
-This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. When changing the MFC specific types to more generic STL it should be easy to change it to a more platform agnostic library. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same.
+This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. For porting to non MFC use more generic STL, mainly CString and CMap are specific, the rest of the code should already be platform agnostic. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same.
+
+# Changelog
+- March 30th 2020: added a demo app, to be compiled using Visual Studio 2012 or later. The app teaches and benchmarks the use of the Font Library and shows how every single exposed function is intented to be used.
+
+# Plans
+- I'm considering replacing MFC specific types with generic STL.
+- I'm also considering to implement SDF fonts (from Valve's famous paper)
+- And lastly, I'd like to replace the fixed function pipeline GL calls with modern GL and an appropriate shader.
+Stay tuned.
 
 # Overview
 The font library is divided into the following files:
