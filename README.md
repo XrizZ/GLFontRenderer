@@ -71,7 +71,10 @@ The parameters are described below in the table.
 | int y | Y-Position of the beginning of the string in screen coordinates.     |
 | float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order: {R, G, B, Alpha} obviously.. |
 |CString font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that, read more about this top in chapter 3. |
+| bool sdf    | As the name suggests, denoted the use of the SDF shader. If sdf == true, sdf shader will be used, if false then conventional GL rendering technique without sdf will be used. Note that if the SDF texture was made for use of a SDF shader and sdf == false then the text will appear blurry. The other way around will work just fine.
 | float scale | It is highly recommended to use the default: 1.0f. If you want to scale the font, you may also use glScalef.. but again, it is not recommended! Instead create font files that have the correct pixel height, e.g. If you want to use Arial with 24pixel height, use Arial24 and NOT Arial12 with scale 2.0 or equally worse: Arial48 with scale 0.5. However, sometimes it is inevitable to use a scale function. For future development it may be useful to choose the correct font according to the scale parameter instead of just scaling the quads for the existing font, but it is not implemented as of writing this document. |
+
+Note that there are more functions with additional features, such as automatic line breaks. See font library header file.
 
 ![Example Image](demo-01/FontLibrary/Documentation/example.png "Example from a production software using a version of this library.")
 
