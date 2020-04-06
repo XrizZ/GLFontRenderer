@@ -1,6 +1,6 @@
 # GLFontLibrary
 
-This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. For porting to non MFC use more generic STL, mainly CString and CMap are specific, the rest of the code should already be platform agnostic. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same.
+This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. If you want to port the library to non MFC, simply use more generic STL, only a few types are not compatible: mainly CString and CMap, the rest of the code should already be platform agnostic. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same. For SDF fonts, you need to use a different generator, e.g. TextMesh Pro.
 
 # Changelog
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline and glow/dropshadow yet. This allows very smooth, sharp scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
@@ -77,6 +77,8 @@ The parameters are described below in the table.
 
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
+
+Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. Use other tools like TextMesh Pro.
 
 Only three steps are necessary to integrate a new font:
     1. Create the font-config and font-bitmap using BM-Font-Generator
