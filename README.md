@@ -15,6 +15,7 @@ This font rendering library was designed with ease of use and render performance
 - I'd like to replace the fixed function pipeline GL calls with modern GL and an appropriate shader.
 - I'm also considering to implement glow, dropshadow and outline for the SDF fonts.
 - Lastly, I'm planning on porting this to Vulkan.
+
 Stay tuned.
 
 # Overview
