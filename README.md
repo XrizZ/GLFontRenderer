@@ -61,7 +61,7 @@ Once this is done, the font library is ready to use, which means you can call th
 The header of the draw call reads:
 
 ```C++
-void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, float scale = 1.0f);
+void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, bool sdf, float scale = 1.0f);
 ```
 The parameters are described below in the table.
 
