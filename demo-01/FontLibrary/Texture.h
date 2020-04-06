@@ -6,7 +6,7 @@
 //=================================================================================
 
 #include <Windows.h>
-#include <gl/GL.h>
+#include "..\glew\include\GL\glew.h"
 #include <string>
 
 struct CRawTexture

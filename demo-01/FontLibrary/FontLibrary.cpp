@@ -12,7 +12,6 @@
 #include "Texture.h"
 #include "acutil_unicode.h"
 #include <windows.h>
-#include <gl\gl.h>
 
 CFontLibrary::CFontLibrary(CString folder)
 {
@@ -54,6 +53,10 @@ CFontLibrary::~CFontLibrary()
 		delete toDelete;
 		toDelete = nullptr;
 	}
+
+	if(m_sdfShaderProgram)
+		delete m_sdfShaderProgram;
+	m_sdfShaderProgram = 0;
 }
 
 bool CFontLibrary::ParseAllFontsInFolder()
@@ -99,11 +102,13 @@ bool CFontLibrary::ParseAllFontsInFolder()
 
 CGLFont* CFontLibrary::ParseFont(CString fileName)
 {
-	CGLFont* newFont = new CGLFont();
-
 	CFontFileParser* parser = new CFontFileParser(fileName);
-	if(!parser->IsInitialized())
-		return nullptr;
+	if(!parser || !parser->IsInitialized())
+		return nullptr; //ERROR
+
+	CGLFont* newFont = new CGLFont();
+	if(!newFont)
+		return nullptr; //ERROR
 
 	//now load font config file(*.fnt) -> see fileName parameter
 	//define strings we are searching for
@@ -181,7 +186,11 @@ CGLFont* CFontLibrary::ParseFont(CString fileName)
 	//==========================
 	unsigned int length = parser->GetNumberOfSupportedChars(); //determine max length of charInfo array
 	if(length <= 0)
+	{
+		delete parser;
+		delete newFont;
 		return nullptr;
+	}
 	newFont->m_fontCharInfo = new CCharInfo*[length+1];
 	newFont->m_highestASCIIChar = length;
 	parser->LoadCharInfos(newFont);
@@ -196,7 +205,10 @@ CGLFont* CFontLibrary::ParseFont(CString fileName)
 	newFont->m_highestKerningFirst = first;
 	newFont->m_highestKerningSecond = second;
 	if(first <= 0 || second <=0)
+	{
+		delete parser;
 		return newFont;
+	}
 
 	//create 2-dimensional kernings array
 	newFont->m_kernings = new int*[first+1];
@@ -211,15 +223,15 @@ CGLFont* CFontLibrary::ParseFont(CString fileName)
 	//==========================
 
 	//clear the parser memory
-	parser->Cleanup();
-
 	delete parser;
 	return newFont;
 }
 
 //returns false on errors, true otherwise
+//only call this function once per instance!
 bool CFontLibrary::InitGLFonts()
 {
+	bool error = false;
 	//go through all fonts
 	POSITION pos = m_fontList.GetStartPosition();
 	while(pos)
@@ -232,24 +244,40 @@ bool CFontLibrary::InitGLFonts()
 		if(!currFont || !CGLTexture::LoadTextureFromFile(std::string(currFont->m_bitmapFileName.GetString(), currFont->m_bitmapFileName.GetLength()), currFont->m_fontTextures))
 		{
 			//TODO: log error
-			return false;
+			error = true;
+			continue;
 		}
 	}
 
-	return true;
+	std::string vertexShaderCode =
+	#include "SDF_Font.vert"
+	std::string fragmentShaderCode =
+	#include "SDF_Font.frag"
+
+	m_sdfShaderProgram = new CGLShaderProgram();
+
+	if (!m_sdfShaderProgram || !m_sdfShaderProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
+	{
+		CString desc;
+		desc.Format(_T("FontLibrary failed to load sdf shader."));
+		//TODO: log error
+		error = true;
+	}
+
+	return error;
 }
 
-void CFontLibrary::DrawString(CString textToDraw, int x, int y, float color[4], CString font, float scale)
+void CFontLibrary::DrawString(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale)
 {
 	CGLQuad2D* quadList = TextToQuadList(font, textToDraw, x, y, scale);
 	if(quadList)
 	{
-		DrawQuadList(font, color, quadList, textToDraw);
+		DrawQuadList(font, color, quadList, textToDraw, sdf);
 		delete[] quadList;
 	}
 }
 
-void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, float scale)
+void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale)
 {
 	CDrawString* savedString = nullptr;
 	bool found = m_glStringList.Lookup(ID, savedString);
@@ -258,7 +286,7 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 		if(savedString->m_text.Compare(textToDraw) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
-			(scale != savedString->m_scale)
+			(scale != savedString->m_scale) || (sdf != savedString->m_sdf)
 			)
 		{
 			if(savedString->m_drawListID)
@@ -273,11 +301,12 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 			savedString->m_y = y;
 			savedString->m_scale = scale;
 			savedString->m_text = textToDraw;
+			savedString->m_sdf = sdf;
 		}
 	}
 	else
 	{
-		savedString = new CDrawString(ID, textToDraw, x, y, color, scale);
+		savedString = new CDrawString(ID, textToDraw, x, y, color, sdf, scale);
 	}
 
 	if(savedString->m_drawListID == 0)
@@ -285,7 +314,7 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
 
-		DrawString(textToDraw, x, y, color, font, scale);
+		DrawString(textToDraw, x, y, color, font, sdf, scale);
 
 		glEndList();
 		savedString->m_drawListID = id;
@@ -298,7 +327,7 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines)
 {
 	CDrawString* savedString = nullptr;
 	bool found = m_glStringList.Lookup(ID, savedString);
@@ -309,7 +338,8 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(scale != savedString->m_scale) ||
 			(maxLines != savedString->m_maxLines) ||
-			(lineWidth != savedString->m_lineWidth)
+			(lineWidth != savedString->m_lineWidth) ||
+			(sdf != savedString->m_sdf)
 			)
 		{
 			if(savedString->m_drawListID)
@@ -326,11 +356,12 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 			savedString->m_text = textToDraw;
 			savedString->m_lineWidth = lineWidth;
 			savedString->m_maxLines = maxLines;
+			savedString->m_sdf = sdf;
 		}
 	}
 	else
 	{
-		savedString = new CDrawString(ID, textToDraw, x, y, color, scale);
+		savedString = new CDrawString(ID, textToDraw, x, y, color, sdf, scale);
 		savedString->m_lineWidth = lineWidth;
 		savedString->m_maxLines = maxLines;
 	}
@@ -340,7 +371,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
 
-		DrawStringWithLineBreaks(textToDraw, x, y, color, font, scale, lineWidth, maxLines);
+		DrawStringWithLineBreaks(textToDraw, x, y, color, font, sdf, scale, lineWidth, maxLines);
 
 		glEndList();
 		savedString->m_drawListID = id;
@@ -353,7 +384,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(CString textToDraw, int x, int y, float color[4], CString font, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines)
 {
 	unsigned int lineHeight = GetLineHeight(font);
 	unsigned int line = 0;
@@ -433,8 +464,6 @@ unsigned int CFontLibrary::GetWidthOfChar(CString ch, CString font)
 
 CGLQuad2D* CFontLibrary::TextToQuadList(CString font, CString textToDraw, int x, int y, float scale)
 {
-	CGLQuad2D* quadList = new CGLQuad2D[textToDraw.GetLength()];
-
 	//get pointer to the correct font
 	CGLFont* currfont = GetFontPointer(font);
 
@@ -443,6 +472,8 @@ CGLQuad2D* CFontLibrary::TextToQuadList(CString font, CString textToDraw, int x,
 		TRACE(_T("CFontLibrary::Font not found! '%s'", font));
 		return nullptr;
 	}
+
+	CGLQuad2D* quadList = new CGLQuad2D[textToDraw.GetLength()];
 
 	int defaultChar = 63; //'?'
 
@@ -541,42 +572,78 @@ int CFontLibrary::GetTextChar(CString textToDraw, int pos)
 	return ch;
 }
 
-void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadList, CString textToDraw)
+void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadList, CString textToDraw, bool sdf)
 {
 	if(textToDraw.GetLength() <= 0)
 		return;
 
-	glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT); //lighting and color mask
-	glDisable(GL_LIGHTING);     //need to disable lighting for proper text color
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-
 	CGLFont* currFont = GetFontPointer(font);
 
-	unsigned int textureID = 0;
-	if(currFont)
-		textureID = currFont->m_fontTextures;
+	if (!currFont)
+		return;
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	unsigned int textureID = currFont->m_fontTextures;
 
-	float zVal = 0.99;
+	glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT); //lighting and color mask
+	glDisable(GL_LIGHTING);     //need to disable lighting for proper text color
+	glDisable(GL_DEPTH_TEST);
 
-	glBegin(GL_QUADS);
-		glColor4fv(color);	//set text color
-		for(int i=0; i<textToDraw.GetLength(); i++)
-		{
-			glTexCoord2f(quadList[i].textureTopLeftX, quadList[i].textureTopLeftY);
-			glVertex3i(quadList[i].topLeftX, quadList[i].topLeftY, zVal);			//top left vertex
-			glTexCoord2f(quadList[i].textureBottomLeftX, quadList[i].textureBottomLeftY);
-			glVertex3i(quadList[i].bottomLeftX, quadList[i].bottomLeftY, zVal);	//bottom left vertex
-			glTexCoord2f(quadList[i].textureBottomRightX, quadList[i].textureBottomRightY);
-			glVertex3i(quadList[i].bottomRightX, quadList[i].bottomRightY, zVal);	//bottom right vertex
-			glTexCoord2f(quadList[i].textureTopRightX, quadList[i].textureTopRightY);
-			glVertex3i(quadList[i].topRightX, quadList[i].topRightY, zVal);		//top right vertex
-		}
-	glEnd();
+	if(textureID > 0)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+	}
 
-	glBindTexture(GL_TEXTURE_2D, 0); //unbind texture
+	glColor4fv(color);	//set text color
+
+	if(sdf && m_sdfShaderProgram && m_sdfShaderProgram->GetProgramID() > 0)
+	{
+		GLuint programID = m_sdfShaderProgram->GetProgramID();
+		glUseProgram(programID);
+		GLuint textureLocation = glGetUniformLocation(programID, "u_FontTexutre");
+		GLuint step = glGetUniformLocation(programID, "u_Step");
+		glActiveTexture(GL_TEXTURE0);
+
+		glUniform1i(textureLocation, 0);
+		glUniform1f(step, 0.0f);
+
+		glBegin(GL_QUADS);
+			for (int i = 0; i<textToDraw.GetLength(); i++)
+			{
+				glMultiTexCoord2f(GL_TEXTURE0, quadList[i].textureTopLeftX, quadList[i].textureTopLeftY);
+				glVertex2f(quadList[i].topLeftX, quadList[i].topLeftY);			//top left vertex
+				glMultiTexCoord2f(GL_TEXTURE0, quadList[i].textureBottomLeftX, quadList[i].textureBottomLeftY);
+				glVertex2f(quadList[i].bottomLeftX, quadList[i].bottomLeftY);	//bottom left vertex
+				glMultiTexCoord2f(GL_TEXTURE0, quadList[i].textureBottomRightX, quadList[i].textureBottomRightY);
+				glVertex2f(quadList[i].bottomRightX, quadList[i].bottomRightY);	//bottom right vertex
+				glMultiTexCoord2f(GL_TEXTURE0, quadList[i].textureTopRightX, quadList[i].textureTopRightY);
+				glVertex2f(quadList[i].topRightX, quadList[i].topRightY);		//top right vertex
+			}
+		glEnd();
+
+		glUseProgram(0);
+	}
+	else
+	{
+		glBegin(GL_QUADS);
+			for(int i=0; i<textToDraw.GetLength(); i++)
+			{
+				glTexCoord2f(quadList[i].textureTopLeftX, quadList[i].textureTopLeftY);
+				glVertex2i(quadList[i].topLeftX, quadList[i].topLeftY);			//top left vertex
+				glTexCoord2f(quadList[i].textureBottomLeftX, quadList[i].textureBottomLeftY);
+				glVertex2i(quadList[i].bottomLeftX, quadList[i].bottomLeftY);	//bottom left vertex
+				glTexCoord2f(quadList[i].textureBottomRightX, quadList[i].textureBottomRightY);
+				glVertex2i(quadList[i].bottomRightX, quadList[i].bottomRightY);	//bottom right vertex
+				glTexCoord2f(quadList[i].textureTopRightX, quadList[i].textureTopRightY);
+				glVertex2i(quadList[i].topRightX, quadList[i].topRightY);		//top right vertex
+			}
+		glEnd();
+	}
+
+	if(textureID > 0)
+		glBindTexture(GL_TEXTURE_2D, 0); //unbind texture
+
 	glEnable(GL_DEPTH_TEST);
 	glPopAttrib();
 }

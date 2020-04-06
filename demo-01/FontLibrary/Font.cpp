@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "Font.h"
 #include <windows.h>
-#include <gl\GL.h>
+#include "..\glew\include\GL\glew.h"
 
 CGLFont::~CGLFont()
 {

@@ -6,7 +6,6 @@
 //=================================================================================
 
 #include "stdafx.h"
-
 #include "FontFileParser.h"
 #include <iostream>
 #include <fstream>
@@ -39,10 +38,6 @@ CFontFileParser::CFontFileParser(CString fileName)
 }
 
 CFontFileParser::~CFontFileParser()
-{
-}
-
-void CFontFileParser::Cleanup()
 {
 	m_buffer.clear();
 }

@@ -101,6 +101,7 @@
     <ClInclude Include="FontLibrary\Font.h" />
     <ClInclude Include="FontLibrary\FontFileParser.h" />
     <ClInclude Include="FontLibrary\FontLibrary.h" />
+    <ClInclude Include="FontLibrary\GLShaderProgram.h" />
     <ClInclude Include="FontLibrary\Texture.h" />
     <ClInclude Include="glutcallbacks.h" />
     <ClInclude Include="HighPerformanceCounter.h" />
@@ -113,6 +114,7 @@
     <ClCompile Include="FontLibrary\Font.cpp" />
     <ClCompile Include="FontLibrary\FontFileParser.cpp" />
     <ClCompile Include="FontLibrary\FontLibrary.cpp" />
+    <ClCompile Include="FontLibrary\GLShaderProgram.cpp" />
     <ClCompile Include="FontLibrary\Texture.cpp" />
     <ClCompile Include="glutcallbacks.cpp" />
     <ClCompile Include="HighPerformanceCounter.cpp" />
@@ -120,6 +122,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FontLibrary\SDF_Font.frag" />
+    <None Include="FontLibrary\SDF_Font.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

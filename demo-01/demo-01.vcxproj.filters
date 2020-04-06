@@ -51,6 +51,9 @@
     <ClInclude Include="FontLibrary\FontLibrary.h">
       <Filter>Header Files\FontLibrary</Filter>
     </ClInclude>
+    <ClInclude Include="FontLibrary\GLShaderProgram.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,5 +83,16 @@
     <ClCompile Include="FontLibrary\FontLibrary.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="FontLibrary\GLShaderProgram.cpp">
+      <Filter>Source Files\FontLibrary</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FontLibrary\SDF_Font.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FontLibrary\SDF_Font.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

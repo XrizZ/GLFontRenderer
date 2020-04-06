@@ -20,7 +20,6 @@ public:
 	//variables:
 
 	//functions:
-	void Cleanup();
 	bool IsInitialized();
 	bool LoadCharInfos(CGLFont* newFont);
 	bool LoadKernings(CGLFont* newFont);

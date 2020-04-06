@@ -66,6 +66,7 @@ float m_rotSpeedY = 0.015;
 bool m_stressTest = false;
 bool m_displayLists = true;
 bool m_dyntext = false;
+bool m_sdf = false;
 
 CHighPerformanceCounter m_fpsCounter;
 
@@ -78,6 +79,9 @@ unsigned int m_loremDisplayListID = 0;
 unsigned int m_rotXDisplayListID = 0;
 unsigned int m_rotYDisplayListID = 0;
 unsigned int m_dynDisplayListID = 0;
+unsigned int m_leelaDisplayListID = 0;
+unsigned int m_leela2DisplayListID = 0;
+unsigned int m_sdfDisplayListID = 0;
 
 void SetVSync(bool sync)
 {
@@ -163,6 +167,12 @@ void DrawFontStressTest()
 	CString dynamicText2;
 	dynamicText2.Format("Cube Rotation Angle y: %.6f", m_rotY);
 
+	CString leelaTest = "Font rendered:";
+	if(m_sdf)
+		leelaTest.Append(" with SDF Shader.");
+	else
+		leelaTest.Append(" conventionally.");
+
 	int top = m_height-60;
 
 	if(m_displayLists)
@@ -171,29 +181,43 @@ void DrawFontStressTest()
 		{
 			if(m_loremDisplayListID == 0)
 				m_loremDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawStringWithLineBreaks(m_loremDisplayListID, bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, 1.0, m_width/2.0 - 30, 25);
+			m_fontLibrary->DrawStringWithLineBreaks(m_loremDisplayListID, bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, false, 1.0, m_width/2.0 - 30, 25);
+
+			if(m_leelaDisplayListID == 0)
+				m_leelaDisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_leelaDisplayListID, leelaTest + " Scale: 1.0", 30, 120, green, GLFONT_DINNEXTLTPROMED_SDF, m_sdf, 1.0);
+
+			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_DINNEXTLTPROMED_SDF)*2.0;
+			if(m_leela2DisplayListID == 0)
+				m_leela2DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_leela2DisplayListID, leelaTest + " Scale: 2.0", 30, 120 - lHeightSDF, green, GLFONT_DINNEXTLTPROMED_SDF, m_sdf, 2.0);
+
 		}
 		else
 		{
 			if(m_rotXDisplayListID == 0)
 				m_rotXDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_rotXDisplayListID, dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_rotXDisplayListID, dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20, false);
 
 			if(m_rotYDisplayListID == 0)
 				m_rotYDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_rotYDisplayListID, dynamicText2, m_width/2 + 30, top-20, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_rotYDisplayListID, dynamicText2, m_width/2 + 30, top-20, white, GLFONT_ARIAL20, false);
 		}
 	}
 	else
 	{
 		if(!m_dyntext)
 		{
-			m_fontLibrary->DrawStringWithLineBreaks(bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, 1.0, m_width/2.0 - 30, 25);
+			m_fontLibrary->DrawStringWithLineBreaks(bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, false, 1.0, m_width/2.0 - 30, 25);
+
+			m_fontLibrary->DrawString(leelaTest + " Scale: 1.0", 30, 120, green, GLFONT_DINNEXTLTPROMED_SDF, m_sdf, 1.0);
+			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_DINNEXTLTPROMED_SDF)*2.0;
+			m_fontLibrary->DrawString(leelaTest + " Scale: 2.0", 30, 120 - lHeightSDF, green, GLFONT_DINNEXTLTPROMED_SDF, m_sdf, 2.0);
 		}
 		else
 		{
-			m_fontLibrary->DrawString(dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20);
-			m_fontLibrary->DrawString(dynamicText2, m_width/2 + 30, top - 20, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20, false);
+			m_fontLibrary->DrawString(dynamicText2, m_width/2 + 30, top - 20, white, GLFONT_ARIAL20, false);
 		}
 	}
 }
@@ -229,6 +253,8 @@ void DrawOnScreenDisplay()
 	else
 		dyn.Append(" (disabled)");
 
+	CString s = "s: toggle sdf";
+
 	unsigned int lHeight = m_fontLibrary->GetLineHeight(GLFONT_ARIAL20);
 	unsigned int boarderPadding = 10;
 	float strWidth = m_fontLibrary->GetWidthOfString(esc, GLFONT_ARIAL20);
@@ -238,42 +264,52 @@ void DrawOnScreenDisplay()
 	{
 		if(m_escDisplayListID == 0)
 			m_escDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_escDisplayListID, esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_escDisplayListID, esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20, false);
 
 		if(m_stressDisplayListID == 0)
 			m_stressDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_stressDisplayListID, stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_stressDisplayListID, stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20, false);
 
 		if(m_dispDisplayListID == 0)
 			m_dispDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_dispDisplayListID, disp, boarderPadding, m_height - 2*lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_dispDisplayListID, disp, boarderPadding, m_height - 2*lHeight, white, GLFONT_ARIAL20, false);
 
 		if(m_stressTest)
 		{
 			if(m_dynDisplayListID == 0)
 				m_dynDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_dynDisplayListID, dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_dynDisplayListID, dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20, false);
+
+			if(m_sdfDisplayListID == 0)
+				m_sdfDisplayListID = m_fontLibrary->GetNewDrawStringID();
+			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_DINNEXTLTPROMED_SDF);
+			m_fontLibrary->DrawString(m_sdfDisplayListID, s, 30, 120 + lHeightSDF, m_dyntext ? red : white, GLFONT_ARIAL20, false);
 		}
 
 		if(m_fpsDisplayListID == 0)
 			m_fpsDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_fpsDisplayListID, fps, boarderPadding, lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_fpsDisplayListID, fps, boarderPadding, lHeight, white, GLFONT_ARIAL20, false);
 
 		if(m_fovDisplayListID == 0)
 			m_fovDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_fovDisplayListID, fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_fovDisplayListID, fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20, false);
 	}
 	else
 	{
-		m_fontLibrary->DrawString(esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(disp, boarderPadding, m_height - 2*lHeight, red, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20, false);
+		m_fontLibrary->DrawString(stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20, false);
+		m_fontLibrary->DrawString(disp, boarderPadding, m_height - 2*lHeight, red, GLFONT_ARIAL20, false);
 
 		if(m_stressTest)
-			m_fontLibrary->DrawString(dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20);
+		{
+			m_fontLibrary->DrawString(dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20, false);
 
-		m_fontLibrary->DrawString(fps, boarderPadding, lHeight, white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20);
+			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_DINNEXTLTPROMED_SDF);
+			m_fontLibrary->DrawString(s, 30, 120 + lHeightSDF, m_dyntext ? red : white, GLFONT_ARIAL20, false);
+		}
+
+		m_fontLibrary->DrawString(fps, boarderPadding, lHeight, white, GLFONT_ARIAL20, false);
+		m_fontLibrary->DrawString(fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20, false);
 	}
 }
 
@@ -498,6 +534,10 @@ void Keyboard(unsigned char key, int x, int y)
 
 		case 'd':
 			m_dyntext = !m_dyntext;
+			break;
+
+		case 's':
+			m_sdf = !m_sdf;
 			break;
 
 		default:

@@ -9,9 +9,9 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include "FontLibrary/FontLibrary.h"
 #include "glut\glut.h"
 #include "glutcallbacks.h"
-#include "FontLibrary/FontLibrary.h"
 
 void Render(int argc, _TCHAR** argv);
 

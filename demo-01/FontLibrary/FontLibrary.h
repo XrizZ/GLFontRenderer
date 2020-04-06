@@ -11,13 +11,15 @@
 #pragma once
 #include "Font.h"
 #include <Windows.h>
-#include <gl\GL.h>
+#include "..\glew\include\GL\glew.h"
 #include <afxtempl.h>
 #include <atlstr.h>
+#include "GLShaderProgram.h"
 
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
 
 #define GLFONT_ARIAL20 "Arial20"
+#define GLFONT_DINNEXTLTPROMED_SDF "DINNextLTProMED_SDF"
 
 //ADD your own here!
 
@@ -62,9 +64,10 @@ public:
 		m_scale = 1.0;
 		m_lineWidth = 0;
 		m_maxLines = 0;
+		m_sdf = false;
 	};
 
-	CDrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], float scale)
+	CDrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], bool sdf, float scale)
 	{
 		m_ID = ID;
 		m_text = textToDraw;
@@ -78,6 +81,7 @@ public:
 		m_drawListID = 0;
 		m_lineWidth = 0;
 		m_maxLines = 0;
+		m_sdf = sdf;
 	};
 
 	~CDrawString(){};
@@ -91,6 +95,7 @@ public:
 	float			m_scale;
 	int				m_lineWidth;
 	int				m_maxLines;
+	bool			m_sdf;
 };
 
 class CFontLibrary
@@ -107,10 +112,10 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts();
-	void DrawString(CString textToDraw, int x, int y, float color[4], CString font, float scale = 1.0f);
-	void DrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, float scale = 1.0f);
-	void DrawStringWithLineBreaks(CString textToDraw, int x, int y, float color[4], CString font, float scale, int lineWidth, int maxLines);
-	void DrawStringWithLineBreaks(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, float scale, int lineWidth, int maxLines);
+	void DrawString(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale = 1.0f);
+	void DrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale = 1.0f);
+	void DrawStringWithLineBreaks(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines);
+	void DrawStringWithLineBreaks(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines);
 	unsigned int GetNewDrawStringID();
 	float GetWidthOfString(CString textToDraw, CString font, float scale = 1.0f);
 	unsigned int GetLineHeight(CString font);
@@ -119,12 +124,13 @@ private:
 	//functions:
 	CGLFont* ParseFont(CString fileName);
 	CGLQuad2D* TextToQuadList(CString font, CString textToDraw, int x, int y, float scale);
-	void DrawQuadList(CString font, float color[4], CGLQuad2D* quadList, CString textToDraw);
+	void DrawQuadList(CString font, float color[4], CGLQuad2D* quadList, CString textToDraw, bool sdf);
 	CGLFont* GetFontPointer(CString fontName);
 	int GetTextChar(CString textToDraw, int pos);
 	unsigned int GetWidthOfChar(CString ch, CString font);
 
 	//variables:
+	CGLShaderProgram* m_sdfShaderProgram = nullptr;
 	CMap<unsigned int, unsigned int, CDrawString*, CDrawString*&> m_glStringList;
 	unsigned int m_IDCounter;
 };
