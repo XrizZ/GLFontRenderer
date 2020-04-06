@@ -7,7 +7,8 @@ This font rendering library was designed with ease of use and render performance
 ![SDF Fonts](demo-01/FontLibrary/Documentation/sdfFonts.png "Screenshot from the newly added SDF Fonts (in green).")
 
 - March 30th 2020: added a demo app, to be compiled using Visual Studio 2012 or later. The app teaches and benchmarks the use of the Font Library and shows how every single exposed function is intented to be used.
-![Demo App](demo-01/FontLibrary/Documentation/screenShotDemoApp.png "Screenshot from the newly added Demo App.")
+
+![Demo App](demo-01/FontLibrary/Documentation/screenshotDemoApp.png "Screenshot from the newly added Demo App.")
 
 # Plans
 - I'm considering replacing MFC specific types with generic STL.
