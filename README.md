@@ -45,7 +45,7 @@ In your code, create a global font library object, before opening a rendering co
 //load openGL fonts
 m_fontLibrary = new CFontLibrary(<PathToFontFolder>);
 if(!m_fontLibrary->ParseAllFontsInFolder())
-	throw -1; //no fonts found!
+    return; //no fonts found!
 ```
 This will load all fonts that are stored in the folder you've specified as input parameter. After the rendering context is created, the textures need to get loaded, like so:
   
