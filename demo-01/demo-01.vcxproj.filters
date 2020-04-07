@@ -30,29 +30,29 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glutcallbacks.h">
+    <ClInclude Include="FontLibrary\acutil_unicode.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\Font.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\FontFileParser.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\FontLibrary.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\GLShaderProgram.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\Texture.hpp">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="glutcallbacks.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HighPerformanceCounter.h">
+    <ClInclude Include="HighPerformanceCounter.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Texture.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\acutil_unicode.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Font.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontFileParser.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontLibrary.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\GLShaderProgram.h">
-      <Filter>Header Files\FontLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

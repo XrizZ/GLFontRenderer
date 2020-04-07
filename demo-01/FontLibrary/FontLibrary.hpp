@@ -9,12 +9,12 @@
 //=================================================================================
 
 #pragma once
-#include "Font.h"
+#include "Font.hpp"
 #include <Windows.h>
 #include "..\glew\include\GL\glew.h"
 #include <afxtempl.h>
 #include <atlstr.h>
-#include "GLShaderProgram.h"
+#include "GLShaderProgram.hpp"
 
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
 

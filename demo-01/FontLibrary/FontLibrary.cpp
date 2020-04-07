@@ -6,11 +6,11 @@
 //=================================================================================
 
 #include "stdafx.h"
-#include "FontFileParser.h"
-#include "FontLibrary.h"
-#include "Font.h"
-#include "Texture.h"
-#include "acutil_unicode.h"
+#include "FontFileParser.hpp"
+#include "FontLibrary.hpp"
+#include "Font.hpp"
+#include "Texture.hpp"
+#include "acutil_unicode.hpp"
 #include <windows.h>
 
 CFontLibrary::CFontLibrary(CString folder)

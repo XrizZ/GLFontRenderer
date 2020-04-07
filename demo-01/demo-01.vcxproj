@@ -97,14 +97,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FontLibrary\acutil_unicode.h" />
-    <ClInclude Include="FontLibrary\Font.h" />
-    <ClInclude Include="FontLibrary\FontFileParser.h" />
-    <ClInclude Include="FontLibrary\FontLibrary.h" />
-    <ClInclude Include="FontLibrary\GLShaderProgram.h" />
-    <ClInclude Include="FontLibrary\Texture.h" />
-    <ClInclude Include="glutcallbacks.h" />
-    <ClInclude Include="HighPerformanceCounter.h" />
+    <ClInclude Include="FontLibrary\acutil_unicode.hpp" />
+    <ClInclude Include="FontLibrary\Font.hpp" />
+    <ClInclude Include="FontLibrary\FontFileParser.hpp" />
+    <ClInclude Include="FontLibrary\FontLibrary.hpp" />
+    <ClInclude Include="FontLibrary\GLShaderProgram.hpp" />
+    <ClInclude Include="FontLibrary\Texture.hpp" />
+    <ClInclude Include="glutcallbacks.hpp" />
+    <ClInclude Include="HighPerformanceCounter.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

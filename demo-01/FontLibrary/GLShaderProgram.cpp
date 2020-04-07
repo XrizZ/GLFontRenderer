@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "GLShaderProgram.h"
+#include "GLShaderProgram.hpp"
 #include <cassert>
 
 CGLShaderProgram::CGLShaderProgram()

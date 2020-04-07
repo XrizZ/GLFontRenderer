@@ -6,7 +6,7 @@
 //=================================================================================
 
 #include "StdAfx.h"
-#include "HighPerformanceCounter.h"
+#include "HighPerformanceCounter.hpp"
 #include <iostream>
 
 //constructor

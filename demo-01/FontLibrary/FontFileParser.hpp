@@ -7,7 +7,7 @@
 
 #pragma once
 #include <vector>
-#include "Font.h"
+#include "Font.hpp"
 #include <atlstr.h>
 
 class CFontFileParser

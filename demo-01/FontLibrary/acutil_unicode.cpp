@@ -26,7 +26,7 @@
 */
 
 #include "stdafx.h"
-#include "acutil_unicode.h"
+#include "acutil_unicode.hpp"
 
 // Reference: http://en.wikipedia.org/wiki/Utf8
 

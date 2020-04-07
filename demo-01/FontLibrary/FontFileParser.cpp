@@ -6,7 +6,7 @@
 //=================================================================================
 
 #include "stdafx.h"
-#include "FontFileParser.h"
+#include "FontFileParser.hpp"
 #include <iostream>
 #include <fstream>
 

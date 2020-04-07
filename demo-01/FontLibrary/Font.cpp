@@ -8,7 +8,7 @@
 //=================================================================================
 
 #include "stdafx.h"
-#include "Font.h"
+#include "Font.hpp"
 #include <windows.h>
 #include "..\glew\include\GL\glew.h"
 

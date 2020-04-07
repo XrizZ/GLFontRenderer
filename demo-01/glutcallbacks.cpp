@@ -11,14 +11,14 @@
 #include "stdafx.h"
 #include <windows.h>
 #include "glew\include\GL\glew.h"
-#include "glutcallbacks.h"
+#include "glutcallbacks.hpp"
 #include <sstream>
 #include <math.h>
 #include "glut\glut.h"
 #include <vector>
 #include <iostream>
-#include "HighPerformanceCounter.h"
-#include "FontLibrary/FontLibrary.h"
+#include "HighPerformanceCounter.hpp"
+#include "FontLibrary/FontLibrary.hpp"
 
 extern int m_width;
 extern int m_height;
