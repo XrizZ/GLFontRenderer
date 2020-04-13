@@ -12,8 +12,8 @@ This font rendering library was designed with ease of use and render performance
 
 # Plans
 - I'm considering replacing MFC specific types with generic STL.
-- I'd like to replace the fixed function pipeline GL calls with modern GL and an appropriate shader.
-- I'm also considering to implement glow, dropshadow and outline for the SDF fonts.
+- I'd like to replace the direct mode GL calls with modern GL and an appropriate shader.
+- I'm also considering to implement glow, dropshadow and outline for the SDF fonts (as well as multi SDF interpolation).
 - Lastly, I'm planning on porting this to Vulkan.
 
 Stay tuned.
