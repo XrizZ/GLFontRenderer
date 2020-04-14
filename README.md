@@ -3,6 +3,7 @@
 This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 for a windows OS with MFC. If you want to port the library to non MFC, simply use more generic STL, only a few types are not compatible: mainly CString and CMap, the rest of the code should already be platform agnostic. The font files read by this library should be produced with BM Font Generator: http://angelcode.com/products/bmfont/ , however other tools can likely achieve the same. For SDF fonts, you need to use a different generator, e.g. TextMesh Pro.
 
 # Changelog
+- April 14th 2020: moved project from MFC to standard libs
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline,glow and dropshadow yet. This allows for very nice scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
 ![SDF Fonts](demo-01/FontLibrary/Documentation/sdfFonts.png "Screenshot from the newly added SDF Fonts (in green).")
 
@@ -11,7 +12,6 @@ This font rendering library was designed with ease of use and render performance
 ![Demo App](demo-01/FontLibrary/Documentation/screenshotDemoApp.png "Screenshot from the newly added Demo App.")
 
 # Plans
-- I'm considering replacing MFC specific types with generic STL.
 - I'd like to replace the direct mode GL calls with modern GL and an appropriate shader.
 - I'm also considering to implement glow, dropshadow and outline for the SDF fonts (as well as multi SDF interpolation).
 - Lastly, I'm planning on porting this to Vulkan.
