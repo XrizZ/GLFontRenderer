@@ -1,13 +1,7 @@
-#include "stdafx.h"
 #include "GLShaderProgram.hpp"
 #include <cassert>
-
-CGLShaderProgram::CGLShaderProgram()
-{
-	m_vertexShader = 0;
-	m_fragmentShader = 0;
-	m_shaderProgram = 0;
-}
+#include <sstream>
+#include <fstream>
 
 CGLShaderProgram::CGLShaderProgram(const CGLShaderProgram & glShaderProgram)
 {
@@ -27,14 +21,10 @@ void CGLShaderProgram::CleanUp()
 {
 	// Detaching the shaders from the program
 	if (m_shaderProgram > 0 && m_vertexShader > 0)
-	{
 		glDetachShader(m_shaderProgram, m_vertexShader);
-	}
 	
 	if (m_shaderProgram > 0 && m_fragmentShader > 0)
-	{
 		glDetachShader(m_shaderProgram, m_fragmentShader);
-	}
 
 	//deleteing shaders and program
 	if(m_vertexShader)
@@ -68,7 +58,6 @@ GLuint CGLShaderProgram::CompileShader(GLenum aShaderType, const char* aShaderSo
 
 	if(!compiled)
 	{
-
 		GLint blen = 0;
 		GLsizei slen = 0;
 		glGetShaderiv(shaderHandle, GL_INFO_LOG_LENGTH, &blen);
@@ -77,10 +66,7 @@ GLuint CGLShaderProgram::CompileShader(GLenum aShaderType, const char* aShaderSo
 		{
 			char* compilerLog = new char[blen + 1];
 			glGetShaderInfoLog(shaderHandle, blen, &slen, compilerLog);
-
-			CString infoText;
-			infoText.Format("GLSL Compiler Error: %s",  CString(compilerLog));
-			TRACE(infoText);
+			std::cout << "GLSL Compiler Error: " << compilerLog;
 			delete []compilerLog;
 		}
 
@@ -132,9 +118,7 @@ bool CGLShaderProgram::InitFromString(const std::string& vertexShaderSourceCode,
 			glGetProgramInfoLog(m_shaderProgram, infoLength + 1, 0, infoBuffer);
 
 			int n = 10; //number of first few characters of shadercode to show in error message
-			CString infoText;
-			infoText.Format("GLSL Linker Error in %s, %s: %s", vertexShaderSourceCode.substr(0,n).c_str(), fragmentShaderSourceCode.substr(0, n).c_str(), CString(infoBuffer));
-			TRACE(infoText);
+			std::cout << "GLSL Linker Error in " << vertexShaderSourceCode.substr(0,n).c_str() << " " << fragmentShaderSourceCode.substr(0, n).c_str() << ": " << infoBuffer;
 			delete []infoBuffer;
 		}
 
@@ -186,10 +170,7 @@ bool CGLShaderProgram::InitFromFile(const std::string& aVertexFileName, const st
 		{
 			char* infoBuffer = new char[infoLength + 1];
 			glGetProgramInfoLog(m_shaderProgram, infoLength, 0, infoBuffer);
-
-			CString infoText;
-			infoText.Format("GLSL Linker Error in %s, %s: %s", aVertexFileName, aFragmentFileName, infoBuffer);
-			TRACE(infoText);
+			std::cout << "GLSL Linker Error in " << aVertexFileName << " " << aFragmentFileName << ": " << infoBuffer;
 			delete []infoBuffer;
 		}
 
@@ -202,10 +183,10 @@ bool CGLShaderProgram::InitFromFile(const std::string& aVertexFileName, const st
 	return true;
 }
 
-bool CGLShaderProgram::CheckForErrors(CString aFile, int aLine)
+bool CGLShaderProgram::CheckForErrors(std::string aFile, int aLine)
 {
 	GLenum errorID = GL_NO_ERROR;
-	CString error;
+	std::string error;
 	int errorCount = 0;
 
 	while ((errorID = glGetError()) != GL_NO_ERROR)
@@ -213,60 +194,54 @@ bool CGLShaderProgram::CheckForErrors(CString aFile, int aLine)
 		errorCount++;
 		switch (errorID)
 		{
-		case GL_INVALID_ENUM:
-			error = "GL_INVALID_ENUM";
-			break;
+			case GL_INVALID_ENUM:
+				error = "GL_INVALID_ENUM";
+				break;
 
-		case GL_INVALID_VALUE:
-			error = "GL_INVALID_VALUE";
-			break;
+			case GL_INVALID_VALUE:
+				error = "GL_INVALID_VALUE";
+				break;
 
-		case GL_INVALID_OPERATION:
-			error = "GL_INVALID_OPERATION";
-			break;
+			case GL_INVALID_OPERATION:
+				error = "GL_INVALID_OPERATION";
+				break;
 
-		case GL_INVALID_FRAMEBUFFER_OPERATION:
-			error = "GL_INVALID_FRAMEBUFFER_OPERATION";
-			break;
+			case GL_INVALID_FRAMEBUFFER_OPERATION:
+				error = "GL_INVALID_FRAMEBUFFER_OPERATION";
+				break;
 
-		case GL_OUT_OF_MEMORY:
-			error = "GL_OUT_OF_MEMORY";
-			break;
+			case GL_OUT_OF_MEMORY:
+				error = "GL_OUT_OF_MEMORY";
+				break;
 
-		default:
-			error = "Unknown GL error Type";
-			break;
+			default:
+				error = "Unknown GL error Type";
+				break;
 		}
 
-		CString output;
-		output.Format("GLSL Error -> %d - %s - %d - %s(%d)\n", errorID, error, errorCount, aFile, aLine);
-		TRACE(output);
+		std::cout << "GLSL Error -> " << errorID << " - " << error << " - " << errorCount << " - " << aFile << "(" << aLine <<")\n";
 		assert(false);
 	}
 
 	return errorCount > 0 ? true : false;
 }
 
-CString CGLShaderProgram::LoadCompleteFile(CString aFileName)
+std::string CGLShaderProgram::LoadCompleteFile(std::string aFileName)
 {
-	FILE* pShaderFile;
-	errno_t err = fopen_s(&pShaderFile, aFileName, "rb");
+	std::string buffer;
 
-	CString buffer;
+	std::ifstream file;
+	file.open(aFileName, std::ios::in | std::ios::binary);
 
-	if (pShaderFile)
+	if(!file.fail())
 	{
-		fseek(pShaderFile, 0, SEEK_END);
-		long size = ftell(pShaderFile);
-		rewind(pShaderFile);
-
-		TCHAR *pStr = buffer.GetBufferSetLength(size);
-		fread(pStr, sizeof(TCHAR), size, pShaderFile);
-		buffer.ReleaseBuffer();
-
-		fclose(pShaderFile);
-
-		return buffer;
+		while(!file.eof())
+		{
+			char currChar;
+			file.get(currChar);
+			buffer.push_back(currChar);
+		}
+		file.close();
 	}
 
 	return buffer;

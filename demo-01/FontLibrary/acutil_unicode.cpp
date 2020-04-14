@@ -25,7 +25,6 @@
    andreas@angelcode.com
 */
 
-#include "stdafx.h"
 #include "acutil_unicode.hpp"
 
 // Reference: http://en.wikipedia.org/wiki/Utf8
@@ -44,7 +43,7 @@ int DecodeUTF8(const char *encodedBuffer, unsigned int *outLength)
 	{
 		// This is the only byte
 		if( outLength ) *outLength = 1;
-		return byte;
+			return byte;
 	}
 	else if( (byte & 0xE0) == 0xC0 )
 	{
@@ -83,7 +82,7 @@ int DecodeUTF8(const char *encodedBuffer, unsigned int *outLength)
 	if( n == length )
 	{
 		if( outLength ) *outLength = (unsigned)length;
-		return value;
+			return value;
 	}
 
 	// The byte sequence isn't a valid UTF-8 byte sequence.
@@ -128,7 +127,7 @@ int EncodeUTF8(unsigned int value, char *outEncodedBuffer, unsigned int *outLeng
 	}
 
 	if( outLength ) *outLength = length;
-	return length;
+		return length;
 }
 
 int DecodeUTF16(const char *encodedBuffer, unsigned int *outLength, EUnicodeByteOrder byteOrder)
@@ -175,7 +174,7 @@ int DecodeUTF16(const char *encodedBuffer, unsigned int *outLength, EUnicodeByte
 
 		value = value + (value2 & 0x3FF) + 0x10000;
 		if( outLength ) *outLength = 4;
-		return value;
+			return value;
 	}
 	
 	// It is an illegal sequence if a character in the 0xDC00-0xDFFF range comes first
@@ -198,7 +197,7 @@ int EncodeUTF16(unsigned int value, char *outEncodedBuffer, unsigned int *outCha
 		}
 
 		if( outCharLength ) *outCharLength = 2;
-		return 2;
+			return 2;
 	}
 	else
 	{
@@ -222,8 +221,8 @@ int EncodeUTF16(unsigned int value, char *outEncodedBuffer, unsigned int *outCha
 		}
 
 		if( outCharLength ) *outCharLength = 4;
-		return 4;
+			return 4;
 	}
 }
 
-}
+} //end of namespace acUtility

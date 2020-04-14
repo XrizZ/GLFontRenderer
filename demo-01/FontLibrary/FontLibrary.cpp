@@ -5,93 +5,69 @@
 // Description	:	Main Implementation file CFontLibrary
 //=================================================================================
 
-#include "stdafx.h"
 #include "FontFileParser.hpp"
 #include "FontLibrary.hpp"
 #include "Font.hpp"
 #include "Texture.hpp"
 #include "acutil_unicode.hpp"
 #include <windows.h>
+#include <fstream>
+#include <iostream>
+#include <experimental/filesystem>
 
-CFontLibrary::CFontLibrary(CString folder)
+CFontLibrary::CFontLibrary(std::string folder)
 {
 	m_fontFolder = folder;
-	m_IDCounter = 1;
 }
 
 CFontLibrary::~CFontLibrary()
 {
-	TRACE("CFontLibrary Destructor \n");
+	std::cout << "CFontLibrary Destructor \n";
 
-	//loop through all fonts
-	POSITION pos = m_fontList.GetStartPosition();
-	while(pos)
-	{
-		//call cleanup for current font
-		CString key;
-		CGLFont* toDelete = nullptr;
-		m_fontList.GetNextAssoc(pos, key, toDelete);
-		m_fontList.RemoveKey(key);
-		if(toDelete)
-			delete toDelete;
-		toDelete = nullptr;
-	}
-
-	//loop through all the strings that we drew
-	pos = m_glStringList.GetStartPosition();
-	while(pos)
-	{
-		//call cleanup for current font
-		unsigned int key;
-		CDrawString* toDelete = nullptr;
-		m_glStringList.GetNextAssoc(pos, key, toDelete);
-		m_glStringList.RemoveKey(key);
-		if(toDelete)
-		{
-			glDeleteLists(toDelete->m_drawListID, 1);
-		}
-		delete toDelete;
-		toDelete = nullptr;
-	}
+	m_fontList.clear();
+	m_glStringList.clear();
 
 	if(m_sdfShaderProgram)
 		delete m_sdfShaderProgram;
-	m_sdfShaderProgram = 0;
+	m_sdfShaderProgram = nullptr;
 }
 
 bool CFontLibrary::ParseAllFontsInFolder()
 {
 	//get a list of all fonts in font directory
-	CFileFind finder;
-	CString filename;
-	filename.Format(_T("%s\\*.fnt"), m_fontFolder.GetString());
-	BOOL bWorking = finder.FindFile(filename);
-	CList<CString, CString&> fileNameList;
-	while(bWorking)
+	std::forward_list<std::string> fileNameList;
+	//this is OS specific, change this Windows method for Linux or other method of your liking
 	{
-		bWorking = finder.FindNextFile();
-		fileNameList.AddTail(finder.GetFileName());
+		//the following code was made available by C++17. Using Visual Studio 2017 you will need to use the epxerimental namespace,
+		//later versions may be able to use std::filesystem directly
+		std::string path = m_fontFolder;
+		path.append("\\");
+		std::string ext(".fnt");
+		for(auto& p: std::experimental::filesystem::recursive_directory_iterator(path))
+		{
+			if(p.path().extension() == ext)
+				fileNameList.push_front(p.path().filename().u8string());
+		}
 	}
 
 	//parse each font individually and add the parsed font to the global font library list
-	POSITION pos = fileNameList.GetHeadPosition();
 	int i=0;
-	for(; i<fileNameList.GetCount(); i++)
+	for (auto it = fileNameList.cbegin(); it != fileNameList.cend(); it++, i++)
 	{
-		CString currFileName;
-		CString curr = fileNameList.GetNext(pos);
-		currFileName.Format(_T("%s\\%s"), m_fontFolder, curr);
+		std::string curr = *it;
+		char* currFileName = new char[m_fontFolder.length() + 2 + curr.length()];
+		sprintf(currFileName, "%s\\%s", m_fontFolder.c_str(), curr.c_str());
+
 		CGLFont* newFont = ParseFont(currFileName);
 		//trim to correct name
-		CString fontName = curr;
-		if(fontName.GetLength() > 5)
-			fontName = fontName.Left(fontName.GetLength()-4);
+		std::string fontName = curr;
+		if(fontName.length() > 5)
+			fontName = fontName.substr(0, fontName.length()-4);
 		if(newFont != nullptr)
-			m_fontList.SetAt(fontName, newFont);
-	}
+			m_fontList.emplace(fontName, newFont); //NOTE: only gets added if the font name is unique
 
-	//Cleanup
-	fileNameList.RemoveAll();
+		delete[] currFileName;
+	}
 
 	//check if we found at least one font
 	if(i)
@@ -100,7 +76,7 @@ bool CFontLibrary::ParseAllFontsInFolder()
 		return false;
 }
 
-CGLFont* CFontLibrary::ParseFont(CString fileName)
+CGLFont* CFontLibrary::ParseFont(std::string fileName)
 {
 	CFontFileParser* parser = new CFontFileParser(fileName);
 	if(!parser || !parser->IsInitialized())
@@ -112,74 +88,74 @@ CGLFont* CFontLibrary::ParseFont(CString fileName)
 
 	//now load font config file(*.fnt) -> see fileName parameter
 	//define strings we are searching for
-	CString faceString("face=");
-	CString sizeString("size=");
-	CString boldString("bold=");
-	CString italicString("italic=");
-	CString unicodeString("unicode=");
-	CString textureWString("scaleW=");
-	CString textureHString("scaleH=");
-	CString textureNameString("file=");
-	CString baseString("base=");
+	std::string faceString("face=");
+	std::string sizeString("size=");
+	std::string boldString("bold=");
+	std::string italicString("italic=");
+	std::string unicodeString("unicode=");
+	std::string textureWString("scaleW=");
+	std::string textureHString("scaleH=");
+	std::string textureNameString("file=");
+	std::string baseString("base=");
 
 	//==========================
 	//load general font infos
 	//==========================
 
 	//load face name
-	CString faceVal;
+	std::string faceVal;
 	parser->GetValueFromBufferOfFirst(faceString, &faceVal);
 	//remove the "
-	faceVal.SetAt(0, ' ');
-	faceVal.SetAt(faceVal.GetLength()-1, ' ');
-	faceVal.TrimLeft();
-	faceVal.TrimRight();
+	faceVal.replace(0, 1, "");
+	faceVal.replace(faceVal.end()-1, faceVal.end(), "");
 	newFont->m_face = faceVal;
 
 	//load font size
-	CString sizeVal;
+	std::string sizeVal;
 	parser->GetValueFromBufferOfFirst(sizeString, &sizeVal);
-	newFont->m_size = atoi(sizeVal.GetString());
+	newFont->m_size = atoi(sizeVal.c_str());
 
 	//load bold parameter
-	CString boldVal;
+	std::string boldVal;
 	parser->GetValueFromBufferOfFirst(boldString, &boldVal);
-	newFont->m_bold = (bool)atoi(boldVal);
+	newFont->m_bold = (bool)atoi(boldVal.c_str());
 
 	//load italic parameter
-	CString italicVal;
+	std::string italicVal;
 	parser->GetValueFromBufferOfFirst(italicString, &italicVal);
-	newFont->m_italic = (bool)atoi(italicVal);
+	newFont->m_italic = (bool)atoi(italicVal.c_str());
 
 	//load unicode parameter
-	CString unicodeVal;
+	std::string unicodeVal;
 	parser->GetValueFromBufferOfFirst(unicodeString, &unicodeVal);
-	newFont->m_unicode = (bool)atoi(unicodeVal);
+	newFont->m_unicode = (bool)atoi(unicodeVal.c_str());
 
 	//load texture height
-	CString textureHVal;
+	std::string textureHVal;
 	parser->GetValueFromBufferOfFirst(textureHString, &textureHVal);
-	newFont->m_textureH = atoi(textureHVal);
+	newFont->m_textureH = atoi(textureHVal.c_str());
 
 	//load texture width
-	CString textureWVal;
+	std::string textureWVal;
 	parser->GetValueFromBufferOfFirst(textureWString, &textureWVal);
-	newFont->m_textureW = atoi(textureWVal);
+	newFont->m_textureW = atoi(textureWVal.c_str());
 
 	//load texture width
-	CString textureNameVal;
+	std::string textureNameVal;
 	parser->GetValueFromBufferOfFirst(textureNameString, &textureNameVal);
+
 	//remove the "
-	textureNameVal.SetAt(0, ' ');
-	textureNameVal.SetAt(textureNameVal.GetLength()-1, ' ');
-	textureNameVal.TrimLeft();
-	textureNameVal.TrimRight();
-	newFont->m_bitmapFileName.Format("%s\\%s", m_fontFolder, textureNameVal);
+	textureNameVal.replace(0, 1, "");
+	textureNameVal.replace(textureNameVal.end()-1, textureNameVal.end(), "");
+
+	char* currFileName = new char[m_fontFolder.length() + 2 + textureNameVal.length()];
+	sprintf(currFileName, "%s\\%s", m_fontFolder.c_str(), textureNameVal.c_str());
+	newFont->m_bitmapFileName = currFileName;
 
 	//load base
-	CString baseVal;
+	std::string baseVal;
 	parser->GetValueFromBufferOfFirst(baseString, &baseVal);
-	newFont->m_base = atoi(baseVal);
+	newFont->m_base = atoi(baseVal.c_str());
 
 	//==========================
 	//load char infos
@@ -233,15 +209,12 @@ bool CFontLibrary::InitGLFonts()
 {
 	bool error = false;
 	//go through all fonts
-	POSITION pos = m_fontList.GetStartPosition();
-	while(pos)
+	for(auto& it: m_fontList)
 	{
 		//load texture for current font
-		CString key;
-		CGLFont* currFont = nullptr;
-		m_fontList.GetNextAssoc(pos, key, currFont);
+		CGLFont* currFont = it.second;
 
-		if(!currFont || !CGLTexture::LoadTextureFromFile(std::string(currFont->m_bitmapFileName.GetString(), currFont->m_bitmapFileName.GetLength()), currFont->m_fontTextures))
+		if(!currFont || !CGLTexture::LoadTextureFromFile(currFont->m_bitmapFileName, currFont->m_fontTextures))
 		{
 			//TODO: log error
 			error = true;
@@ -258,8 +231,7 @@ bool CFontLibrary::InitGLFonts()
 
 	if (!m_sdfShaderProgram || !m_sdfShaderProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
 	{
-		CString desc;
-		desc.Format(_T("FontLibrary failed to load sdf shader."));
+		std::string err = "FontLibrary failed to load sdf shader.";
 		//TODO: log error
 		error = true;
 	}
@@ -267,7 +239,7 @@ bool CFontLibrary::InitGLFonts()
 	return error;
 }
 
-void CFontLibrary::DrawString(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale)
+void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale)
 {
 	CGLQuad2D* quadList = TextToQuadList(font, textToDraw, x, y, scale);
 	if(quadList)
@@ -277,13 +249,15 @@ void CFontLibrary::DrawString(CString textToDraw, int x, int y, float color[4], 
 	}
 }
 
-void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale)
+void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale)
 {
+	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
-	bool found = m_glStringList.Lookup(ID, savedString);
-	if(found && savedString)
+	if(found != m_glStringList.end() && found->second)
 	{
-		if(savedString->m_text.Compare(textToDraw) != 0 || 
+		savedString = found->second;
+
+		if(savedString->m_text.compare(textToDraw) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(scale != savedString->m_scale) || (sdf != savedString->m_sdf)
@@ -309,7 +283,7 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 		savedString = new CDrawString(ID, textToDraw, x, y, color, sdf, scale);
 	}
 
-	if(savedString->m_drawListID == 0)
+	if(savedString && savedString->m_drawListID == 0)
 	{
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
@@ -319,21 +293,24 @@ void CFontLibrary::DrawString(unsigned int ID, CString textToDraw, int x, int y,
 		glEndList();
 		savedString->m_drawListID = id;
 	}
-	glCallList(savedString->m_drawListID);
+	if(savedString && savedString->m_drawListID)
+		glCallList(savedString->m_drawListID);
 
-	if(!found)
-		m_glStringList.SetAt(ID, savedString);
+	if(found == m_glStringList.end() && savedString)
+		m_glStringList.emplace(ID, savedString);
 }
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines)
 {
+	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
-	bool found = m_glStringList.Lookup(ID, savedString);
-	if(found && savedString)
+	if(found != m_glStringList.end() && found->second)
 	{
-		if(savedString->m_text.Compare(textToDraw) != 0 || 
+		savedString = found->second;
+
+		if(savedString->m_text.compare(textToDraw) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(scale != savedString->m_scale) ||
@@ -366,7 +343,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 		savedString->m_maxLines = maxLines;
 	}
 
-	if(savedString->m_drawListID == 0)
+	if(savedString && savedString->m_drawListID == 0)
 	{
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
@@ -376,36 +353,37 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, CString textToDraw,
 		glEndList();
 		savedString->m_drawListID = id;
 	}
-	glCallList(savedString->m_drawListID);
+	if(savedString && savedString->m_drawListID)
+		glCallList(savedString->m_drawListID);
 
-	if(!found)
-		m_glStringList.SetAt(ID, savedString);
+	if(found == m_glStringList.end() && savedString)
+		m_glStringList.emplace(ID, savedString);
 }
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(CString textToDraw, int x, int y, float color[4], CString font, bool sdf, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines)
 {
 	unsigned int lineHeight = GetLineHeight(font);
 	unsigned int line = 0;
-	for(int index = 0; index < textToDraw.GetLength();)
+	for(int index = 0; index < textToDraw.length();)
 	{
 		if(maxLines > 0 && line >= maxLines) //lets only draw the number of lines defind my "maxLines"
 			return;
 
-		CString subStringToDraw;
+		std::string subStringToDraw;
 		int textWidth = 0;
-		while(textWidth < lineWidth && index < textToDraw.GetLength())
+		while(textWidth < lineWidth && index < textToDraw.length())
 		{
-			subStringToDraw.AppendChar(textToDraw.GetAt(index++));
+			subStringToDraw.push_back(textToDraw.at(index++));
 			textWidth = GetWidthOfString(subStringToDraw, font, scale);
 		}
 
-		DrawString(subStringToDraw.Trim(), x, y - line++*lineHeight*scale, color, font, scale);
+		DrawString(subStringToDraw, x, y - line++*lineHeight*scale, color, font, scale);
 	}
 }
 
-unsigned int CFontLibrary::GetLineHeight(CString font)
+unsigned int CFontLibrary::GetLineHeight(std::string font)
 {
 	unsigned int retVal = 0;
 
@@ -413,26 +391,25 @@ unsigned int CFontLibrary::GetLineHeight(CString font)
 
 	if(!currfont)
 	{
-		TRACE("CFontLibrary::Font not found! '%s'", font);
+		std::cout << "CFontLibrary::Font not found! " << font;
 		return 0;
 	}
 
-	char ascii = 'W'; //very tall character
+	char ascii = 'W'; //very tall character, we use this as representative for the entire font
 
-	retVal = currfont->m_fontCharInfo[ascii]->m_textureWidth + 2; //very tall character + 2 comes line height very close
+	if(currfont->m_fontCharInfo[ascii])
+		retVal = currfont->m_fontCharInfo[ascii]->m_textureWidth + 2; //very tall character + 2 comes line height very close
 
 	return retVal;
 }
 
-float CFontLibrary::GetWidthOfString(CString textToDraw, CString font, float scale)
+float CFontLibrary::GetWidthOfString(std::string textToDraw, std::string font, float scale)
 {
 	float retVal = 0;
 
-	for(int i=0; i<textToDraw.GetLength(); i++)
+	for(int i=0; i<textToDraw.length(); i++)
 	{
-		CString charToDraw;
-		charToDraw.Format(_T("%c"), textToDraw.GetAt(i));
-		retVal+=GetWidthOfChar(charToDraw, font);
+		retVal+=GetWidthOfChar(textToDraw.at(i), font);
 
 		//TODO: account for kernings!
 	}
@@ -442,7 +419,7 @@ float CFontLibrary::GetWidthOfString(CString textToDraw, CString font, float sca
 	return retVal;
 }
 
-unsigned int CFontLibrary::GetWidthOfChar(CString ch, CString font)
+unsigned int CFontLibrary::GetWidthOfChar(char ch, std::string font)
 {
 	unsigned int retVal = 0;
 
@@ -451,35 +428,38 @@ unsigned int CFontLibrary::GetWidthOfChar(CString ch, CString font)
 
 	if(!currfont)
 	{
-		TRACE(_T("CFontLibrary::Font not found! '%s'", font));
+		std::cout << "CFontLibrary::Font not found! " << font;
 		return 0;
 	}
 
-	int ascii = GetTextChar(ch, 0);
+	std::string stringToTest;
+	stringToTest.push_back(ch);
+
+	int ascii = GetTextChar(stringToTest, 0);
 	if(ascii >= 0 && ascii < currfont->m_highestASCIIChar) //sanity check
 		retVal = currfont->m_fontCharInfo[ascii]->m_xadvance;
 
 	return retVal;
 }
 
-CGLQuad2D* CFontLibrary::TextToQuadList(CString font, CString textToDraw, int x, int y, float scale)
+CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale)
 {
 	//get pointer to the correct font
 	CGLFont* currfont = GetFontPointer(font);
 
 	if(!currfont)
 	{
-		TRACE(_T("CFontLibrary::Font not found! '%s'", font));
+		std::cout << "CFontLibrary::Font not found! " << font;
 		return nullptr;
 	}
 
-	CGLQuad2D* quadList = new CGLQuad2D[textToDraw.GetLength()];
+	CGLQuad2D* quadList = new CGLQuad2D[textToDraw.length()];
 
-	int defaultChar = 63; //'?'
+	int defaultChar = 63; //'?', default for unknown characters is the question mark
 
 	int cursor = 0;
 
-	for(int i=0; i<textToDraw.GetLength(); i++)
+	for(int i=0; i<textToDraw.length(); i++)
 	{
 		int ascii = GetTextChar(textToDraw, i);
 
@@ -526,9 +506,9 @@ CGLQuad2D* CFontLibrary::TextToQuadList(CString font, CString textToDraw, int x,
 		quadList[i].bottomLeftX = (offsetX)*scale + x + cursor;
 		quadList[i].bottomLeftY = y + (base - offsetY - height)*scale;
 
-		//calc kerning depending in current and next character in the string to draw
+		//calc kerning depending on current and next character in the string to draw
 		int kerning = 0;
-		if(i>0 && i<textToDraw.GetLength()-1)
+		if(i>0 && i<textToDraw.length()-1)
 		{
 			if(ascii <= currfont->m_highestKerningFirst)
 			{
@@ -545,49 +525,33 @@ CGLQuad2D* CFontLibrary::TextToQuadList(CString font, CString textToDraw, int x,
 	return quadList;
 }
 
-int CFontLibrary::GetTextChar(CString textToDraw, int pos)
+int CFontLibrary::GetTextChar(std::string textToDraw, int pos)
 {
-	int UTF8 = 1;
-	int UTF16 = 2;
-
-	int encoding = 1;
-	if((int)textToDraw.GetAt(pos) < 0)
+	int ch = (int)textToDraw.at(pos);
+	if(ch < 0) //UTF8 conversion did not work, we will attempt UTF16 conversion
 	{
-		encoding = 2;
-	}
-
-	int ch;
-	unsigned int len;
-	if( encoding == UTF8 )
-	{
-		ch = (int)textToDraw.GetAt(pos);
-	}
-	else if( encoding == UTF16 )
-	{
-		CString fakeText;
-		fakeText.Format(_T("%c"), textToDraw.GetAt(pos)); //creates a null terminated string with the utf16 character
-		ch = acUtility::DecodeUTF16(fakeText.GetString(), &len);
+		unsigned int len = 0;
+		char text = textToDraw.at(pos);
+		ch = acUtility::DecodeUTF16(&text, &len);
 	}
 
 	return ch;
 }
 
-void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadList, CString textToDraw, bool sdf)
+void CFontLibrary::DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw, bool sdf)
 {
-	if(textToDraw.GetLength() <= 0)
+	if(textToDraw.length() <= 0)
 		return;
 
 	CGLFont* currFont = GetFontPointer(font);
-
 	if (!currFont)
 		return;
-
-	unsigned int textureID = currFont->m_fontTextures;
 
 	glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT | GL_TEXTURE_BIT); //lighting and color mask
 	glDisable(GL_LIGHTING);     //need to disable lighting for proper text color
 	glDisable(GL_DEPTH_TEST);
 
+	unsigned int textureID = currFont->m_fontTextures;
 	if(textureID > 0)
 	{
 		glActiveTexture(GL_TEXTURE0);
@@ -609,7 +573,7 @@ void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadLis
 		glUniform1f(step, 0.0f);
 
 		glBegin(GL_QUADS);
-			for (int i = 0; i<textToDraw.GetLength(); i++)
+			for (int i = 0; i<textToDraw.length(); i++)
 			{
 				glMultiTexCoord2f(GL_TEXTURE0, quadList[i].textureTopLeftX, quadList[i].textureTopLeftY);
 				glVertex2f(quadList[i].topLeftX, quadList[i].topLeftY);			//top left vertex
@@ -627,7 +591,7 @@ void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadLis
 	else
 	{
 		glBegin(GL_QUADS);
-			for(int i=0; i<textToDraw.GetLength(); i++)
+			for(int i=0; i<textToDraw.length(); i++)
 			{
 				glTexCoord2f(quadList[i].textureTopLeftX, quadList[i].textureTopLeftY);
 				glVertex2i(quadList[i].topLeftX, quadList[i].topLeftY);			//top left vertex
@@ -648,12 +612,11 @@ void CFontLibrary::DrawQuadList(CString font, float color[4], CGLQuad2D* quadLis
 	glPopAttrib();
 }
 
-CGLFont* CFontLibrary::GetFontPointer(CString fontName)
+CGLFont* CFontLibrary::GetFontPointer(std::string fontName)
 {
-	CGLFont* retVal;
-	bool success = m_fontList.Lookup(fontName, retVal);
-	if(success)
-		return retVal;
+	std::map<std::string, CGLFont*>::const_iterator found = m_fontList.find(fontName);
+	if (found != m_fontList.end())
+		return found->second;
 	else
 		return nullptr;
 }

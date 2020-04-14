@@ -5,7 +5,6 @@
 // Description	:	Implementation file for CGLTexture, used by the FontLibrary
 //=================================================================================
 
-#include "stdafx.h"
 #include "Texture.hpp"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

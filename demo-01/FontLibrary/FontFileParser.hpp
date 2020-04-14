@@ -8,38 +8,36 @@
 #pragma once
 #include <vector>
 #include "Font.hpp"
-#include <atlstr.h>
+#include <forward_list>
 
 class CFontFileParser
 {
 public:
 	//constructor + destructor:
-	CFontFileParser(CString fileName);
+	CFontFileParser(std::string fileName);
 	~CFontFileParser(void);
-
-	//variables:
 
 	//functions:
 	bool IsInitialized();
 	bool LoadCharInfos(CGLFont* newFont);
 	bool LoadKernings(CGLFont* newFont);
 	int GetNumberOfSupportedChars();
-	bool GetValueFromBufferOfFirst(CString string, CString* value);
-	bool GetValueFromBufferOfAll(CString string, CList<CString, CString&>* values);
-	int GetValueFromBufferStartingAt(CString string, CString* value, int startPos);
+	bool GetValueFromBufferOfFirst(std::string string, std::string* value);
+	bool GetValueFromBufferOfAll(std::string string, std::forward_list<std::string>* values);
+	int GetValueFromBufferStartingAt(std::string string, std::string* value, int startPos);
 	int GetKerningsFirstHighest();
 	int GetKerningsSecondHighest();
 
 private:
 	//functions:
-	void GetCStringBetween(int begin, int end, CString* value, CString src);
-	void VectorToString(std::vector<char>* src, CString* dst);
+	void GetStringBetween(int begin, int end, std::string* value, std::string src);
+	void VectorToString(std::vector<char>* src, std::string* dst);
 	CCharInfo* GetNextCharInfo(int *startSearchPos);
 	CKerning* GetNextKerning(int *startSearchPos);
 
 	//variables:
-	CString m_seperator;
-	bool m_isInitialized;
+	std::string m_seperator = " "; //separator is a whitespace
+	bool m_isInitialized = false;
 	std::vector<char> m_buffer;
-	CString m_bufferString;
+	std::string m_bufferString;
 };

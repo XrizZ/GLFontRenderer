@@ -11,13 +11,7 @@
 
 struct CRawTexture
 {
-	CRawTexture()
-	{
-		m_channels = 0;
-		m_sizeX = 0;
-		m_sizeY = 0;
-		m_data = nullptr;
-	}
+	CRawTexture(){}
 	~CRawTexture()
 	{
 		if (m_data)
@@ -26,10 +20,11 @@ struct CRawTexture
 			m_data = nullptr;
 		}
 	}
-	int m_channels;
-	int m_sizeX;
-	int m_sizeY;
-	unsigned char *m_data;
+
+	int m_channels = 0;
+	int m_sizeX = 0;
+	int m_sizeY = 0;
+	unsigned char *m_data = nullptr;
 };
 
 class CGLTexture

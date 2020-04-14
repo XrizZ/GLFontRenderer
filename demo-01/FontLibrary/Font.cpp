@@ -7,7 +7,6 @@
 //					Is used by he Font Library
 //=================================================================================
 
-#include "stdafx.h"
 #include "Font.hpp"
 #include <windows.h>
 #include "..\glew\include\GL\glew.h"

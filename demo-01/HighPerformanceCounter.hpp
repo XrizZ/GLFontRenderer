@@ -8,16 +8,12 @@
 #pragma once
 #include <windows.h>
 
-#ifndef HIGHPERFORMANCECOUNTER_H
-#define HIGHPERFORMANCECOUNTER_H
-
 class CHighPerformanceCounter
 {
-	
 private:
-	DWORD_PTR m_threadAffMask;
-	LARGE_INTEGER m_cpuFrequency;
-	LARGE_INTEGER m_lastTick;
+	ULONG_PTR m_threadAffMask = 0;
+	LARGE_INTEGER m_cpuFrequency = {0};
+	LARGE_INTEGER m_lastTick = {0};
 	
 public:
 
@@ -28,5 +24,3 @@ public:
 	void Tick();
 	double GetDeltaInMS();
 };
-
-#endif
