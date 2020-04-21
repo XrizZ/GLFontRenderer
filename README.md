@@ -83,7 +83,7 @@ Note that there are more functions with additional features, such as automatic l
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
 
-Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. You can still use that tool, but you will need to perform a post processing step with tools like this: https://github.com/Chlumsky/msdfgen
+Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. You can still use that tool, but you will need to perform a post processing step with tools like this ImageMagick. Tutorial below.
 
 Only three steps are necessary to integrate a new font:
     1. Create the font-config and font-bitmap using BM-Font-Generator
@@ -162,6 +162,9 @@ here are a few examples: <br>
 etc.
 
 Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
+
+### Converting Texture to Signed Distance Field Texture
+<TODO>
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
