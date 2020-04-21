@@ -164,9 +164,24 @@ etc.
 Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
 
 ### Converting Texture to Signed Distance Field Texture
-<TODO>
-magick convert --% Arial12_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 43%,57% -resize 12.5% test4.tga
+2 step process:
  
+ BMFont:
+- font size: 400px
+- bitmap size: 8192x4096
+- smoothing enabled
+- no outline or other special features
+- Padding: 45px on all sides
+- still white text with alpha
+- bit depth still 32
+- texture format either tga or png (since imageMagick can convert it to tga later if needed)
+
+Afterwards:
+
+ ImageMagick:
+ from command line, run:
+ 
+magick convert --% Arial400_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 45%,55% -resize 25% Arial400_0.tga 
  
 
 ## Defining Fonts in the Font-Library
