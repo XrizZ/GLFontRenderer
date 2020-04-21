@@ -182,7 +182,11 @@ Afterwards:
  from command line, run:
  
 magick convert --% Arial400_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 45%,55% -resize 25% Arial400_0.tga 
- 
+
+#### Multi-Channel SDFs
+
+use: https://soimy.github.io/msdf-bmfont-xml/
+You need to start from a ttf file, but you will receive the usual fnt plus a png file. 
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
