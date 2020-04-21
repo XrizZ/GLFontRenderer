@@ -165,6 +165,9 @@ Hit Save to complete the process. All there is to do now, is to copy the two fil
 
 ### Converting Texture to Signed Distance Field Texture
 <TODO>
+magick convert --% Arial12_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 43%,57% -resize 12.5% test4.tga
+ 
+ 
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
