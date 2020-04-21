@@ -25,6 +25,7 @@ The font library is divided into the following files:
  - Font.cpp/.h - helper files
  - Texture.cpp/.h - helper files for loading a texture into GL memory
  - acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
+ - SDF_Font.frag/.vert - shader files for enabling use of SDL fonts
  
 # Working Principle
 The DrawString function call does the following: receives string → parses string → creates list of quads → draws list of quads. All this is done in the fixed function pipeline of OpenGL. Thanks to "draw lists" this is of similar performance as the OpenGL 2.0+ way of rendering (benchmarked).
@@ -82,7 +83,7 @@ Note that there are more functions with additional features, such as automatic l
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
 
-Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. Use other tools like TextMesh Pro.
+Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. You can still use that tool, but you will need to perform a post processing step with tools like this: https://github.com/Chlumsky/msdfgen
 
 Only three steps are necessary to integrate a new font:
     1. Create the font-config and font-bitmap using BM-Font-Generator
