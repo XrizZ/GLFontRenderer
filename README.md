@@ -87,8 +87,6 @@ The parameters are described below in the table.
 
 Note that there are more functions with additional features, such as automatic line breaks. See font library header file.
 
-![Example Image](demo-01/FontLibrary/Documentation/example.png "Example from a production software using a version of this library.")
-
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
 
