@@ -52,13 +52,37 @@ void CFontFileParser::VectorToString(std::vector<char>* src, std::string* dst)
 	}
 }
 
+void FindAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+{
+	// Get the first occurrence
+	size_t pos = data.find(toSearch);
+ 
+	// Repeat till end is reached
+	while( pos != std::string::npos)
+	{
+		// Replace this occurrence of Sub String
+		data.replace(pos, toSearch.size(), replaceStr);
+		// Get the next occurrence from the current position
+		pos =data.find(toSearch, pos + replaceStr.size());
+	}
+}
+
 bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string* value)
 {
 	size_t firstPos = m_bufferString.find(string);
 	if(firstPos == std::string::npos)
 		return false; //we have not found the value we are looking for in the given buffer
 
-	size_t seperatorPos1 = m_bufferString.find(m_seperator, firstPos+string.length());
+	size_t seperatorPos1 = 0;
+	for(int i=0; i<m_seperators.size(); i++)
+	{
+		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
+		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
+		{
+			seperatorPos1 = tempPos;
+		}
+	}
+
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
@@ -74,6 +98,10 @@ bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string*
 		value->push_back(m_bufferString.at(i));
 	}
 
+	//remove the "
+	FindAndReplaceAll(*value, "\"", "");
+	FindAndReplaceAll(*value, "\>", "");
+
 	return true;
 }
 
@@ -83,7 +111,16 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 	if(firstPos == std::string::npos)
 		return -1; //we have not found the value we are looking for in the given buffer
 
-	size_t seperatorPos1 = m_bufferString.find(m_seperator, firstPos+string.length());
+	//size_t seperatorPos1 = m_bufferString.find(m_seperator, firstPos+string.length());
+	size_t seperatorPos1 = 0;
+	for(int i=0; i<m_seperators.size(); i++)
+	{
+		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
+		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
+		{
+			seperatorPos1 = tempPos;
+		}
+	}
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
@@ -93,6 +130,10 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 	int beginValue = firstPos + string.length();
 	//retrieve string between beginValue and seperatorPos
 	GetStringBetween(beginValue, seperatorPos, value, m_bufferString);
+
+	//remove the "
+	FindAndReplaceAll(*value, "\"", "");
+	FindAndReplaceAll(*value, "\>", "");
 
 	return seperatorPos;
 }
@@ -109,7 +150,16 @@ bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_l
 	{
 		int beginValue = currPos + string.length();
 
-		size_t seperatorPos1 = m_bufferString.find(m_seperator, beginValue);
+		//size_t seperatorPos1 = m_bufferString.find(m_seperator, beginValue);
+		size_t seperatorPos1 = 0;
+		for(int i=0; i<m_seperators.size(); i++)
+		{
+			size_t tempPos = m_bufferString.find(m_seperators.at(i), beginValue);
+			if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
+			{
+				seperatorPos1 = tempPos;
+			}
+		}
 		size_t seperatorPos2 = m_bufferString.find("\n", beginValue);
 		size_t seperatorPos3 = m_bufferString.find("\r", beginValue);
 
@@ -122,6 +172,9 @@ bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_l
 		{
 			currValue.push_back(m_bufferString.at(i));
 		}
+		//remove the "
+		FindAndReplaceAll(currValue, "\"", "");
+		FindAndReplaceAll(currValue, "\>", "");
 		values->push_front(currValue);
 
 		currPos = m_bufferString.find(string, beginValue + currValue.length());
@@ -132,7 +185,7 @@ bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_l
 
 //returns the highest number(ascii) of char, supported by the font
 //-1 if failure
-int CFontFileParser::GetNumberOfSupportedChars()
+int CFontFileParser::GetHighestSupportedChar()
 {
 	int retVal = -1;
 
@@ -148,6 +201,9 @@ int CFontFileParser::GetNumberOfSupportedChars()
 	for (auto it = values.cbegin(); it != values.cend(); it++)
 	{
 		std::string currString = *it;
+		//remove the "
+		FindAndReplaceAll(currString, "\"", "");
+		FindAndReplaceAll(currString, "\>", "");
 		int currAsciiID = atoi(currString.c_str());
 		if(currAsciiID > retVal)
 			retVal = currAsciiID;
@@ -207,8 +263,8 @@ CCharInfo* CFontFileParser::GetNextCharInfo(int *startSearchPos)
 	CCharInfo* newCharInfo = new CCharInfo();
 
 	std::string idString("char id=");
-	std::string xString("x=");
-	std::string yString("y=");
+	std::string xString(" x=");
+	std::string yString(" y=");
 	std::string widthString("width=");
 	std::string heightString("height=");
 	std::string xoffsetString("xoffset=");
@@ -219,61 +275,81 @@ CCharInfo* CFontFileParser::GetNextCharInfo(int *startSearchPos)
 
 	int start = *startSearchPos;
 
+	int furthestSearchPos = start;
+
 	//-------------
 	//Get ID
 	//-------------
 	std::string idVal;
-	*startSearchPos = GetValueFromBufferStartingAt(idString, &idVal, start);
+	int pos = GetValueFromBufferStartingAt(idString, &idVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_ID = atoi(idVal.c_str());
 
 	//-------------
 	//Get x
 	//-------------
 	std::string xVal;
-	*startSearchPos = GetValueFromBufferStartingAt(xString, &xVal, start);
+	furthestSearchPos = GetValueFromBufferStartingAt(xString, &xVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_textureX = atoi(xVal.c_str());
 
 	//-------------
 	//Get y
 	//-------------
 	std::string yVal;
-	*startSearchPos = GetValueFromBufferStartingAt(yString, &yVal, start);
+	furthestSearchPos = GetValueFromBufferStartingAt(yString, &yVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_textureY = atoi(yVal.c_str());
 
 	//-------------
 	//Get width
 	//-------------
 	std::string widthVal;
-	*startSearchPos = GetValueFromBufferStartingAt(widthString, &widthVal, start);
+	pos = GetValueFromBufferStartingAt(widthString, &widthVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_textureWidth = atoi(widthVal.c_str());
 
 	//-------------
 	//Get height
 	//-------------
 	std::string heightVal;
-	*startSearchPos = GetValueFromBufferStartingAt(heightString, &heightVal, start);
+	pos = GetValueFromBufferStartingAt(heightString, &heightVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_textureHeight = atoi(heightVal.c_str());
 
 	//-------------
 	//Get xoffset
 	//-------------
 	std::string xoffsetVal;
-	*startSearchPos = GetValueFromBufferStartingAt(xoffsetString, &xoffsetVal, start);
+	pos = GetValueFromBufferStartingAt(xoffsetString, &xoffsetVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_xoffset = atoi(xoffsetVal.c_str());
 
 	//-------------
 	//Get yoffset
 	//-------------
 	std::string yoffsetVal;
-	*startSearchPos = GetValueFromBufferStartingAt(yoffsetString, &yoffsetVal, start);
+	pos = GetValueFromBufferStartingAt(yoffsetString, &yoffsetVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_yoffset = atoi(yoffsetVal.c_str());
 
 	//-------------
 	//Get xadvance
 	//-------------
 	std::string xadvanceVal;
-	*startSearchPos = GetValueFromBufferStartingAt(xadvanceString, &xadvanceVal, start);
+	pos = GetValueFromBufferStartingAt(xadvanceString, &xadvanceVal, start);
+	if(pos > furthestSearchPos)
+		furthestSearchPos = pos;
 	newCharInfo->m_xadvance = atoi(xadvanceVal.c_str());
+
+	*startSearchPos = furthestSearchPos;
 
 	return newCharInfo;
 }

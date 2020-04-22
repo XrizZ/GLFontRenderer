@@ -46,7 +46,7 @@
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glew\lib\Release\Win32;C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(MSBuildProjectDirector)\glew\include\GL;$(MSBuildProjectDirectory)\FontLibrary;$(MSBuildProjectDirectory)\glut;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirector)\glew\include\GL;$(MSBuildProjectDirectory)\FontLibrary;$(MSBuildProjectDirectory)\glut;$(MSBuildProjectDirectory)\FontLibrary\lodepng;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -99,6 +99,7 @@
     <ClInclude Include="FontLibrary\FontFileParser.hpp" />
     <ClInclude Include="FontLibrary\FontLibrary.hpp" />
     <ClInclude Include="FontLibrary\GLShaderProgram.hpp" />
+    <ClInclude Include="FontLibrary\lodepng\lodepng.h" />
     <ClInclude Include="FontLibrary\Texture.hpp" />
     <ClInclude Include="glutcallbacks.hpp" />
     <ClInclude Include="HighPerformanceCounter.hpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="FontLibrary\FontFileParser.cpp" />
     <ClCompile Include="FontLibrary\FontLibrary.cpp" />
     <ClCompile Include="FontLibrary\GLShaderProgram.cpp" />
+    <ClCompile Include="FontLibrary\lodepng\lodepng.cpp" />
     <ClCompile Include="FontLibrary\Texture.cpp" />
     <ClCompile Include="glutcallbacks.cpp" />
     <ClCompile Include="HighPerformanceCounter.cpp" />

@@ -10,6 +10,13 @@
 #pragma once
 #include <string>
 
+enum SDFTYPE
+{
+	SDF_NO = 0,
+	SDF_SINGLE = 1,
+	SDF_MULTI = 2
+};
+
 class CCharInfo
 {
 public:
@@ -56,4 +63,6 @@ public:
 	unsigned int m_highestKerningSecond = 0;
 	unsigned int m_fontTextures = 0;
 	int		m_base = 0;
+	SDFTYPE m_sdfType = SDF_NO;
+	int		m_sdfRange = 4; //only used for multichannel SDFs
 };

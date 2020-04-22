@@ -1,6 +1,7 @@
 info face="DINNextLTPro-MediumCond" size=32 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=4,4,4,4 spacing=-8,-8
 common lineHeight=40 base=28 scaleW=512 scaleH=512 pages=1 packed=0
 page id=0 file="DINNextLTProMED_SDF.tga"
+distanceField fieldType="sdf"
 chars count=97
 char id=0       x=201  y=67   width=21   height=30   xoffset=-4   yoffset=2    xadvance=12   page=0    chnl=0 
 char id=10      x=0    y=0    width=0    height=0    xoffset=-4   yoffset=0    xadvance=0    page=0    chnl=0 

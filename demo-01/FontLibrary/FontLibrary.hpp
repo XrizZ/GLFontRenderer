@@ -17,6 +17,7 @@
 
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
 
+#define GLFONT_COURIER42_MSDF "Courier42_msdf"
 #define GLFONT_ARIAL20 "Arial20"
 #define GLFONT_DINNEXTLTPROMED_SDF "DINNextLTProMED_SDF"
 
@@ -58,7 +59,7 @@ public:
 		m_color[3] = 0.0f;
 	};
 
-	CDrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], bool sdf, float scale)
+	CDrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], float scale)
 	{
 		m_ID = ID;
 		m_text = textToDraw;
@@ -72,7 +73,6 @@ public:
 		m_drawListID = 0;
 		m_lineWidth = 0;
 		m_maxLines = 0;
-		m_sdf = sdf;
 	};
 
 	~CDrawString(){};
@@ -86,7 +86,6 @@ public:
 	float			m_scale = 1.0;
 	int				m_lineWidth = 0;
 	int				m_maxLines = 0;
-	bool			m_sdf = false;
 };
 
 class CFontLibrary
@@ -103,10 +102,10 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts();
-	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale = 1.0f);
-	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale = 1.0f);
-	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines);
-	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines);
+	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, float scale = 1.0f);
+	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale = 1.0f);
+	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines);
+	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines);
 	unsigned int GetNewDrawStringID();
 	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f);
 	unsigned int GetLineHeight(std::string font);
@@ -115,7 +114,7 @@ private:
 	//functions:
 	CGLFont* ParseFont(std::string fileName);
 	CGLQuad2D* TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale);
-	void DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw, bool sdf);
+	void DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw);
 	CGLFont* GetFontPointer(std::string fontName);
 	int GetTextChar(std::string textToDraw, int pos);
 	unsigned int GetWidthOfChar(char ch, std::string font);

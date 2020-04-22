@@ -21,7 +21,7 @@ public:
 	bool IsInitialized();
 	bool LoadCharInfos(CGLFont* newFont);
 	bool LoadKernings(CGLFont* newFont);
-	int GetNumberOfSupportedChars();
+	int GetHighestSupportedChar();
 	bool GetValueFromBufferOfFirst(std::string string, std::string* value);
 	bool GetValueFromBufferOfAll(std::string string, std::forward_list<std::string>* values);
 	int GetValueFromBufferStartingAt(std::string string, std::string* value, int startPos);
@@ -36,7 +36,7 @@ private:
 	CKerning* GetNextKerning(int *startSearchPos);
 
 	//variables:
-	std::string m_seperator = " "; //separator is a whitespace
+	std::vector<std::string> m_seperators = {" ", "\/"}; //separators: whitespace (for standard text file) and slash (for XML)
 	bool m_isInitialized = false;
 	std::vector<char> m_buffer;
 	std::string m_bufferString;

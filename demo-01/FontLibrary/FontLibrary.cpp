@@ -78,6 +78,8 @@ bool CFontLibrary::ParseAllFontsInFolder()
 
 CGLFont* CFontLibrary::ParseFont(std::string fileName)
 {
+	//Here we assume basic text format set by BMFont, or XML but not json
+
 	CFontFileParser* parser = new CFontFileParser(fileName);
 	if(!parser || !parser->IsInitialized())
 		return nullptr; //ERROR
@@ -105,9 +107,6 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 	//load face name
 	std::string faceVal;
 	parser->GetValueFromBufferOfFirst(faceString, &faceVal);
-	//remove the "
-	faceVal.replace(0, 1, "");
-	faceVal.replace(faceVal.end()-1, faceVal.end(), "");
 	newFont->m_face = faceVal;
 
 	//load font size
@@ -144,10 +143,6 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 	std::string textureNameVal;
 	parser->GetValueFromBufferOfFirst(textureNameString, &textureNameVal);
 
-	//remove the "
-	textureNameVal.replace(0, 1, "");
-	textureNameVal.replace(textureNameVal.end()-1, textureNameVal.end(), "");
-
 	char* currFileName = new char[m_fontFolder.length() + 2 + textureNameVal.length()];
 	sprintf(currFileName, "%s\\%s", m_fontFolder.c_str(), textureNameVal.c_str());
 	newFont->m_bitmapFileName = currFileName;
@@ -158,17 +153,43 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 	newFont->m_base = atoi(baseVal.c_str());
 
 	//==========================
+	//load distance field infos
+	//==========================
+	std::string fieldTypeString("fieldType=");
+
+	std::string fieldVal;
+	parser->GetValueFromBufferOfFirst(fieldTypeString, &fieldVal);
+	if(fieldVal.compare("msdf") == 0)
+		newFont->m_sdfType = SDF_MULTI;
+	else if(fieldVal.compare("sdf") == 0)
+		newFont->m_sdfType = SDF_SINGLE;
+	//else its not an SDF, which is the default, so no need to set it again here
+
+	if(newFont->m_sdfType == SDF_MULTI)
+	{
+		std::string distanceRangeString("distanceRange=");
+		std::string rangeVal;
+		parser->GetValueFromBufferOfFirst(distanceRangeString, &rangeVal);
+		newFont->m_sdfRange = atoi(rangeVal.c_str());
+	}
+
+	//==========================
 	//load char infos
 	//==========================
-	unsigned int length = parser->GetNumberOfSupportedChars(); //determine max length of charInfo array
+	std::string distanceRangeString("chars count=");
+	std::string numCharsVal;
+	parser->GetValueFromBufferOfFirst(distanceRangeString, &numCharsVal);
+	unsigned int length = atoi(numCharsVal.c_str());
+
 	if(length <= 0)
 	{
 		delete parser;
 		delete newFont;
 		return nullptr;
 	}
-	newFont->m_fontCharInfo = new CCharInfo*[length+1];
-	newFont->m_highestASCIIChar = length;
+	unsigned int highestChar = parser->GetHighestSupportedChar();
+	newFont->m_fontCharInfo = new CCharInfo*[highestChar+1];
+	newFont->m_highestASCIIChar = highestChar;
 	parser->LoadCharInfos(newFont);
 
 	//==========================
@@ -239,17 +260,17 @@ bool CFontLibrary::InitGLFonts()
 	return error;
 }
 
-void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale)
+void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, float scale)
 {
 	CGLQuad2D* quadList = TextToQuadList(font, textToDraw, x, y, scale);
 	if(quadList)
 	{
-		DrawQuadList(font, color, quadList, textToDraw, sdf);
+		DrawQuadList(font, color, quadList, textToDraw);
 		delete[] quadList;
 	}
 }
 
-void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale)
+void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale)
 {
 	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
@@ -260,7 +281,7 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 		if(savedString->m_text.compare(textToDraw) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
-			(scale != savedString->m_scale) || (sdf != savedString->m_sdf)
+			(scale != savedString->m_scale)
 			)
 		{
 			if(savedString->m_drawListID)
@@ -275,12 +296,11 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 			savedString->m_y = y;
 			savedString->m_scale = scale;
 			savedString->m_text = textToDraw;
-			savedString->m_sdf = sdf;
 		}
 	}
 	else
 	{
-		savedString = new CDrawString(ID, textToDraw, x, y, color, sdf, scale);
+		savedString = new CDrawString(ID, textToDraw, x, y, color, scale);
 	}
 
 	if(savedString && savedString->m_drawListID == 0)
@@ -288,7 +308,7 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
 
-		DrawString(textToDraw, x, y, color, font, sdf, scale);
+		DrawString(textToDraw, x, y, color, font, scale);
 
 		glEndList();
 		savedString->m_drawListID = id;
@@ -302,7 +322,7 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines)
 {
 	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
@@ -315,9 +335,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(scale != savedString->m_scale) ||
 			(maxLines != savedString->m_maxLines) ||
-			(lineWidth != savedString->m_lineWidth) ||
-			(sdf != savedString->m_sdf)
-			)
+			(lineWidth != savedString->m_lineWidth))
 		{
 			if(savedString->m_drawListID)
 				glDeleteLists(savedString->m_drawListID, 1);
@@ -333,12 +351,11 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 			savedString->m_text = textToDraw;
 			savedString->m_lineWidth = lineWidth;
 			savedString->m_maxLines = maxLines;
-			savedString->m_sdf = sdf;
 		}
 	}
 	else
 	{
-		savedString = new CDrawString(ID, textToDraw, x, y, color, sdf, scale);
+		savedString = new CDrawString(ID, textToDraw, x, y, color, scale);
 		savedString->m_lineWidth = lineWidth;
 		savedString->m_maxLines = maxLines;
 	}
@@ -348,7 +365,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 		GLuint id = glGenLists(1);
 		glNewList(id, GL_COMPILE);
 
-		DrawStringWithLineBreaks(textToDraw, x, y, color, font, sdf, scale, lineWidth, maxLines);
+		DrawStringWithLineBreaks(textToDraw, x, y, color, font, scale, lineWidth, maxLines);
 
 		glEndList();
 		savedString->m_drawListID = id;
@@ -362,7 +379,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, bool sdf, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines)
 {
 	unsigned int lineHeight = GetLineHeight(font);
 	unsigned int line = 0;
@@ -538,7 +555,7 @@ int CFontLibrary::GetTextChar(std::string textToDraw, int pos)
 	return ch;
 }
 
-void CFontLibrary::DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw, bool sdf)
+void CFontLibrary::DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw)
 {
 	if(textToDraw.length() <= 0)
 		return;
@@ -559,18 +576,32 @@ void CFontLibrary::DrawQuadList(std::string font, float color[4], CGLQuad2D* qua
 		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 
-	glColor4fv(color);	//set text color
-
-	if(sdf && m_sdfShaderProgram && m_sdfShaderProgram->GetProgramID() > 0)
+	if(currFont->m_sdfType != SDF_NO && m_sdfShaderProgram && m_sdfShaderProgram->GetProgramID() > 0)
 	{
 		GLuint programID = m_sdfShaderProgram->GetProgramID();
 		glUseProgram(programID);
-		GLuint textureLocation = glGetUniformLocation(programID, "u_FontTexutre");
-		GLuint step = glGetUniformLocation(programID, "u_Step");
-		glActiveTexture(GL_TEXTURE0);
 
+		GLint textureLocation = glGetUniformLocation(programID, "u_FontTexutre");
 		glUniform1i(textureLocation, 0);
-		glUniform1f(step, 0.0f);
+
+		GLint sdfLoc = glGetUniformLocation(programID, "sdfType");
+		if(sdfLoc >= 0)
+			glUniform1i(sdfLoc, currFont->m_sdfType);
+
+		if(currFont->m_sdfType == SDF_MULTI)
+		{
+			GLint pxLoc = glGetUniformLocation(programID, "pxRange");
+			if(pxLoc >= 0)
+				glUniform1f(pxLoc, (float)currFont->m_sdfRange);
+
+			GLint fgColorLoc = glGetUniformLocation(programID, "fgColor");
+			if(fgColorLoc >= 0)
+				glUniform4f(fgColorLoc, color[0], color[1], color[2], color[3]);
+
+			GLint bgColorLoc = glGetUniformLocation(programID, "bgColor");
+			if(bgColorLoc >= 0)
+				glUniform4f(bgColorLoc, 0.0, 0.0, 0.0, 0.0); //TODO
+		}
 
 		glBegin(GL_QUADS);
 			for (int i = 0; i<textToDraw.length(); i++)
@@ -590,6 +621,8 @@ void CFontLibrary::DrawQuadList(std::string font, float color[4], CGLQuad2D* qua
 	}
 	else
 	{
+		glColor4fv(color);	//set text color
+
 		glBegin(GL_QUADS);
 			for(int i=0; i<textToDraw.length(); i++)
 			{

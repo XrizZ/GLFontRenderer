@@ -6,6 +6,7 @@
 //=================================================================================
 
 #include "Texture.hpp"
+#include "lodepng.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //										TEXTURE LOADER
@@ -23,10 +24,12 @@ bool CGLTexture::GetTextureSizeFromFile(std::string strFileName, float &w, float
 	{
 		pImage = LoadTGA(strFileName);
 	}
-	else
+	else if(strFileName.find(".png") != std::string::npos)
 	{
-		return false;
+		pImage = LoadPNG(strFileName);
 	}
+	else
+		return false; //unsupported file type
 
 	if(!pImage)
 		return false;
@@ -54,10 +57,12 @@ bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &text
 	{
 		pImage = LoadTGA(strFileName);
 	}
-	else
+	else if(strFileName.find(".png") != std::string::npos)
 	{
-		return false;
+		pImage = LoadPNG(strFileName);
 	}
+	else
+		return false; //unsupported file type
 
 	if(!pImage)
 		return false;
@@ -95,6 +100,32 @@ bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &text
 		return true;
 	else
 		return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//										PNG LOADER
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+CRawTexture* CGLTexture::LoadPNG(std::string strFileName)
+{
+	unsigned int width = 0;
+	unsigned int height = 0;
+	std::vector<unsigned char> image;
+	unsigned int error = lodepng::decode(image, width, height, strFileName);
+
+	if(error || image.empty())
+		return nullptr; //ERROR!
+
+	CRawTexture *pImageData = new CRawTexture();
+	pImageData->m_data = new unsigned char[image.size()];
+	for(int i=0; i<image.size(); i++)
+		pImageData->m_data[i] = image.at(i);
+
+	pImageData->m_channels = 4;
+	pImageData->m_sizeX    = width;
+	pImageData->m_sizeY    = height;
+
+	return pImageData;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

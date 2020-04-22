@@ -39,4 +39,5 @@ public:
 private:
 	// This Loads And Returns The TGA Image Data
 	static CRawTexture *LoadTGA(std::string strFileName);
+	static CRawTexture *LoadPNG(std::string strFileName);
 };

@@ -3,7 +3,9 @@
 This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 and updated it every now and then. The font files read by this library follow the format developed for the BM Font Generator: http://angelcode.com/products/bmfont/. The font file is accompanied by a texture file. The library supports standard textures, as well as single channel and even multi channel SDFs.
 
 # Changelog
-- April 22nd 2020: added support for XML format .fnt files, added multi SDF support
+- April 22nd 2020: added support for XML format .fnt files, added multi SDF support, added support for PNG file type textures
+![Demo App](demo-01/FontLibrary/Documentation/MultiChannelSDF.png "Screenshot from the newly MultiChannel SDF Fonts.")
+
 - April 14th 2020: moved project from MFC to standard libs
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline,glow and dropshadow yet. This allows for very nice scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
 ![SDF Fonts](demo-01/FontLibrary/Documentation/sdfFonts.png "Screenshot from the newly added SDF Fonts (in green).")
@@ -14,18 +16,25 @@ This font rendering library was designed with ease of use and render performance
 
 # Plans
 - I'd like to replace the direct mode GL calls with modern GL and an appropriate shader.
-- I'm also considering to implement glow, dropshadow and outline for the SDF fonts (as well as multi SDF interpolation).
+- I'm also considering to implement glow, dropshadow and outline for the SDF fonts.
 - Lastly, I'm planning on porting this to Vulkan.
 
 Stay tuned.
 
+# External Libraries
+- glut (included in the project, only needed for the demo!)
+- glew (included in the project)
+- acutil_unicode (inlcude in the project, from AngelCode ToolBox Library)
+- lodepng (included in the project)
+
 # Overview
 The font library is divided into the following files:
- - FontLibrary.cpp/.h - main lib with rendering functionality
- - FontFileParser.cpp/.h - helper files for reading fonts from file
- - Font.cpp/.h - helper files
- - Texture.cpp/.h - helper files for loading a texture into GL memory
- - acutil_unicode.cpp/.h - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
+ - FontLibrary.cpp/.hpp - main lib with rendering functionality
+ - FontFileParser.cpp/.hpp - helper files for reading fonts from file
+ - Font.cpp/.hpp - helper files
+ - Texture.cpp/.hpp - helper files for loading a texture into GL memory
+ - acutil_unicode.cpp/.hpp - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
+ - GLShaderProgram.cpp/.hpp - for loading shaders
  - SDF_Font.frag/.vert - shader files for enabling use of SDL fonts
  
 # Working Principle
@@ -74,7 +83,6 @@ The parameters are described below in the table.
 | int y | Y-Position of the beginning of the string in screen coordinates.     |
 | float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order: {R, G, B, Alpha} obviously.. |
 |CString font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that, read more about this top in chapter 3. |
-| bool sdf    | As the name suggests, denoted the use of the SDF shader. If sdf == true, sdf shader will be used, if false then conventional GL rendering technique without sdf will be used. Note that if the SDF texture was made for use of a SDF shader and sdf == false then the text will appear blurry. The other way around will work just fine.
 | float scale | It is highly recommended to use the default: 1.0f. If you want to scale the font, you may also use glScalef.. but again, it is not recommended! Instead create font files that have the correct pixel height, e.g. If you want to use Arial with 24pixel height, use Arial24 and NOT Arial12 with scale 2.0 or equally worse: Arial48 with scale 0.5. However, sometimes it is inevitable to use a scale function. For future development it may be useful to choose the correct font according to the scale parameter instead of just scaling the quads for the existing font, but it is not implemented as of writing this document. |
 
 Note that there are more functions with additional features, such as automatic line breaks. See font library header file.
@@ -137,7 +145,7 @@ Open the Export Options my hitting either [T], or clicking Options → Export Op
 4. Leave the Checkbox “Pack chars in multiple channels” empty
 5. rather than defining the channels yourself, select the preset “White text with alpha”, this should be the usual setting. Otherwise, if you would like a font with outline, then set it to: “Outlined text with alpha”.
 6. Font descriptor must be set to “Text” only!
-7. Texture format should be “tga – Targa”
+7. Texture format should be tga or png
 8. and compression: “none”
     
 Once these settings are done, close the window and proceed to the next step.
@@ -162,12 +170,13 @@ here are a few examples: <br>
 - Helvetica_italic_outline1_12
 etc.
 
-Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software.
+Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software. Unless you want to use Signed Distance Field Textures, in that case, proceed the next chapter.
 
 ### Converting Texture to Signed Distance Field Texture
-3 step process:
+This is a 3 step process.
  
-#### BMFont:
+#### BMFont
+First, use the BMFont Generator, as described above, however, the use the following settings that may differ form what you've used before.
 - font size: 400px
 - bitmap size: 8192x4096
 - smoothing enabled
@@ -175,38 +184,33 @@ Hit Save to complete the process. All there is to do now, is to copy the two fil
 - Padding: 45px on all sides
 - still white text with alpha
 - bit depth still 32
-- texture format either tga or png (since imageMagick can convert it to tga later if needed)
+- texture format either tga or png
 
 #### Edit Font File:
-- add the following the header before the chars:
+Next, add the following to the fnt header my hand before the chars definition:
 fieldType=sdf
+This will tell the Font Lib to use the single channel SDF shader when this font is used.
 
 #### ImageMagick:
- from command line, run:
- 
+Lastly, you need to use ImageMagick (https://imagemagick.org/index.php) or a similar tool to convert the texture file to an SDF.
+Once you have ImageMagick installed run the following from the command line (example is for windows power shell, but is very similar for Unix):
+```
 magick convert --% Arial400_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 45%,55% -resize 25% Arial400_0.tga
-
-#### Multi-Channel SDFs
-WORK IN PROGRESS
-use: https://soimy.github.io/msdf-bmfont-xml/
-You need to start from a ttf file, but you will receive the usual fnt plus a png file. 
-run: msdf-bmfont -o multisdf.png cour.ttf
-
+```
+### Converting Texture to Multi-Channel Signed Distance Field Texture
+For Multi-Channel SDFs you do not need to use the BM Font Generator, instead use: https://soimy.github.io/msdf-bmfont-xml/
+With this tool, you need to start from a ttf file, but you will receive the usual fnt plus a png file.
+Once installed, run the following from the command line:
+```
+msdf-bmfont -o multisdf.png cour.ttf
+```
 ## Defining Fonts in the Font-Library
-This is optional: Make a define for each new font you add to the FontLibrary.h, this should make debugging and coding easier!
+This is optional: Make a define for each new font you add to the FontLibrary.h, this should make coding easier though!
 
 ```C++
 //font type defines, string must match the filename without extension in your fonts folder!
-#define GLFONT_ARIAL_OUTLINE2_64 "Arial_outline2_64"
+#define GLFONT_COURIER42_MSDF "Courier42_msdf"
 #define GLFONT_ARIAL20 "Arial20"
-#define GLFONT_ARIAL24 "Arial24"
-#define GLFONT_ARIAL32 "Arial32"
-#define GLFONT_CALIBRI_24 "Calibri24"
-#define GLFONT_CAMBRIA_24 "Cambria24"
-#define GLFONT_COURIER_8 "Courier8"
-#define GLFONT_TAHOMA_32 "Tahoma32"
-#define GLFONT_TIMES_NEW_ROMAN_ITALIC_24 "TimesNewRoman_italic_24"
-#define GLFONT_TIMES_NEW_ROMAN_24 "TimesNewRoman24"
+#define GLFONT_DINNEXTLTPROMED_SDF "DINNextLTProMED_SDF"
 ```
 .. add your own defines here!
-

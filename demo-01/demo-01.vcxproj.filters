@@ -19,6 +19,12 @@
     <Filter Include="Source Files\FontLibrary">
       <UniqueIdentifier>{9bbc736a-3c86-482b-8b14-499690d38ae0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lodepng">
+      <UniqueIdentifier>{8d14e24f-8505-46db-ac18-ce32d6d707e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lodepng">
+      <UniqueIdentifier>{e8798860-0e32-4eaf-8427-3b9eb47f907b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FontLibrary\acutil_unicode.hpp">
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="HighPerformanceCounter.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\lodepng\lodepng.h">
+      <Filter>Header Files\lodepng</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="FontLibrary\GLShaderProgram.cpp">
       <Filter>Source Files\FontLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="FontLibrary\lodepng\lodepng.cpp">
+      <Filter>Source Files\lodepng</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
