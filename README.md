@@ -7,15 +7,9 @@ This font rendering library was designed with ease of use and render performance
 ![Modern GL](demo-01/FontLibrary/Documentation/ModernGL.png "Screenshot from the new Modern GL Demo project.")
 
 - April 22nd 2020: added support for XML format .fnt files, added multi SDF support, added support for PNG file type textures
-![Demo App](demo-01/FontLibrary/Documentation/MultiChannelSDF.png "Screenshot from the newly MultiChannel SDF Fonts.")
-
 - April 14th 2020: moved project from MFC to standard libs
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline,glow and dropshadow yet. This allows for very nice scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
-![SDF Fonts](demo-01/FontLibrary/Documentation/sdfFonts.png "Screenshot from the newly added SDF Fonts (in green).")
-
 - March 30th 2020: added a demo app, to be compiled using Visual Studio 2012 or later. The app teaches and benchmarks the use of the Font Library and shows how every single exposed function is intented to be used.
-
-![Demo App](demo-01/FontLibrary/Documentation/screenshotDemoApp.png "Screenshot from the newly added Demo App.")
 
 # Plans
 - I'm considering to implement glow, dropshadow and outline for the SDF fonts.
