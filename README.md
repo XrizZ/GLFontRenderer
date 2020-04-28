@@ -1,6 +1,6 @@
 # GLFontLibrary
 
-This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 and updated it every now and then. The font files read by this library follow the format developed for the BM Font Generator: http://angelcode.com/products/bmfont/. The font file is accompanied by a texture file. The library supports standard textures, as well as single channel and even multi channel SDFs.
+This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 and updated it every now and then. The font files read by this library follow the format developed for the BM Font Generator: http://angelcode.com/products/bmfont/. The font file is accompanied by a texture file. The library supports standard textures, as well as single channel, and even multi channel SDFs.
 
 # Changelog
 - April 29th 2020: replaced the direct mode GL calls with modern GL and appropriate shaders - roughly the same performance as before with direct mode and Display Lists
