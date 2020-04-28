@@ -43,12 +43,9 @@ The font library is divided into the following files:
  - Default_Font.frag/.vert - shader files for non SDL fonts
  
 # Working Principle
-The DrawString function call does the following: receives string → parses string → creates list of quads → draws list of quads. All this is done in the fixed function pipeline of OpenGL. Thanks to "draw lists" this is of similar performance as the OpenGL 2.0+ way of rendering (benchmarked).
-
-During the parsing, the string to draw is checked for characters that are not drawable by the current font, those chars will be drawn as question marks.
-For each character in the string, a quad is created and added to the final quad-list, this quad contains information about the position and size on the screen(2D, orthogonal!) and the texture coordinate for that one character within the bitmap font. The position of a quad depends on the starting position of the string and the position of the previous character. The specific relation between the spacing of one character and the next is called kerning. The font config file contains a table with all kerning information for that specific font. E.g. it could be, that if an “a” follows a “M” it needs to be one pixel apart, however when an “o” follows an “M” it is minus one pixel, or zero pixels. These information are stored internally in a two dimensional array for fast access. 
-The complete list of quads is then given to the actual renderer, this render is openGL specific, however since we have all information in a generic list of quads, this render function may be changed to use directX very easily.
-To make this drawing fast enough, all information about the characters and character-relations(like kerning), as well as the textures are loaded on program start.
+The DrawString function call does the following: receives string → parses string → creates list of quads → translates that into a vertex buffer array -> draws all textured triangles. During the parsing, the string to draw is checked for characters that are not drawable by the current font, those chars will be drawn as question marks.
+For each character in the string, a quad is created and added to the final quad-list, this quad contains information about the position and size on the screen(2D, orthogonal!) and the texture coordinate for that one character within the bitmap font. The position of a quad depends on the starting position of the string and the position of the previous character. The specific relation between the spacing of one character and the next is called kerning. The font config file contains a table with all kerning information for that specific font. E.g. it could be, that if an “a” follows a “M” it needs to be one pixel apart, however when an “o” follows an “M” it is minus one pixel, or zero pixels. These information are stored internally in a two dimensional array for fast access.
+To make this drawing fast enough, all information about the characters and character-relations(like kerning), as well as the textures are loaded on program start. The texts can be stored so that vertex buffers don't have to be created on each render loop iteration.
 
 # Adding Font Library to your Software
 This chapter is concerned with the integration of the font library into your own software.
@@ -74,10 +71,11 @@ This can be done in a one time Init function of that render context for example.
 Once this is done, the font library is ready to use, which means you can call the DrawString() method from the FontLibrary object.
 
 ## Using the DrawString call
+(Note: this chapter needs an overhaul, its only roughly correct, some function parameters are missing, but mostly self explanatory anyways)
 The header of the draw call reads:
 
 ```C++
-void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, bool sdf, float scale = 1.0f);
+void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, float scale = 1.0f);
 ```
 The parameters are described below in the table.
 
