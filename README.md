@@ -18,7 +18,7 @@ This font rendering library was designed with ease of use and render performance
 ![Demo App](demo-01/FontLibrary/Documentation/screenshotDemoApp.png "Screenshot from the newly added Demo App.")
 
 # Plans
-- I'm also considering to implement glow, dropshadow and outline for the SDF fonts.
+- I'm considering to implement glow, dropshadow and outline for the SDF fonts.
 - Adding a Make Script.
 - Lastly, I'm planning on porting this to Vulkan.
 
@@ -40,6 +40,7 @@ The font library is divided into the following files:
  - acutil_unicode.cpp/.hpp - AngelCode Tool Box Library, just used for UTF16 encoding, nothing else.. could be cut if not wanted
  - GLShaderProgram.cpp/.hpp - for loading shaders
  - SDF_Font.frag/.vert - shader files for enabling use of SDL fonts
+ - Default_Font.frag/.vert - shader files for non SDL fonts
  
 # Working Principle
 The DrawString function call does the following: receives string → parses string → creates list of quads → draws list of quads. All this is done in the fixed function pipeline of OpenGL. Thanks to "draw lists" this is of similar performance as the OpenGL 2.0+ way of rendering (benchmarked).
