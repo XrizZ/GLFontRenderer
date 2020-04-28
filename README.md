@@ -24,7 +24,7 @@ This font rendering library was designed with ease of use and render performance
 
 Stay tuned.
 
-# External Libraries
+# External Dependenices
 - glut (included in the repo, only needed for the demo!)
 - glm (included in the repo, only needed for the demo!)
 - glew (included in the repo)
