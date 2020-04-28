@@ -46,7 +46,7 @@
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glew\lib\Release\Win32;C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(MSBuildProjectDirector)\glew\include\GL;$(MSBuildProjectDirectory)\FontLibrary;$(MSBuildProjectDirectory)\glut;$(MSBuildProjectDirectory)\FontLibrary\lodepng;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirector)\glew\include\GL;$(MSBuildProjectDirectory)\FontLibrary;$(MSBuildProjectDirectory)\glut;$(MSBuildProjectDirectory)\FontLibrary\lodepng;$(MSBuildProjectDirectory)\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -94,15 +94,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="FontLibrary\acutil_unicode.hpp" />
-    <ClInclude Include="FontLibrary\Font.hpp" />
-    <ClInclude Include="FontLibrary\FontFileParser.hpp" />
-    <ClInclude Include="FontLibrary\FontLibrary.hpp" />
-    <ClInclude Include="FontLibrary\GLShaderProgram.hpp" />
+    <ClInclude Include="FontLibrary\acutil_unicode.h" />
+    <ClInclude Include="FontLibrary\Font.h" />
+    <ClInclude Include="FontLibrary\FontFileParser.h" />
+    <ClInclude Include="FontLibrary\FontLibrary.h" />
+    <ClInclude Include="FontLibrary\GLShaderProgram.h" />
     <ClInclude Include="FontLibrary\lodepng\lodepng.h" />
-    <ClInclude Include="FontLibrary\Texture.hpp" />
-    <ClInclude Include="glutcallbacks.hpp" />
-    <ClInclude Include="HighPerformanceCounter.hpp" />
+    <ClInclude Include="FontLibrary\Texture.h" />
+    <ClInclude Include="glutcallbacks.h" />
+    <ClInclude Include="HighPerformanceCounter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="demo-01.cpp" />
@@ -117,6 +117,10 @@
     <ClCompile Include="HighPerformanceCounter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FontLibrary\Cube.frag" />
+    <None Include="FontLibrary\Cube.vert" />
+    <None Include="FontLibrary\Default_Font.frag" />
+    <None Include="FontLibrary\Default_Font.vert" />
     <None Include="FontLibrary\SDF_Font.frag" />
     <None Include="FontLibrary\SDF_Font.vert" />
   </ItemGroup>

@@ -10,14 +10,18 @@
 
 #include <windows.h>
 #include "glew\include\GL\glew.h"
-#include "glutcallbacks.hpp"
+#include "glutcallbacks.h"
 #include <sstream>
 #include <math.h>
 #include "glut\glut.h"
 #include <vector>
 #include <iostream>
-#include "HighPerformanceCounter.hpp"
-#include "FontLibrary/FontLibrary.hpp"
+#include "HighPerformanceCounter.h"
+#include "FontLibrary/FontLibrary.h"
+
+// Include GLM
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 
 extern int m_width;
 extern int m_height;
@@ -39,8 +43,6 @@ float BGCOLOR_4F[4] = {0.15, 0.15, 0.15, 1.0};
 
 unsigned int cubeDisplayListID = 0;
 
-void* font = GLUT_BITMAP_8_BY_13;
-
 LARGE_INTEGER m_frameCounter[100];
 LARGE_INTEGER m_freq;
 int m_frame = 0;
@@ -50,7 +52,7 @@ using namespace std;
 float m_glNear = 1.0;
 float m_glFar = 100.0f;
 double m_fps = 0.0;
-double m_glFov = 60;
+float m_glFov = 60;
 
 int m_lbutton = 0; //is left mouse button pressed
 int m_lastMouseX = 0;
@@ -80,6 +82,103 @@ unsigned int m_dynDisplayListID = 0;
 unsigned int m_sdfDisplayListID = 0;
 unsigned int m_sdf2DisplayListID = 0;
 unsigned int m_sdf3DisplayListID = 0;
+
+GLuint m_cubeVertexArrayID = 0;
+
+static const GLfloat g_vertex_buffer_data[] =
+{
+    -1.0f,-1.0f,-1.0f, //V1
+    -1.0f,-1.0f, 1.0f, //V2
+    -1.0f, 1.0f, 1.0f, //V3
+    1.0f, 1.0f,-1.0f, //V4
+    -1.0f,-1.0f,-1.0f, //V1
+    -1.0f, 1.0f,-1.0f, //V5
+    1.0f,-1.0f, 1.0f, //V6
+    -1.0f,-1.0f,-1.0f, //V1
+    1.0f,-1.0f,-1.0f, //V7
+    1.0f, 1.0f,-1.0f, //V4
+    1.0f,-1.0f,-1.0f, //V7
+    -1.0f,-1.0f,-1.0f, //V1
+    -1.0f,-1.0f,-1.0f, //V1
+    -1.0f, 1.0f, 1.0f, //V3
+    -1.0f, 1.0f,-1.0f, //V5
+    1.0f,-1.0f, 1.0f, //V6
+    -1.0f,-1.0f, 1.0f, //V2
+    -1.0f,-1.0f,-1.0f, //V1
+    -1.0f, 1.0f, 1.0f, //V3
+    -1.0f,-1.0f, 1.0f, //V2
+    1.0f,-1.0f, 1.0f, //V6
+    1.0f, 1.0f, 1.0f, //V8
+    1.0f,-1.0f,-1.0f, //V7
+    1.0f, 1.0f,-1.0f, //V4
+    1.0f,-1.0f,-1.0f, //V7
+    1.0f, 1.0f, 1.0f, //V8
+    1.0f,-1.0f, 1.0f, //V6
+    1.0f, 1.0f, 1.0f, //V8
+    1.0f, 1.0f,-1.0f, //V4
+    -1.0f, 1.0f,-1.0f, //V5
+    1.0f, 1.0f, 1.0f, //V8
+    -1.0f, 1.0f,-1.0f, //V5
+    -1.0f, 1.0f, 1.0f, //V3
+    1.0f, 1.0f, 1.0f, //V8
+    -1.0f, 1.0f, 1.0f, //V3
+    1.0f,-1.0f, 1.0f //V6
+};
+
+// One color for each vertex. They were generated randomly.
+static const GLfloat g_color_buffer_data[] =
+{
+    1.0f, 0.0f, 0.0f, //V1
+    0.0f, 1.0f, 0.0f, //V2
+    0.0f, 0.0f, 1.0f, //V3
+    1.0f, 1.0f, 0.0f, //V4
+    1.0f, 0.0f, 0.0f, //V1
+    1.0f, 0.0f, 1.0f, //V5
+    0.0f, 1.0f, 1.0f, //V6
+    1.0f, 0.0f, 0.0f, //V1
+    0.0f, 0.0f, 0.0f, //V7
+    1.0f, 1.0f, 0.0f, //V4
+    0.0f, 0.0f, 0.0f, //V7
+    1.0f, 0.0f, 0.0f, //V1
+    1.0f, 0.0f, 0.0f, //V1
+    0.0f, 0.0f, 1.0f, //V3
+    1.0f, 0.0f, 1.0f, //V5
+    0.0f, 1.0f, 1.0f, //V6
+    0.0f, 1.0f, 0.0f, //V2
+    1.0f, 0.0f, 0.0f, //V1
+    0.0f, 0.0f, 1.0f, //V3
+    0.0f, 1.0f, 0.0f, //V2
+    0.0f, 1.0f, 1.0f, //V6
+    1.0f, 1.0f, 1.0f, //V8
+    0.0f, 0.0f, 0.0f, //V7
+    1.0f, 1.0f, 0.0f, //V4
+    0.0f, 0.0f, 0.0f, //V7
+    1.0f, 1.0f, 1.0f, //V8
+    0.0f, 1.0f, 1.0f, //V6
+    1.0f, 1.0f, 1.0f, //V8
+    1.0f, 1.0f, 0.0f, //V4
+    1.0f, 0.0f, 1.0f, //V5
+    1.0f, 1.0f, 1.0f, //V8
+    1.0f, 0.0f, 1.0f, //V5
+    0.0f, 0.0f, 1.0f, //V3
+    1.0f, 1.0f, 1.0f, //V8
+    0.0f, 0.0f, 1.0f, //V3
+    0.0f, 1.0f, 1.0f, //V6
+};
+
+GLuint m_vertexbufferID = 0;
+GLuint m_colorbufferID = 0;
+
+CGLShaderProgram* m_cubeProgram = nullptr;
+
+glm::mat4 m_projectionMatrix;
+glm::mat4 m_ViewMatrix = glm::lookAt(
+								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
+								glm::vec3(0,0,0), // and looks at the origin
+								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+						);
+glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+glm::mat4 MVP;
 
 void SetVSync(bool sync)
 {
@@ -115,12 +214,6 @@ void Init(void)
 
 	SetVSync(false);
 
-	// usual shading
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	// clear background to black and clear depth buffer
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -128,18 +221,6 @@ void Init(void)
 	// enable depth test (z-buffer)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-
-	// enable normalization of vertex normals
-	glEnable(GL_NORMALIZE);
-
-	// initial view definitions
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// perspective projection
-	gluPerspective(m_glFov, 1.0, m_glNear, m_glFar);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
 	glEnable(GL_POINT_SMOOTH);
 
@@ -149,6 +230,34 @@ void Init(void)
 		if(!success)
 			return; //ERROR!
 	}
+
+	glGenVertexArrays(1, &m_cubeVertexArrayID);
+	glBindVertexArray(m_cubeVertexArrayID);
+
+	glGenBuffers(1, &m_vertexbufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexbufferID); // This will talk about our 'vertexbuffer' buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW); // Give our vertices to OpenGL.
+
+	glGenBuffers(1, &m_colorbufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, m_colorbufferID); // This will talk about our 'vertexbuffer' buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW); // Give our vertices to OpenGL.
+
+	std::string vertexShaderCode =
+	#include "Cube.vert"
+	std::string fragmentShaderCode =
+	#include "Cube.frag"
+
+	m_cubeProgram = new CGLShaderProgram();
+
+	if (!m_cubeProgram || !m_cubeProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
+	{
+		std::string err = "FontLibrary failed to load default shader.";
+		//TODO: log error
+	}
+
+	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+	m_projectionMatrix = glm::perspective(glm::radians(m_glFov), 4.0f / 3.0f, 0.1f, 100.0f);
+	MVP = m_projectionMatrix * m_ViewMatrix * m_modelMatrix; // Remember, matrix multiplication is the other way around
 }
 
 void DrawFontStressTest()
@@ -178,46 +287,46 @@ void DrawFontStressTest()
 		{
 			if(m_loremDisplayListID == 0)
 				m_loremDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawStringWithLineBreaks(m_loremDisplayListID, bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, 1.0, m_width/2.0 - 30, 22);
+			m_fontLibrary->DrawStringWithLineBreaks(m_loremDisplayListID, bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, m_width, m_height, 1.0, m_width/2.0 - 30, 22);
 
 			if(m_sdf3DisplayListID == 0)
 				m_sdf3DisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdf3DisplayListID, singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, 2.0);
+			m_fontLibrary->DrawString(m_sdf3DisplayListID, singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, m_width, m_height, 2.0);
 
 			if(m_sdfDisplayListID == 0)
 				m_sdfDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdfDisplayListID, multiSDF + " Scale: 0.5", 30, 150, white, GLFONT_COURIER42_MSDF, .5);
+			m_fontLibrary->DrawString(m_sdfDisplayListID, multiSDF + " Scale: 0.5", 30, 150, green, GLFONT_COURIER42_MSDF, m_width, m_height, .5);
 
 			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_COURIER42_MSDF)*2.0;
 			if(m_sdf2DisplayListID == 0)
 				m_sdf2DisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdf2DisplayListID, multiSDF + " Scale: 2.0", 30, 150 - lHeightSDF, green, GLFONT_COURIER42_MSDF, 2.0);
+			m_fontLibrary->DrawString(m_sdf2DisplayListID, multiSDF + " Scale: 2.0", 30, 150 - lHeightSDF, green, GLFONT_COURIER42_MSDF, m_width, m_height, 2.0);
 		}
 		else
 		{
 			if(m_rotXDisplayListID == 0)
 				m_rotXDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_rotXDisplayListID, dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_rotXDisplayListID, dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20, m_width, m_height);
 
 			if(m_rotYDisplayListID == 0)
 				m_rotYDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_rotYDisplayListID, dynamicText2, m_width/2 + 30, top-20, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_rotYDisplayListID, dynamicText2, m_width/2 + 30, top-20, white, GLFONT_ARIAL20, m_width, m_height);
 		}
 	}
 	else
 	{
 		if(!m_dyntext)
 		{
-			m_fontLibrary->DrawStringWithLineBreaks(bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, 1.0, m_width/2.0 - 30, 22);
-			m_fontLibrary->DrawString(singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, 2.0);
-			m_fontLibrary->DrawString(multiSDF + " Scale: 0.5", 30, 120, green, GLFONT_COURIER42_MSDF, .5);
+			m_fontLibrary->DrawStringWithLineBreaks(bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, m_width, m_height, 1.0, m_width/2.0 - 30, 22);
+			m_fontLibrary->DrawString(singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, m_width, m_height, 2.0);
+			m_fontLibrary->DrawString(multiSDF + " Scale: 0.5", 30, 150, green, GLFONT_COURIER42_MSDF, m_width, m_height, .5);
 			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_COURIER42_MSDF)*2.0;
-			m_fontLibrary->DrawString(multiSDF + " Scale: 2.0", 30, 120 - lHeightSDF, green, GLFONT_COURIER42_MSDF, 2.0);
+			m_fontLibrary->DrawString(multiSDF + " Scale: 2.0", 30, 150 - lHeightSDF, green, GLFONT_COURIER42_MSDF, m_width, m_height, 2.0);
 		}
 		else
 		{
-			m_fontLibrary->DrawString(dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20);
-			m_fontLibrary->DrawString(dynamicText2, m_width/2 + 30, top - 20, white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(dynamicText1, m_width/2 + 30, top, white, GLFONT_ARIAL20, m_width, m_height);
+			m_fontLibrary->DrawString(dynamicText2, m_width/2 + 30, top - 20, white, GLFONT_ARIAL20, m_width, m_height);
 		}
 	}
 }
@@ -262,44 +371,44 @@ void DrawOnScreenDisplay()
 	{
 		if(m_escDisplayListID == 0)
 			m_escDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_escDisplayListID, esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_escDisplayListID, esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20, m_width, m_height);
 
 		if(m_stressDisplayListID == 0)
 			m_stressDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_stressDisplayListID, stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_stressDisplayListID, stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20, m_width, m_height);
 
 		if(m_dispDisplayListID == 0)
 			m_dispDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_dispDisplayListID, disp, boarderPadding, m_height - 2*lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_dispDisplayListID, disp, boarderPadding, m_height - 2*lHeight, white, GLFONT_ARIAL20, m_width, m_height);
 
 		if(m_stressTest)
 		{
 			if(m_dynDisplayListID == 0)
 				m_dynDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_dynDisplayListID, dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(m_dynDisplayListID, dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20, m_width, m_height);
 		}
 
 		if(m_fpsDisplayListID == 0)
 			m_fpsDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_fpsDisplayListID, fps, boarderPadding, lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_fpsDisplayListID, fps, boarderPadding, lHeight, white, GLFONT_ARIAL20, m_width, m_height);
 
 		if(m_fovDisplayListID == 0)
 			m_fovDisplayListID = m_fontLibrary->GetNewDrawStringID();
-		m_fontLibrary->DrawString(m_fovDisplayListID, fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(m_fovDisplayListID, fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20, m_width, m_height);
 	}
 	else
 	{
-		m_fontLibrary->DrawString(esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(disp, boarderPadding, m_height - 2*lHeight, red, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(esc, m_width - strWidth - boarderPadding, m_height - lHeight, white, GLFONT_ARIAL20, m_width, m_height);
+		m_fontLibrary->DrawString(stress, boarderPadding, m_height - lHeight, m_stressTest ? red : white, GLFONT_ARIAL20, m_width, m_height);
+		m_fontLibrary->DrawString(disp, boarderPadding, m_height - 2*lHeight, red, GLFONT_ARIAL20, m_width, m_height);
 
 		if(m_stressTest)
 		{
-			m_fontLibrary->DrawString(dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20);
+			m_fontLibrary->DrawString(dyn, m_width/2.0 - dynStrWidth/2.0, m_height - lHeight, m_dyntext ? red : white, GLFONT_ARIAL20, m_width, m_height);
 		}
 
-		m_fontLibrary->DrawString(fps, boarderPadding, lHeight, white, GLFONT_ARIAL20);
-		m_fontLibrary->DrawString(fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20);
+		m_fontLibrary->DrawString(fps, boarderPadding, lHeight, white, GLFONT_ARIAL20, m_width, m_height);
+		m_fontLibrary->DrawString(fov, boarderPadding, 2*lHeight, white, GLFONT_ARIAL20, m_width, m_height);
 	}
 }
 
@@ -328,98 +437,48 @@ void CalculateFrameRate(LARGE_INTEGER newVal)
 
 void DrawCubeEightColor()
 {
-	glDisable(GL_TEXTURE_2D);
-	//cube centered around zero with size:
-	float size = 1.0;
-	float sizeHalf = size / 2.0;
-	float z = -2.0;
+	if(!m_cubeProgram)
+		return;
 
-	glPushMatrix();
+	glBindVertexArray(m_cubeVertexArrayID);
 
-	glTranslatef(0.0, 0.0, z);
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexbufferID);
+	glVertexAttribPointer(
+		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
 
-	glRotatef(m_rotX, 0.0, 1.0, 0.0);
-	glRotatef(m_rotY, 0.0, 0.0, 1.0);
+	// 2nd attribute buffer : colors
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, m_colorbufferID);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+	);
 
-	if(!cubeDisplayListID)
-	{
-		glEnable(GL_MULTISAMPLE);
+	// Use our shader
+	glUseProgram(m_cubeProgram->GetProgramID());
 
-		GLuint id = glGenLists(1);
-		glNewList(id, GL_COMPILE);
+	// Get a handle for our "MVP" uniform
+	GLint matrixLoc = glGetUniformLocation(m_cubeProgram->GetProgramID(), "MVP");
+	if(matrixLoc >= 0)
+		glUniformMatrix4fv(matrixLoc, 1, GL_FALSE, &MVP[0][0]); // Send our transformation to the currently bound shader, in the "MVP" uniform
 
-		glColor4fv(white);
+	// Draw the Cube!
+	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
 
-		glBegin(GL_QUADS);
-			//face 1 - front face
-			glColor4fv(red);
-			glVertex3f(-sizeHalf, sizeHalf, sizeHalf); //top left
-			glColor4fv(pink);
-			glVertex3f(sizeHalf, sizeHalf, sizeHalf); //top right
-			glColor4fv(blue);
-			glVertex3f(sizeHalf, -sizeHalf, sizeHalf); //bottom right
-			glColor4fv(cyan);
-			glVertex3f(-sizeHalf, -sizeHalf, sizeHalf); //bottom left
-
-			//face 3 - left face
-			glColor4fv(red);
-			glVertex3f(-sizeHalf, sizeHalf, sizeHalf); //front top
-			glColor4fv(yellow);
-			glVertex3f(-sizeHalf, sizeHalf, -sizeHalf); //back top
-			glColor4fv(green);
-			glVertex3f(-sizeHalf, -sizeHalf, -sizeHalf); //back bottom
-			glColor4fv(cyan);
-			glVertex3f(-sizeHalf, -sizeHalf, sizeHalf); //front bottom
-
-			//face 4 - right face
-			glColor4fv(pink);
-			glVertex3f(sizeHalf, sizeHalf, sizeHalf); //front top
-			glColor4fv(white);
-			glVertex3f(sizeHalf, sizeHalf, -sizeHalf); //back top
-			glColor4fv(black);
-			glVertex3f(sizeHalf, -sizeHalf, -sizeHalf); //back bottom
-			glColor4fv(blue);
-			glVertex3f(sizeHalf, -sizeHalf, sizeHalf); //front bottom
-		
-			//face 5 - bottom face
-			glColor4fv(green);
-			glVertex3f(-sizeHalf, -sizeHalf, -sizeHalf); //back left
-			glColor4fv(black);
-			glVertex3f(sizeHalf, -sizeHalf, -sizeHalf); //back right
-			glColor4fv(blue);
-			glVertex3f(sizeHalf, -sizeHalf, sizeHalf); //front right
-			glColor4fv(cyan);
-			glVertex3f(-sizeHalf, -sizeHalf, sizeHalf); //front left
-
-			//face 6 - top face
-			glColor4fv(yellow);
-			glVertex3f(-sizeHalf, sizeHalf, -sizeHalf); //back left
-			glColor4fv(white);
-			glVertex3f(sizeHalf, sizeHalf, -sizeHalf); //back right
-			glColor4fv(pink);
-			glVertex3f(sizeHalf, sizeHalf, sizeHalf); //front right
-			glColor4fv(red);
-			glVertex3f(-sizeHalf, sizeHalf, sizeHalf); //front left
-
-			//face 2 - back face
-			glColor4fv(yellow);
-			glVertex3f(-sizeHalf, sizeHalf, -sizeHalf); //top left
-			glColor4fv(white);
-			glVertex3f(sizeHalf, sizeHalf, -sizeHalf); //top right
-			glColor4fv(black);
-			glVertex3f(sizeHalf, -sizeHalf, -sizeHalf); //bottom right
-			glColor4fv(green);
-			glVertex3f(-sizeHalf, -sizeHalf, -sizeHalf); //bottom left
-		glEnd();
-
-		glDisable(GL_MULTISAMPLE);
-
-		glEndList();
-		cubeDisplayListID = id;
-	}
-	glCallList(cubeDisplayListID);
-
-	glPopMatrix();
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }
 
 void Rotate()
@@ -432,32 +491,19 @@ void Rotate()
 
 	if(m_rotY >= 360.0)
 		m_rotY = 0.0;
+
+	glm::mat4 rotMat = glm::rotate(m_modelMatrix, glm::radians(m_rotX), glm::vec3(1.0, 0.0, 0.0));
+	rotMat = glm::rotate(rotMat, glm::radians(m_rotY), glm::vec3(0.0, 1.0, 0.0));
+	MVP = m_projectionMatrix * m_ViewMatrix * rotMat; // Remember, matrix multiplication is the other way around
 }
 
 // display callback for GLUT
 void Display(void)
 {
-	//initial view definitions
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(m_glFov, (float)m_width/(float)m_height, m_glNear, m_glFar);
-
-	//perspective projection
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
 	glClearColor(BGCOLOR_4F[0], BGCOLOR_4F[1], BGCOLOR_4F[2], BGCOLOR_4F[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	DrawCubeEightColor();
-
-	//set to 2D orthogonal projection
-	glMatrixMode(GL_PROJECTION);        //switch to projection matrix
-	glLoadIdentity();                   //reset projection matrix
-	gluOrtho2D(0, m_width, 0, m_height);//set to orthogonal projection
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
 	//on screen infos
 	DrawOnScreenDisplay();
@@ -486,19 +532,15 @@ void Reshape(int w, int h)
 	m_height = h;
 
 	// viewport
-	glViewport(0,0, (GLsizei) m_width, (GLsizei) m_height);
+	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 
 	// clear background and depth buffer
-	glClearColor(0.1,0.1,0.1,1.0);
+	glClearColor(BGCOLOR_4F[0],BGCOLOR_4F[1],BGCOLOR_4F[2],BGCOLOR_4F[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// restore view definition after window reshape
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	// perspective projection
-	gluPerspective(m_glFov, aspect, 1.0, m_glFar);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	// Projection matrix : 45° Field of View, aspect ratio, display range : 0.1 unit <-> 100 units
+	m_projectionMatrix = glm::perspective(glm::radians(m_glFov), aspect, 0.1f, 100.0f);
+	MVP = m_projectionMatrix * m_ViewMatrix * m_modelMatrix; // Remember, matrix multiplication is the other way around
 
 	Display();
 }
@@ -506,8 +548,6 @@ void Reshape(int w, int h)
 // keyboard callback
 void Keyboard(unsigned char key, int x, int y)
 {
-	// rotate selected node around 
-	// x,y and z axes with keypresses
 	switch( key )
 	{
 		case 27: //Escape
@@ -576,12 +616,16 @@ void Mouse(int btn, int state, int x, int y)
 		m_glFov += 2.0f;
 		if(m_glFov > 179.0f)
 			m_glFov = 179.0f;
+
+		m_projectionMatrix = glm::perspective(glm::radians(m_glFov), (float)m_width/(float)m_height, 0.1f, 100.0f);
 	}
 	else if(btn == GLUT_WHEEL_DOWN)
 	{
 		m_glFov -= 2.0f;
 		if(m_glFov < 1.0f)
 			m_glFov = 1.0f;
+
+		m_projectionMatrix = glm::perspective(glm::radians(m_glFov), (float)m_width/(float)m_height, 0.1f, 100.0f);
 	}
 }
 

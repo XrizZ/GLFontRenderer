@@ -27,32 +27,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FontLibrary\acutil_unicode.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Font.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontFileParser.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontLibrary.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\GLShaderProgram.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Texture.hpp">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="glutcallbacks.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HighPerformanceCounter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FontLibrary\lodepng\lodepng.h">
       <Filter>Header Files\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\acutil_unicode.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\Font.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\FontFileParser.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\FontLibrary.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\GLShaderProgram.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLibrary\Texture.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="glutcallbacks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HighPerformanceCounter.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +92,18 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="FontLibrary\SDF_Font.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FontLibrary\Default_Font.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FontLibrary\Default_Font.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FontLibrary\Cube.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FontLibrary\Cube.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

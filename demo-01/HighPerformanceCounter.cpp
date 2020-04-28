@@ -5,7 +5,7 @@
 // Description	:	Implementation file for CHighPerformanceCounter, used by the Example App
 //=================================================================================
 
-#include "HighPerformanceCounter.hpp"
+#include "HighPerformanceCounter.h"
 #include <iostream>
 
 //constructor

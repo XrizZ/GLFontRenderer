@@ -1,4 +1,4 @@
-#include "GLShaderProgram.hpp"
+#include "GLShaderProgram.h"
 #include <cassert>
 #include <sstream>
 #include <fstream>

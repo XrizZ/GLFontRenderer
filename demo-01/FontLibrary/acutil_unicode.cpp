@@ -25,7 +25,7 @@
    andreas@angelcode.com
 */
 
-#include "acutil_unicode.hpp"
+#include "acutil_unicode.h"
 
 // Reference: http://en.wikipedia.org/wiki/Utf8
 

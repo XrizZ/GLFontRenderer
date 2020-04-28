@@ -9,10 +9,10 @@
 //=================================================================================
 
 #pragma once
-#include "Font.hpp"
+#include "Font.h"
 #include <Windows.h>
 #include "..\glew\include\GL\glew.h"
-#include "GLShaderProgram.hpp"
+#include "GLShaderProgram.h"
 #include <map>
 
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
@@ -59,7 +59,7 @@ public:
 		m_color[3] = 0.0f;
 	};
 
-	CDrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], float scale)
+	CDrawString(unsigned int ID, std::string font, std::string textToDraw, int x, int y, float color[4], float scale)
 	{
 		m_ID = ID;
 		m_text = textToDraw;
@@ -70,15 +70,22 @@ public:
 		m_color[2] = color[2];
 		m_color[3] = color[3];
 		m_scale = scale;
-		m_drawListID = 0;
-		m_lineWidth = 0;
-		m_maxLines = 0;
+		m_font = font;
 	};
 
-	~CDrawString(){};
+	~CDrawString()
+	{
+		if(m_vertexbuffer)
+			glDeleteBuffers(1, &m_vertexbuffer);
+		m_vertexbuffer = 0;
+
+		if(m_uvBuffer)
+			glDeleteBuffers(1, &m_uvBuffer);
+		m_uvBuffer = 0;
+	};
 
 	unsigned int	m_ID = 0;
-	GLint			m_drawListID = 0;
+	bool			m_needsChange = true;
 	std::string		m_text;
 	int				m_x = 0;
 	int				m_y = 0;
@@ -86,6 +93,12 @@ public:
 	float			m_scale = 1.0;
 	int				m_lineWidth = 0;
 	int				m_maxLines = 0;
+	unsigned int	m_winW = 1; //window width of application
+	unsigned int	m_winH = 1; //window height of application
+	GLuint			m_vertexbuffer = 0; //stores verticies positions
+	GLuint			m_uvBuffer =  0; //stores texture UVs for each vert
+	std::string		m_font = GLFONT_ARIAL20;
+	unsigned int	m_numVerticies = 0;
 };
 
 class CFontLibrary
@@ -102,10 +115,10 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts();
-	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, float scale = 1.0f);
-	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale = 1.0f);
-	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines);
-	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, float scale, int lineWidth, int maxLines);
+	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f);
+	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f);
+	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
+	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
 	unsigned int GetNewDrawStringID();
 	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f);
 	unsigned int GetLineHeight(std::string font);
@@ -114,13 +127,16 @@ private:
 	//functions:
 	CGLFont* ParseFont(std::string fileName);
 	CGLQuad2D* TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale);
-	void DrawQuadList(std::string font, float color[4], CGLQuad2D* quadList, std::string textToDraw);
+	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject);
 	CGLFont* GetFontPointer(std::string fontName);
 	int GetTextChar(std::string textToDraw, int pos);
 	unsigned int GetWidthOfChar(char ch, std::string font);
+	void PopulateVertexBuffers(CDrawString* stringObject);
 
 	//variables:
 	CGLShaderProgram* m_sdfShaderProgram = nullptr;
+	CGLShaderProgram* m_defaultShaderProgram = nullptr;
 	std::map<unsigned int, CDrawString*> m_glStringList;
 	unsigned int m_IDCounter = 1;
+	GLuint m_vertexArrayID = 0; // Our Vertex Array Object, once for all!
 };

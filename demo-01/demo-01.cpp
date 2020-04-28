@@ -8,9 +8,9 @@
 //=================================================================================
 
 #include <iostream>
-#include "FontLibrary/FontLibrary.hpp"
+#include "FontLibrary/FontLibrary.h"
 #include "glut\glut.h"
-#include "glutcallbacks.hpp"
+#include "glutcallbacks.h"
 #include <tchar.h>
 
 using namespace std;
@@ -22,7 +22,7 @@ CFontLibrary* m_fontLibrary = nullptr;
 
 void Render(int argc, char** argv)
 {
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	glutInitWindowPosition(500, 300);
 	glutInitWindowSize(m_width, m_height);
 	glutInit(&argc, argv);

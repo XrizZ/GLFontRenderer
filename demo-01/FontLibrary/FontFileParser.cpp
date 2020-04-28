@@ -5,7 +5,7 @@
 // Description	:	Implementation file for CFontFileParser, used by the FontLibrary
 //=================================================================================
 
-#include "FontFileParser.hpp"
+#include "FontFileParser.h"
 #include <iostream>
 #include <fstream>
 

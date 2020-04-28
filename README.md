@@ -23,10 +23,11 @@ This font rendering library was designed with ease of use and render performance
 Stay tuned.
 
 # External Libraries
-- glut (included in the project, only needed for the demo!)
-- glew (included in the project)
-- acutil_unicode (inlcude in the project, from AngelCode ToolBox Library)
-- lodepng (included in the project)
+- glut (included in the repo, only needed for the demo!)
+- glm (included in the repo, only needed for the demo!)
+- glew (included in the repo)
+- acutil_unicode (inlcude in the repo, from AngelCode ToolBox Library)
+- lodepng (included in the repo)
 
 # Overview
 The font library is divided into the following files:

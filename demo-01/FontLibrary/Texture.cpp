@@ -5,7 +5,7 @@
 // Description	:	Implementation file for CGLTexture, used by the FontLibrary
 //=================================================================================
 
-#include "Texture.hpp"
+#include "Texture.h"
 #include "lodepng.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
