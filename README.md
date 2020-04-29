@@ -203,13 +203,13 @@ This will tell the Font Lib to use the single channel SDF shader when this font 
 - Due to the above issues, I suggest to use Multi-Channel SDFs instead - easier to use and scale works correctly.
 
 ## Multi-Channel SDF Fonts
-For Multi-Channel SDFs you do not need to use the BM Font Generator, instead use: https://soimy.github.io/msdf-bmfont-xml/
+For Multi-Channel SDFs you can't use the BM Font Generator, instead use: https://soimy.github.io/msdf-bmfont-xml/
 With this tool, you need to start from a ttf file, but you will receive the usual fnt plus a png file.
 Once installed, run the following from the command line:
 ```
 msdf-bmfont -o multisdf.png cour.ttf
 ```
-Noe that you can supply the font size and other parameters through the commandline as well.
+Note that you can supply the font size and other parameters through the commandline as well.
 
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make coding easier though!
