@@ -4,7 +4,7 @@ This font rendering library was designed with ease of use and render performance
 
 # Changelog
 - April 29th 2020: replaced the direct mode GL calls with modern GL and appropriate shaders - roughly the same performance as before with direct mode and Display Lists - but more appropriate for modern applications.
-![Modern GL](demo-01/FontLibrary/Documentation/ModernGL.png "Screenshot from the new Modern GL Demo project.")
+![Modern GL](Documentation/ModernGL.png "Screenshot from the new Modern GL Demo project.")
 
 - April 22nd 2020: added support for XML format .fnt files, added multi SDF support, added support for PNG file type textures
 - April 14th 2020: moved project from MFC to standard libs
@@ -100,12 +100,12 @@ In the following section, the use of BM-Font Generator is described in detail, b
 For producing the font-config as well as the actual font bitmap, I use the “Bitmap Font Generator” from AngelCode. Which can be obtained from their website: http://angelcode.com/products/bmfont/
 After installation, open the program, it should look like in the following figure.
 
-![Main Menu](demo-01/FontLibrary/Documentation/main_menu.png "Main Menu")
+![Main Menu](Documentation/main_menu.png "Main Menu")
 
 ### Font Settings Menu
 As a first step, open the Font-Settings, by clicking on Options → Font Settings or by hitting [F], which will open a new window, as shown by the next figure.
 
-![Font Settings](demo-01/FontLibrary/Documentation/FontSettings.png "Font Settings Menu")
+![Font Settings](Documentation/FontSettings.png "Font Settings Menu")
 
 1. select the font type(or “face”). If the font type is not in the list, you need to install it on your windows system by adding the true type font file for it to the system font folder, all fonts in that folder will be accessible by the BM-font generator.
 2. Charset: for most cases “Unicode” should do.
@@ -122,7 +122,7 @@ After you made these setups, close the Font Settings window and proceed to the n
 ### Character Selection
 Back in the main window of the program, you can now select the character sets you'd like to include. You can either select full sets or select only specific characters of a set. As an example see next figure.
 
-![Character Sets](demo-01/FontLibrary/Documentation/CharacterSets.png "Character Selection")
+![Character Sets](Documentation/CharacterSets.png "Character Selection")
 
 As a basic rule, only select the characters that you are likely to use, this saves processing time and most of all memory, not just one character, but a lot more(kerning, bitmap size, array sizes in our code, etc.).
 After you selected all characters your font shall include, proceed to the next section.
@@ -132,7 +132,7 @@ After you selected all characters your font shall include, proceed to the next s
 It is now time to export the font as a bitmap and a create a config file for it.
 Open the Export Options my hitting either [T], or clicking Options → Export Options. A new window should pop up, looking like in the following figure.
 
-![Export Options](demo-01/FontLibrary/Documentation/ExportOptions.png "Export Options")
+![Export Options](Documentation/ExportOptions.png "Export Options")
 
 1. Leave Padding and Spacing at default.
 2. Set the width of the texture to something big enough to hold all your selected characters, but also not too large, you don't want to waste space in the bitmap for emptyness. How you determine whether the texture has the right size or not will be discussed in the next subsection.

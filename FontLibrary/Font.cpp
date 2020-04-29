@@ -9,7 +9,7 @@
 
 #include "Font.h"
 #include <windows.h>
-#include "..\glew\include\GL\glew.h"
+#include <glew.h>
 
 CGLFont::~CGLFont()
 {

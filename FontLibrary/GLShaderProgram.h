@@ -1,5 +1,5 @@
 #pragma once
-#include "..\glew\include\GL\glew.h"
+#include <glew.h>
 #include <iostream>
 
 class CGLShaderProgram

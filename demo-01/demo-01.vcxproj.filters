@@ -27,32 +27,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FontLibrary\lodepng\lodepng.h">
-      <Filter>Header Files\lodepng</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\acutil_unicode.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Font.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontFileParser.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\FontLibrary.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\GLShaderProgram.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLibrary\Texture.h">
-      <Filter>Header Files\FontLibrary</Filter>
-    </ClInclude>
     <ClInclude Include="glutcallbacks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HighPerformanceCounter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\Texture.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\Font.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\FontFileParser.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\FontLibrary.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\GLShaderProgram.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\Dependencies\Acutil\acutil_unicode.h">
+      <Filter>Header Files\FontLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FontLibrary\Dependencies\lodepng\lodepng.h">
+      <Filter>Header Files\lodepng</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,46 +65,26 @@
     <ClCompile Include="HighPerformanceCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\Texture.cpp">
+    <ClCompile Include="..\FontLibrary\Texture.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\acutil_unicode.cpp">
+    <ClCompile Include="..\FontLibrary\Font.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\Font.cpp">
+    <ClCompile Include="..\FontLibrary\FontFileParser.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\FontFileParser.cpp">
+    <ClCompile Include="..\FontLibrary\FontLibrary.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\FontLibrary.cpp">
+    <ClCompile Include="..\FontLibrary\GLShaderProgram.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\GLShaderProgram.cpp">
+    <ClCompile Include="..\FontLibrary\Dependencies\Acutil\acutil_unicode.cpp">
       <Filter>Source Files\FontLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="FontLibrary\lodepng\lodepng.cpp">
+    <ClCompile Include="..\FontLibrary\Dependencies\lodepng\lodepng.cpp">
       <Filter>Source Files\lodepng</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FontLibrary\SDF_Font.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="FontLibrary\SDF_Font.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="FontLibrary\Default_Font.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="FontLibrary\Default_Font.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="FontLibrary\Cube.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="FontLibrary\Cube.vert">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -8,8 +8,8 @@
 //=================================================================================
 
 #include <iostream>
-#include "FontLibrary/FontLibrary.h"
-#include "glut\glut.h"
+#include <FontLibrary.h>
+#include <glut.h>
 #include "glutcallbacks.h"
 #include <tchar.h>
 
@@ -44,7 +44,7 @@ int _tmain(int argc, char* argv[])
 	cout << "Loading Fonts" << endl;
 
 	//load fonts
-	std::string fontFileFolder = "..\\demo-01\\FontLibrary\\Fonts";
+	std::string fontFileFolder = "..\\FontLibrary\\Fonts";
 	
 	m_fontLibrary = new CFontLibrary(fontFileFolder);
 	if (!m_fontLibrary->ParseAllFontsInFolder())

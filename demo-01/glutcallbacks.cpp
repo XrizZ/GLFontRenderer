@@ -9,15 +9,15 @@
 //=================================================================================
 
 #include <windows.h>
-#include "glew\include\GL\glew.h"
+#include <glew.h>
 #include "glutcallbacks.h"
 #include <sstream>
 #include <math.h>
-#include "glut\glut.h"
+#include <glut.h>
 #include <vector>
 #include <iostream>
 #include "HighPerformanceCounter.h"
-#include "FontLibrary/FontLibrary.h"
+#include <FontLibrary.h>
 
 // Include GLM
 #include <glm.hpp>

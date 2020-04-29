@@ -44,9 +44,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glew\lib\Release\Win32;C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(MSBuildProjectDirector)\glew\include\GL;$(MSBuildProjectDirectory)\FontLibrary;$(MSBuildProjectDirectory)\glut;$(MSBuildProjectDirectory)\FontLibrary\lodepng;$(MSBuildProjectDirectory)\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\Dependencies\glut;$(MSBuildProjectDirectory)\Dependencies\glew\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(MSBuildProjectDirectory)\Dependencies\glew\include\GL;$(MSBuildProjectDirectory)\Dependencies\glut;$(MSBuildProjectDirectory)\Dependencies\glm;$(MSBuildProjectDirectory)\..\FontLibrary\Dependencies\lodepng;$(MSBuildProjectDirectory)\..\FontLibrary\Dependencies\acutil;$(MSBuildProjectDirectory)\..\FontLibrary;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\..\FontLibrary;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -62,6 +63,7 @@
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\..\FontLibrary\Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -69,6 +71,10 @@
       <AdditionalDependencies>glut32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\Chris\Desktop\demo-01\demo-01\demo-01\glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreLinkEvent>
+      <Command>xcopy "Dependencies\glut\glut32.dll" "$(OutDir)"  /Y /D
+xcopy "Dependencies\glew\bin\Release\Win32\glew32.dll" "$(OutDir)"  /Y /D</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -94,35 +100,27 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="FontLibrary\acutil_unicode.h" />
-    <ClInclude Include="FontLibrary\Font.h" />
-    <ClInclude Include="FontLibrary\FontFileParser.h" />
-    <ClInclude Include="FontLibrary\FontLibrary.h" />
-    <ClInclude Include="FontLibrary\GLShaderProgram.h" />
-    <ClInclude Include="FontLibrary\lodepng\lodepng.h" />
-    <ClInclude Include="FontLibrary\Texture.h" />
+    <ClInclude Include="..\FontLibrary\Dependencies\Acutil\acutil_unicode.h" />
+    <ClInclude Include="..\FontLibrary\Dependencies\lodepng\lodepng.h" />
+    <ClInclude Include="..\FontLibrary\Font.h" />
+    <ClInclude Include="..\FontLibrary\FontFileParser.h" />
+    <ClInclude Include="..\FontLibrary\FontLibrary.h" />
+    <ClInclude Include="..\FontLibrary\GLShaderProgram.h" />
+    <ClInclude Include="..\FontLibrary\Texture.h" />
     <ClInclude Include="glutcallbacks.h" />
     <ClInclude Include="HighPerformanceCounter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\FontLibrary\Dependencies\Acutil\acutil_unicode.cpp" />
+    <ClCompile Include="..\FontLibrary\Dependencies\lodepng\lodepng.cpp" />
+    <ClCompile Include="..\FontLibrary\Font.cpp" />
+    <ClCompile Include="..\FontLibrary\FontFileParser.cpp" />
+    <ClCompile Include="..\FontLibrary\FontLibrary.cpp" />
+    <ClCompile Include="..\FontLibrary\GLShaderProgram.cpp" />
+    <ClCompile Include="..\FontLibrary\Texture.cpp" />
     <ClCompile Include="demo-01.cpp" />
-    <ClCompile Include="FontLibrary\acutil_unicode.cpp" />
-    <ClCompile Include="FontLibrary\Font.cpp" />
-    <ClCompile Include="FontLibrary\FontFileParser.cpp" />
-    <ClCompile Include="FontLibrary\FontLibrary.cpp" />
-    <ClCompile Include="FontLibrary\GLShaderProgram.cpp" />
-    <ClCompile Include="FontLibrary\lodepng\lodepng.cpp" />
-    <ClCompile Include="FontLibrary\Texture.cpp" />
     <ClCompile Include="glutcallbacks.cpp" />
     <ClCompile Include="HighPerformanceCounter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FontLibrary\Cube.frag" />
-    <None Include="FontLibrary\Cube.vert" />
-    <None Include="FontLibrary\Default_Font.frag" />
-    <None Include="FontLibrary\Default_Font.vert" />
-    <None Include="FontLibrary\SDF_Font.frag" />
-    <None Include="FontLibrary\SDF_Font.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
