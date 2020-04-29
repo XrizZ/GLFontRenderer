@@ -15,8 +15,8 @@
 
 using namespace std;
 
-int m_width = 1024;
-int m_height = 768;
+int m_width = 1280;
+int m_height = 900;
 
 CFontLibrary* m_fontLibrary = nullptr;
 

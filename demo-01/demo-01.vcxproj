@@ -122,6 +122,14 @@ xcopy "Dependencies\glew\bin\Release\Win32\glew32.dll" "$(OutDir)"  /Y /D</Comma
     <ClCompile Include="glutcallbacks.cpp" />
     <ClCompile Include="HighPerformanceCounter.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\FontLibrary\Shaders\Cube.frag" />
+    <None Include="..\FontLibrary\Shaders\Cube.vert" />
+    <None Include="..\FontLibrary\Shaders\Default_Font.frag" />
+    <None Include="..\FontLibrary\Shaders\Default_Font.vert" />
+    <None Include="..\FontLibrary\Shaders\SDF_Font.frag" />
+    <None Include="..\FontLibrary\Shaders\SDF_Font.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

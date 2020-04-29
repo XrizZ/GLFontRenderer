@@ -79,9 +79,21 @@ unsigned int m_loremDisplayListID = 0;
 unsigned int m_rotXDisplayListID = 0;
 unsigned int m_rotYDisplayListID = 0;
 unsigned int m_dynDisplayListID = 0;
-unsigned int m_sdfDisplayListID = 0;
+unsigned int m_sdf0DisplayListID = 0;
+unsigned int m_sdf1DisplayListID = 0;
 unsigned int m_sdf2DisplayListID = 0;
 unsigned int m_sdf3DisplayListID = 0;
+unsigned int m_sdf4DisplayListID = 0;
+unsigned int m_sdf5DisplayListID = 0;
+unsigned int m_sdf6DisplayListID = 0;
+unsigned int m_sdf7DisplayListID = 0;
+unsigned int m_sdf8DisplayListID = 0;
+unsigned int m_sdf9DisplayListID = 0;
+unsigned int m_sdf10DisplayListID = 0;
+unsigned int m_sdf11DisplayListID = 0;
+unsigned int m_sdf12DisplayListID = 0;
+unsigned int m_sdf13DisplayListID = 0;
+unsigned int m_sdf14DisplayListID = 0;
 
 GLuint m_cubeVertexArrayID = 0;
 
@@ -224,13 +236,6 @@ void Init(void)
 
 	glEnable(GL_POINT_SMOOTH);
 
-	if(m_fontLibrary)
-	{
-		bool success = m_fontLibrary->InitGLFonts();
-		if(!success)
-			return; //ERROR!
-	}
-
 	glGenVertexArrays(1, &m_cubeVertexArrayID);
 	glBindVertexArray(m_cubeVertexArrayID);
 
@@ -258,6 +263,13 @@ void Init(void)
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	m_projectionMatrix = glm::perspective(glm::radians(m_glFov), 4.0f / 3.0f, 0.1f, 100.0f);
 	MVP = m_projectionMatrix * m_ViewMatrix * m_modelMatrix; // Remember, matrix multiplication is the other way around
+
+	if(m_fontLibrary)
+	{
+		bool success = m_fontLibrary->InitGLFonts();
+		if(!success)
+			return; //ERROR!
+	}
 }
 
 void DrawFontStressTest()
@@ -276,8 +288,11 @@ void DrawFontStressTest()
 	char dynamicText2[50];
 	sprintf(dynamicText2, "Cube Rotation Angle y: %.6f", m_rotY);
 
-	std::string multiSDF = "MultiChannel SDF Font";
-	std::string singleSDF = "SingleChannel SDF Font";
+	std::string explanation1 = "native height - RGBA texture | SDF texture | Multi-Channel SDF texture";
+	std::string explanation2 = "scale: 2.0    - RGBA texture | SDF texture | Multi-Channel SDF texture";
+	std::string explanation3 = "scale: 4.0    - RGBA texture | SDF texture | Multi-Channel SDF texture";
+	std::string explanation4 = "scale: 8.0    -     SDF texture        |         Multi-Channel SDF texture";
+	std::string sample = "a";
 
 	int top = m_height-60;
 
@@ -289,18 +304,65 @@ void DrawFontStressTest()
 				m_loremDisplayListID = m_fontLibrary->GetNewDrawStringID();
 			m_fontLibrary->DrawStringWithLineBreaks(m_loremDisplayListID, bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, m_width, m_height, 1.0, m_width/2.0 - 30, 22);
 
-			if(m_sdf3DisplayListID == 0)
-				m_sdf3DisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdf3DisplayListID, singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, m_width, m_height, 2.0);
+			if(m_sdf0DisplayListID == 0)
+				m_sdf0DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf0DisplayListID, explanation1, m_width/2 + 10, top, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
 
-			if(m_sdfDisplayListID == 0)
-				m_sdfDisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdfDisplayListID, multiSDF + " Scale: 0.5", 30, 150, green, GLFONT_COURIER42_MSDF, m_width, m_height, .5);
+			if(m_sdf1DisplayListID == 0)
+				m_sdf1DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf1DisplayListID, sample, m_width/2 + 100, top - 50, green, GLFONT_COURIERNEW100, m_width, m_height, 1.0);
 
-			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_COURIER42_MSDF)*2.0;
 			if(m_sdf2DisplayListID == 0)
 				m_sdf2DisplayListID = m_fontLibrary->GetNewDrawStringID();
-			m_fontLibrary->DrawString(m_sdf2DisplayListID, multiSDF + " Scale: 2.0", 30, 150 - lHeightSDF, green, GLFONT_COURIER42_MSDF, m_width, m_height, 2.0);
+			m_fontLibrary->DrawString(m_sdf2DisplayListID, sample, m_width/2 + 250, top - 50, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 0.275);
+
+			if(m_sdf3DisplayListID == 0)
+				m_sdf3DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf3DisplayListID, sample, m_width/2 + 400, top - 50, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 1.0);
+
+			if(m_sdf4DisplayListID == 0)
+				m_sdf4DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf4DisplayListID, explanation2, m_width/2 + 10, top-100, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+
+			if(m_sdf5DisplayListID == 0)
+				m_sdf5DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf5DisplayListID, sample, m_width/2 + 70, top - 190, green, GLFONT_COURIERNEW100, m_width, m_height, 2.0);
+
+			if(m_sdf6DisplayListID == 0)
+				m_sdf6DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf6DisplayListID, sample, m_width/2 + 220, top - 190, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 0.55);
+
+			if(m_sdf7DisplayListID == 0)
+				m_sdf7DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf7DisplayListID, sample, m_width/2 + 370, top - 190, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 2.0);
+
+			if(m_sdf8DisplayListID == 0)
+				m_sdf8DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf8DisplayListID, explanation3, m_width/2 + 10, top-220, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+
+			if(m_sdf9DisplayListID == 0)
+				m_sdf9DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf9DisplayListID, sample, m_width/2, top - 400, green, GLFONT_COURIERNEW100, m_width, m_height, 4.0);
+
+			if(m_sdf10DisplayListID == 0)
+				m_sdf10DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf10DisplayListID, sample, m_width/2 + 190, top - 400, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 1.10);
+
+			if(m_sdf11DisplayListID == 0)
+				m_sdf11DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf11DisplayListID, sample, m_width/2 + 390, top - 400, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 4.0);
+
+			if(m_sdf12DisplayListID == 0)
+				m_sdf12DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf12DisplayListID, explanation4, m_width/2 + 10, top-440, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+
+			if(m_sdf13DisplayListID == 0)
+				m_sdf13DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf13DisplayListID, sample, m_width/2 - 200, top - 800, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 2.2);
+
+			if(m_sdf14DisplayListID == 0)
+				m_sdf14DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf14DisplayListID, sample, m_width/2 + 190, top - 800, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 8.0);
 		}
 		else
 		{
@@ -318,10 +380,22 @@ void DrawFontStressTest()
 		if(!m_dyntext)
 		{
 			m_fontLibrary->DrawStringWithLineBreaks(bigStaticTextWithLineBreaks, 30, top, white, GLFONT_ARIAL20, m_width, m_height, 1.0, m_width/2.0 - 30, 22);
-			m_fontLibrary->DrawString(singleSDF + " Scale: 2.0", 30, 200, green, GLFONT_DINNEXTLTPROMED_SDF, m_width, m_height, 2.0);
-			m_fontLibrary->DrawString(multiSDF + " Scale: 0.5", 30, 150, green, GLFONT_COURIER42_MSDF, m_width, m_height, .5);
-			float lHeightSDF = m_fontLibrary->GetLineHeight(GLFONT_COURIER42_MSDF)*2.0;
-			m_fontLibrary->DrawString(multiSDF + " Scale: 2.0", 30, 150 - lHeightSDF, green, GLFONT_COURIER42_MSDF, m_width, m_height, 2.0);
+
+			m_fontLibrary->DrawString(explanation1, m_width/2 + 10, top, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(sample, m_width/2 + 100, top - 50, green, GLFONT_COURIERNEW100, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(sample, m_width/2 + 250, top - 50, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 0.275);
+			m_fontLibrary->DrawString(sample, m_width/2 + 400, top - 50, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(explanation2, m_width/2 + 10, top-100, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(sample, m_width/2 + 70, top - 190, green, GLFONT_COURIERNEW100, m_width, m_height, 2.0);
+			m_fontLibrary->DrawString(sample, m_width/2 + 220, top - 190, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 0.55);
+			m_fontLibrary->DrawString(sample, m_width/2 + 370, top - 190, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 2.0);
+			m_fontLibrary->DrawString(explanation3, m_width/2 + 10, top-220, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(sample, m_width/2, top - 400, green, GLFONT_COURIERNEW100, m_width, m_height, 4.0);
+			m_fontLibrary->DrawString(sample, m_width/2 + 190, top - 400, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 1.10);
+			m_fontLibrary->DrawString(sample, m_width/2 + 390, top - 400, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 4.0);
+			m_fontLibrary->DrawString(explanation4, m_width/2 + 10, top-440, yellow, GLFONT_ARIAL20, m_width, m_height, 1.0);
+			m_fontLibrary->DrawString(sample, m_width/2 - 200, top - 800, red, GLFONT_COURIERNEW_SDF, m_width, m_height, 2.2);
+			m_fontLibrary->DrawString(sample, m_width/2 + 190, top - 800, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 8.0);
 		}
 		else
 		{
@@ -344,7 +418,7 @@ void DrawOnScreenDisplay()
 
 	std::string esc = "esc: exit";
 	std::string stress = "enter: Stress Test";
-	std::string disp = "l: Toggle Display Lists";
+	std::string disp = "l: Toggle Font Lookup Lists";
 	if(m_displayLists)
 		disp.append(" (enabled)");
 	else

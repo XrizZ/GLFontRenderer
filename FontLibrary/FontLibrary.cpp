@@ -754,15 +754,15 @@ void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* 
 		if(sdfLoc >= 0)
 			glUniform1i(sdfLoc, currFont->m_sdfType);
 
+		GLint fgColorLoc = glGetUniformLocation(programID, "fgColor");
+		if(fgColorLoc >= 0)
+			glUniform4f(fgColorLoc, color[0], color[1], color[2], color[3]);
+
 		if(currFont->m_sdfType == SDF_MULTI)
 		{
 			GLint pxLoc = glGetUniformLocation(programID, "pxRange");
 			if(pxLoc >= 0)
 				glUniform1f(pxLoc, (float)currFont->m_sdfRange);
-
-			GLint fgColorLoc = glGetUniformLocation(programID, "fgColor");
-			if(fgColorLoc >= 0)
-				glUniform4f(fgColorLoc, color[0], color[1], color[2], color[3]);
 
 			GLint bgColorLoc = glGetUniformLocation(programID, "bgColor");
 			if(bgColorLoc >= 0)

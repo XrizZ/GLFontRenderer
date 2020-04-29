@@ -87,4 +87,24 @@
       <Filter>Source Files\lodepng</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\FontLibrary\Shaders\Cube.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\FontLibrary\Shaders\Default_Font.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\FontLibrary\Shaders\Default_Font.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\FontLibrary\Shaders\SDF_Font.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\FontLibrary\Shaders\SDF_Font.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\FontLibrary\Shaders\Cube.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

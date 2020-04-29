@@ -17,7 +17,9 @@
 
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
 
-#define GLFONT_COURIER42_MSDF "Courier42_msdf"
+#define GLFONT_COURIERNEW_MSDF "CourierNew_msdf"
+#define GLFONT_COURIERNEW_SDF "CourierNew_sdf"
+#define GLFONT_COURIERNEW100 "CourierNew100"
 #define GLFONT_ARIAL20 "Arial20"
 #define GLFONT_DINNEXTLTPROMED_SDF "DINNextLTProMED_SDF"
 
