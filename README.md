@@ -2,10 +2,11 @@
 
 This font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 and updated it every now and then. The font files read by this library follow the format developed for the BM Font Generator: http://angelcode.com/products/bmfont/. The font file is accompanied by a texture file. The library supports standard textures, as well as single channel, and even multi channel SDFs.
 
-# Changelog
-- April 29th 2020: replaced the direct mode GL calls with modern GL and appropriate shaders - roughly the same performance as before with direct mode and Display Lists - but more appropriate for modern applications.
-![Modern GL](Documentation/ModernGL.png "Screenshot from the new Modern GL Demo project.")
+![Demo Project Screenshot](Documentation/SDFComparison.png "Screenshot from the Demo project.")
 
+# Changelog
+- April 30th 2020: fixed a bug with colors in single channel SDFs, added SDF comparison
+- April 29th 2020: replaced the direct mode GL calls with modern GL and appropriate shaders - roughly the same performance as before with direct mode and Display Lists - but more appropriate for modern applications.
 - April 22nd 2020: added support for XML format .fnt files, added multi SDF support, added support for PNG file type textures
 - April 14th 2020: moved project from MFC to standard libs
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline,glow and dropshadow yet. This allows for very nice scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
@@ -96,7 +97,7 @@ Only three steps are necessary to integrate a new font:
   
 In the following section, the use of BM-Font Generator is described in detail, but first a few notes. Each font-file you produce contains only a font of a fixed size, also it is already defined by the file whether it is bold or italic, etc. Same counts for outline, smoothness of the font, etc. This matter will become more clear with the following section.
 
-## Using Bm-Font-Generator
+## RGBA-Fonts: Using Bm-Font-Generator
 For producing the font-config as well as the actual font bitmap, I use the “Bitmap Font Generator” from AngelCode. Which can be obtained from their website: http://angelcode.com/products/bmfont/
 After installation, open the program, it should look like in the following figure.
 
@@ -165,9 +166,10 @@ here are a few examples: <br>
 - Helvetica_italic_outline1_12
 etc.
 
-Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software. Unless you want to use Signed Distance Field Textures, in that case, proceed the next chapter.
+Hit Save to complete the process. All there is to do now, is to copy the two files for that font into the fonts folder of your software. 
+You may convert the tga to png with another tool, just remember to change the file extension in the fnt file correctly.
 
-### Converting Texture to Signed Distance Field Texture
+## Single Channel SDF Fonts
 This is a 3 step process.
  
 #### BMFont
@@ -194,13 +196,21 @@ fieldType=sdf
 ```
 This will tell the Font Lib to use the single channel SDF shader when this font is used.
 
-### Converting Texture to Multi-Channel Signed Distance Field Texture
+##### Notes
+- This method will work, there is a known issue with the font scale though. Once the font is used by the FontLibrary, the scale will be off by a factor of 0.275. Meaning to get 100% scale you need to supply 0.275 as input.
+- I have added a sample SDF where this works fine though (DINNextLTProMED_SDF), this font was created using a different method though. If I have time, I'll investigate how to create single channel SDFs properly. 
+- Do not be alarmed that the output png or tga from imageMagick has black text instead of white, the shader will note care either way.
+- Due to the above issues, I suggest to use Multi-Channel SDFs instead - easier to use and scale works correctly.
+
+## Multi-Channel SDF Fonts
 For Multi-Channel SDFs you do not need to use the BM Font Generator, instead use: https://soimy.github.io/msdf-bmfont-xml/
 With this tool, you need to start from a ttf file, but you will receive the usual fnt plus a png file.
 Once installed, run the following from the command line:
 ```
 msdf-bmfont -o multisdf.png cour.ttf
 ```
+Noe that you can supply the font size and other parameters through the commandline as well.
+
 ## Defining Fonts in the Font-Library
 This is optional: Make a define for each new font you add to the FontLibrary.h, this should make coding easier though!
 
