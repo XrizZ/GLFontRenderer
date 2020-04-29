@@ -181,17 +181,19 @@ First, use the BMFont Generator, as described above, however, the use the follow
 - bit depth still 32
 - texture format either tga or png
 
-#### Edit Font File:
-Next, add the following to the fnt header my hand before the chars definition:
-fieldType=sdf
-This will tell the Font Lib to use the single channel SDF shader when this font is used.
-
 #### ImageMagick:
 Lastly, you need to use ImageMagick (https://imagemagick.org/index.php) or a similar tool to convert the texture file to an SDF.
 Once you have ImageMagick installed run the following from the command line (example is for windows power shell, but is very similar for Unix):
 ```
-magick convert --% Arial400_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 45%,55% -resize 25% Arial400_0.tga
+magick convert --% Arial400_0.tga -filter Jinc ( +clone -negate -morphology Distance Euclidean -level 50%,-50% ) -morphology Distance Euclidean -compose Plus -composite -level 45%,55% -resize 25% Arial400_0.png
 ```
+#### Edit Font File:
+Next, we need to edit the fnt file. Add the following to the fnt header my hand before the chars definition:
+```
+fieldType=sdf
+```
+This will tell the Font Lib to use the single channel SDF shader when this font is used.
+
 ### Converting Texture to Multi-Channel Signed Distance Field Texture
 For Multi-Channel SDFs you do not need to use the BM Font Generator, instead use: https://soimy.github.io/msdf-bmfont-xml/
 With this tool, you need to start from a ttf file, but you will receive the usual fnt plus a png file.
