@@ -223,9 +223,9 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 	}
 
 	//create 2-dimensional kernings array
-	newFont->m_kernings = new int*[first+1];
+	newFont->m_kernings = new float*[first+1];
 	for(int i=0; i <= first; i++)
-		newFont->m_kernings[i] = new int[second+1];
+		newFont->m_kernings[i] = new float[second+1];
 
 	//now lets fill the kernins array with correct values
 	parser->LoadKernings(newFont);
@@ -253,7 +253,8 @@ bool CFontLibrary::InitGLFonts()
 
 		if(!currFont || !CGLTexture::LoadTextureFromFile(currFont->m_bitmapFileName, currFont->m_fontTextures))
 		{
-			//TODO: log error
+			std::string err = "Font not found or could not load font texture.";
+			std::cout << err;
 			success = false;
 			continue;
 		}
@@ -269,7 +270,7 @@ bool CFontLibrary::InitGLFonts()
 	if (!m_defaultShaderProgram || !m_defaultShaderProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
 	{
 		std::string err = "FontLibrary failed to load default shader.";
-		//TODO: log error
+		std::cout << err;
 		success = false;
 	}
 
@@ -283,7 +284,7 @@ bool CFontLibrary::InitGLFonts()
 	if (!m_sdfShaderProgram || !m_sdfShaderProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
 	{
 		std::string err = "FontLibrary failed to load sdf shader.";
-		//TODO: log error
+		std::cout << err;
 		success = false;
 	}
 
@@ -295,14 +296,21 @@ bool CFontLibrary::InitGLFonts()
 	return success;
 }
 
-void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale)
+void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, float bgColor[4])
 {
 	CDrawString* volatileString = new CDrawString(0, font, textToDraw, x, y, color, scale);
 	volatileString->m_winH = winH;
 	volatileString->m_winW = winW;
+	if(bgColor)
+	{
+		volatileString->m_bgColor[0] = bgColor[0];
+		volatileString->m_bgColor[1] = bgColor[1];
+		volatileString->m_bgColor[2] = bgColor[2];
+		volatileString->m_bgColor[3] = bgColor[3];
+	}
 	PopulateVertexBuffers(volatileString);
 
-	DrawTriangles(font, color, volatileString);
+	DrawTriangles(font, color, volatileString, bgColor);
 	delete volatileString;
 }
 
@@ -430,7 +438,7 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 	delete[] quadList;
 }
 
-void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale)
+void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, float bgColor[4])
 {
 	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
@@ -441,6 +449,7 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 		if(savedString->m_text.compare(textToDraw) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
+			(bgColor && (bgColor[0] != savedString->m_bgColor[0] || bgColor[1] != savedString->m_bgColor[1] || bgColor[2] != savedString->m_bgColor[2] || bgColor[3] != savedString->m_bgColor[3])) ||
 			(scale != savedString->m_scale) ||
 			(winW != savedString->m_winW) || 
 			(winH != savedString->m_winH)
@@ -450,6 +459,13 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 			savedString->m_color[1] = color[1];
 			savedString->m_color[2] = color[2];
 			savedString->m_color[3] = color[3];
+			if(bgColor)
+			{
+				savedString->m_bgColor[0] = bgColor[0];
+				savedString->m_bgColor[1] = bgColor[1];
+				savedString->m_bgColor[2] = bgColor[2];
+				savedString->m_bgColor[3] = bgColor[3];
+			}
 			savedString->m_x = x;
 			savedString->m_y = y;
 			savedString->m_scale = scale;
@@ -465,6 +481,14 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 		savedString = new CDrawString(ID, font, textToDraw, x, y, color, scale);
 		savedString->m_winH = winH;
 		savedString->m_winW = winW;
+
+		if(bgColor)
+		{
+			savedString->m_bgColor[0] = bgColor[0];
+			savedString->m_bgColor[1] = bgColor[1];
+			savedString->m_bgColor[2] = bgColor[2];
+			savedString->m_bgColor[3] = bgColor[3];
+		}
 	}
 
 	if(found == m_glStringList.end() && savedString)
@@ -472,7 +496,7 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 
 	PopulateVertexBuffers(savedString);
 
-	DrawTriangles(font, color, savedString);
+	DrawTriangles(font, color, savedString, bgColor);
 }
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
@@ -562,18 +586,34 @@ unsigned int CFontLibrary::GetLineHeight(std::string font)
 	return retVal;
 }
 
-float CFontLibrary::GetWidthOfString(std::string textToDraw, std::string font, float scale)
+// For internal use only
+float CFontLibrary::AdjustForKerningPairs(std::string font, std::string textToDraw, int first, char second, float scale)
+{
+	int ascii1 = GetTextChar(textToDraw, first);
+	int ascii2 = GetTextChar(textToDraw, second);
+	if( ascii1 <= 0 || ascii2 <= 0 ) return 0;
+
+	CGLFont* currFont = GetFontPointer(font);
+	if(!currFont) return 0;
+
+	if(ascii1 <= currFont->m_highestKerningFirst && ascii2 <=currFont->m_highestKerningSecond)
+		return currFont->m_kernings[ascii1][ascii2];
+
+	return 0;
+}
+
+float CFontLibrary::GetWidthOfString(std::string textToDraw, std::string font, float scale, bool ignoreKerning)
 {
 	float retVal = 0;
 
 	for(int i=0; i<textToDraw.length(); i++)
 	{
-		retVal+=GetWidthOfChar(textToDraw.at(i), font);
+		retVal+=GetWidthOfChar(textToDraw.at(i), font)*scale;
 
-		//TODO: account for kernings!
+		if(!ignoreKerning)
+			if(i<textToDraw.length()-1)
+				retVal += AdjustForKerningPairs(font, textToDraw, i, i+1, scale);
 	}
-
-	retVal *= scale;
 
 	return retVal;
 }
@@ -697,7 +737,7 @@ int CFontLibrary::GetTextChar(std::string textToDraw, int pos)
 	return ch;
 }
 
-void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject)
+void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, float bgColor[4])
 {
 	CGLFont* currFont = GetFontPointer(font);
 	if (!currFont || !stringObject)
@@ -766,7 +806,12 @@ void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* 
 
 			GLint bgColorLoc = glGetUniformLocation(programID, "bgColor");
 			if(bgColorLoc >= 0)
-				glUniform4f(bgColorLoc, 0.0, 0.0, 0.0, 0.0); //TODO
+			{
+				if(bgColor)
+					glUniform4f(bgColorLoc, bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
+				else
+					glUniform4f(bgColorLoc, 0.0, 0.0, 0.0, 0.0);
+			}
 		}
 	}
 	else

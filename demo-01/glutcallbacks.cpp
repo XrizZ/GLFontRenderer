@@ -257,7 +257,7 @@ void Init(void)
 	if (!m_cubeProgram || !m_cubeProgram->InitFromString(vertexShaderCode, fragmentShaderCode))
 	{
 		std::string err = "FontLibrary failed to load default shader.";
-		//TODO: log error
+		std::cout << err;
 	}
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units

@@ -219,9 +219,6 @@ void CFontFileParser::GetStringBetween(int begin, int end, std::string* value, s
 	{
 		value->push_back(src.at(i));
 	}
-
-	//TODO
-	//*value = src.substr(begin, end-begin);
 }
 
 CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
@@ -253,7 +250,7 @@ CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
 	//-------------
 	std::string amountVal;
 	*startSearchPos = GetValueFromBufferStartingAt(amountString, &amountVal, start);
-	newKerning->m_amount = atoi(amountVal.c_str());
+	newKerning->m_amount = atof(amountVal.c_str());
 
 	return newKerning;
 }
@@ -426,7 +423,7 @@ bool CFontFileParser::LoadKernings(CGLFont* newFont)
 	//init the array with null
 	for(int f=0; f<=newFont->m_highestKerningFirst; f++)
 		for(int s=0; s<=newFont->m_highestKerningSecond; s++)
-			newFont->m_kernings[f][s] = 0;
+			newFont->m_kernings[f][s] = 0.0f;
 
 	std::string totalNumberOfKerningsString;
 	GetValueFromBufferOfFirst("kernings count=", &totalNumberOfKerningsString);

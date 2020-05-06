@@ -37,7 +37,7 @@ class CKerning
 public:
 	unsigned int m_first = 0;
 	unsigned int m_second = 0;
-	int m_amount = 0;
+	float m_amount = 0.0;
 };
 
 class CGLFont
@@ -58,7 +58,7 @@ public:
 	unsigned int m_highestASCIIChar = 0;
 	unsigned int m_textureH = 0;
 	unsigned int m_textureW = 0;
-	int**	m_kernings = nullptr;
+	float**	m_kernings = nullptr;
 	unsigned int m_highestKerningFirst = 0;
 	unsigned int m_highestKerningSecond = 0;
 	unsigned int m_fontTextures = 0;

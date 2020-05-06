@@ -101,6 +101,7 @@ public:
 	GLuint			m_uvBuffer =  0; //stores texture UVs for each vert
 	std::string		m_font = GLFONT_ARIAL20;
 	unsigned int	m_numVerticies = 0;
+	float			m_bgColor[4] = {0};
 };
 
 class CFontLibrary
@@ -117,19 +118,20 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts();
-	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f);
-	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f);
+	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
 	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
 	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
 	unsigned int GetNewDrawStringID();
-	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f);
+	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f, bool ignoreKerning = true);
 	unsigned int GetLineHeight(std::string font);
 
 private:
 	//functions:
+	float AdjustForKerningPairs(std::string font, std::string textToDraw, int first, char second, float scale);
 	CGLFont* ParseFont(std::string fileName);
 	CGLQuad2D* TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale);
-	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject);
+	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, float bgColor[4] = {0});
 	CGLFont* GetFontPointer(std::string fontName);
 	int GetTextChar(std::string textToDraw, int pos);
 	unsigned int GetWidthOfChar(char ch, std::string font);
