@@ -283,12 +283,12 @@ void DrawFontStressTest()
 	std::string bigStaticTextWithLineBreaks = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec aliquet urna congue, scelerisque augue id, scelerisque turpis. Suspendisse potenti. Proin efficitur, justo eu ultricies accumsan, leo nunc placerat lacus, eu suscipit odio erat ac ante. Nunc euismod sit amet mi vel mollis. Nullam molestie dolor quis placerat iaculis. Quisque ut lacus faucibus tellus blandit tincidunt. Praesent lobortis eros nunc, non volutpat eros aliquet sed. Fusce non erat leo. Aenean a orci vel ante congue gravida sit amet quis nisi. Proin pulvinar, est eu posuere mattis, velit magna egestas arcu, at tincidunt risus dolor sed felis. Donec dapibus egestas hendrerit. Mauris maximus in ipsum non vulputate. Ut sagittis a leo et placerat. Donec dictum erat sed mi varius, nec euismod massa sodales. Pellentesque in lorem a urna tempor vehicula sed id justo. Donec dictum dapibus risus eget porta. Phasellus at libero blandit, pellentesque felis nec, aliquet orci. Nam eu aliquam nunc, ut imperdiet augue. Nunc viverra venenatis lacinia. Fusce elementum dignissim turpis, sed efficitur arcu feugiat at. Nam rutrum, odio ac sodales semper, magna arcu ullamcorper odio, ut fermentum mi lectus quis orci. Cras ultricies arcu ante, non consequat ex pulvinar et. Quisque in blandit quam. Quisque vitae feugiat elit, eu congue mauris. Phasellus suscipit ligula a est dignissim consequat. Quisque viverra ex metus, fringilla elementum metus lobortis quis. Mauris vitae convallis ipsum. Nullam faucibus ornare dui eu consectetur. Donec aliquam sem quis ligula ultricies, ac fringilla arcu congue. Pellentesque molestie diam in maximus imperdiet. Integer cursus sit amet sapien ac porta. In blandit aliquet consequat. Vivamus ultrices pretium facilisis. Morbi eu turpis id mauris malesuada fermentum in nec ipsum. Vestibulum congue dapibus est, a vulputate erat congue a. Phasellus aliquet blandit lectus. Mauris tincidunt luctus ullamcorper. Curabitur diam turpis, aliquet ac sagittis nec, gravida eget justo. Duis mattis diam ac lacus hendrerit mattis ut ut diam. Praesent eu velit nec nisi hendrerit tempor. Nunc dapibus mauris ante, eu congue magna sollicitudin eget. Fusce viverra egestas quam. Vivamus porttitor est vitae vestibulum tristique. Suspendisse non lacinia tortor. Suspendisse facilisis, dolor sit amet dignissim efficitur, orci mi lobortis urna, vel posuere urna mi a sem. Morbi a libero bibendum, dictum dui eu, finibus sem. Aenean viverra malesuada nulla, efficitur laoreet nulla egestas sit amet. Phasellus ut imperdiet lorem, vel aliquam mauris. Donec sit amet est id ex dapibus cursus nec vel lacus. Morbi ac velit tellus. Quisque eget rutrum felis. Donec tempor ex turpis, vel pretium lectus ultrices ut. Ut eget est ac nulla lacinia viverra ut a felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque ornare elit in magna lobortis dapibus. Sed sapien est, tincidunt nec leo eu, consequat accumsan mi. Etiam quis dignissim enim. Praesent porta erat a diam posuere porta.";
 
 	char dynamicText1[50];
-	sprintf(dynamicText1, "Cube Rotation Angle x: %.6f", m_rotX);
+	sprintf_s(dynamicText1, "Cube Rotation Angle x: %.6f", m_rotX);
 
 	char dynamicText2[50];
-	sprintf(dynamicText2, "Cube Rotation Angle y: %.6f", m_rotY);
+	sprintf_s(dynamicText2, "Cube Rotation Angle y: %.6f", m_rotY);
 
-	std::string explanation1 = "native height - RGBA texture | SDF texture | Multi-Channel SDF texture";
+	std::string explanation1 = "native scale  - RGBA texture | SDF texture | Multi-Channel SDF texture";
 	std::string explanation2 = "scale: 2.0    - RGBA texture | SDF texture | Multi-Channel SDF texture";
 	std::string explanation3 = "scale: 4.0    - RGBA texture | SDF texture | Multi-Channel SDF texture";
 	std::string explanation4 = "scale: 8.0    -     SDF texture        |         Multi-Channel SDF texture";
@@ -411,10 +411,10 @@ void DrawOnScreenDisplay()
 		return; //ERROR!
 
 	char fps[20];
-	sprintf(fps, "fps: %.1f", m_fps);
+	sprintf_s(fps, "fps: %.1f", m_fps);
 
 	char fov[20];
-	sprintf(fov, "fovH: %.1f", m_glFov);
+	sprintf_s(fov, "fovH: %.1f", m_glFov);
 
 	std::string esc = "esc: exit";
 	std::string stress = "enter: Stress Test";
