@@ -34,8 +34,8 @@ bool CGLTexture::GetTextureSizeFromFile(std::string strFileName, float &w, float
 	if(!pImage)
 		return false;
 
-	w = pImage->m_sizeX;
-	h = pImage->m_sizeY;
+	w = (float)pImage->m_sizeX;
+	h = (float)pImage->m_sizeY;
 
 	if(pImage)
 	{
@@ -118,7 +118,7 @@ CRawTexture* CGLTexture::LoadPNG(std::string strFileName)
 
 	CRawTexture *pImageData = new CRawTexture();
 	pImageData->m_data = new unsigned char[image.size()];
-	for(int i=0; i<image.size(); i++)
+	for(unsigned int i=0; i<image.size(); i++)
 		pImageData->m_data[i] = image.at(i);
 
 	pImageData->m_channels = 4;

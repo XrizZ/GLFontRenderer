@@ -36,7 +36,7 @@ private:
 	CKerning* GetNextKerning(int *startSearchPos);
 
 	//variables:
-	std::vector<std::string> m_seperators = {" ", "\/"}; //separators: whitespace (for standard text file) and slash (for XML)
+	std::vector<std::string> m_seperators = {" ", "/"}; //separators: whitespace (for standard text file) and slash (for XML)
 	bool m_isInitialized = false;
 	std::vector<char> m_buffer;
 	std::string m_bufferString;

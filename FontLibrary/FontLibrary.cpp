@@ -26,7 +26,7 @@ CFontLibrary::~CFontLibrary()
 	std::cout << "CFontLibrary Destructor \n";
 
 	m_fontList.clear();
-	for(int i=0; i<m_glStringList.size(); i++)
+	for(unsigned int i=0; i<m_glStringList.size(); i++)
 	{
 		if(m_glStringList.at(i)->m_vertexbuffer)
 			glDeleteBuffers(1, &m_glStringList.at(i)->m_vertexbuffer);
@@ -71,7 +71,7 @@ bool CFontLibrary::ParseAllFontsInFolder()
 	{
 		std::string curr = *it;
 		char* currFileName = new char[m_fontFolder.length() + 2 + curr.length()];
-		sprintf(currFileName, "%s\\%s", m_fontFolder.c_str(), curr.c_str());
+		sprintf_s(currFileName, m_fontFolder.size() + curr.size() + 2, "%s\\%s", m_fontFolder.c_str(), curr.c_str());
 
 		CGLFont* newFont = ParseFont(currFileName);
 		//trim to correct name
@@ -159,7 +159,7 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 	parser->GetValueFromBufferOfFirst(textureNameString, &textureNameVal);
 
 	char* currFileName = new char[m_fontFolder.length() + 2 + textureNameVal.length()];
-	sprintf(currFileName, "%s\\%s", m_fontFolder.c_str(), textureNameVal.c_str());
+	sprintf_s(currFileName, m_fontFolder.size() + textureNameVal.size() + 2, "%s\\%s", m_fontFolder.c_str(), textureNameVal.c_str());
 	newFont->m_bitmapFileName = currFileName;
 
 	//load base
@@ -323,17 +323,17 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 		return;
 
 	unsigned int lineHeight = GetLineHeight(stringObject->m_font);
-	unsigned int line = 0;
+	int line = 0;
 
-	int numQuads = stringObject->m_text.length();
+	unsigned int numQuads = stringObject->m_text.length();
 	CGLQuad2D* quadList = new CGLQuad2D[numQuads];
 	int qi = 0;
-	for(int index = 0; index < numQuads;)
+	for(unsigned int index = 0; index < numQuads;)
 	{
 		if(stringObject->m_maxLines > 0 && line >= stringObject->m_maxLines) //lets only draw the number of lines defind my "maxLines"
 			break;
 
-		int textWidth = 0;
+		float textWidth = 0.0f;
 		std::string subStringToDraw;
 		if(stringObject->m_maxLines == 0) //we don't care about line breaks
 			subStringToDraw = stringObject->m_text;
@@ -344,9 +344,9 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 			textWidth = GetWidthOfString(subStringToDraw, stringObject->m_font, stringObject->m_scale);
 		}
 
-		CGLQuad2D* tempQuadList = TextToQuadList(stringObject->m_font, subStringToDraw, stringObject->m_x, stringObject->m_y - line++*lineHeight*stringObject->m_scale, stringObject->m_scale);
+		CGLQuad2D* tempQuadList = TextToQuadList(stringObject->m_font, subStringToDraw, stringObject->m_x, stringObject->m_y - (int)(line++*lineHeight*stringObject->m_scale), stringObject->m_scale);
 
-		for(int l = 0; l<subStringToDraw.size(); l++)
+		for(unsigned int l = 0; l<subStringToDraw.size(); l++)
 		{
 			quadList[qi++] = tempQuadList[l];
 		}
@@ -365,7 +365,7 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 	int winW = stringObject->m_winW;
 	int winH = stringObject->m_winH;
 	
-	for(int i=0; i<numQuads; i++)
+	for(unsigned int i=0; i<numQuads; i++)
 	{
 		unsigned int vertexIndex = i*18;
 		unsigned int uvIndex = i*12;
@@ -373,46 +373,46 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 		//first triangle of quad
 
 		//top left vertex
-		vertexBufferPositions[vertexIndex] = (((float)quadList[i].topLeftX)/winW)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+1] = (((float)quadList[i].topLeftY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+2] = 0.0;
+		vertexBufferPositions[vertexIndex] = (((float)quadList[i].topLeftX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+1] = (((float)quadList[i].topLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+2] = 0.0f;
 		vertexBufferUV[uvIndex] = quadList[i].textureTopLeftX;
 		vertexBufferUV[uvIndex+1] = quadList[i].textureTopLeftY;
 
 		//bottom left vertex
-		vertexBufferPositions[vertexIndex+3] = (((float)quadList[i].bottomLeftX)/winW)*2.0 -1.0;
-		vertexBufferPositions[vertexIndex+3+1] = (((float)quadList[i].bottomLeftY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+3+2] = 0.0;
+		vertexBufferPositions[vertexIndex+3] = (((float)quadList[i].bottomLeftX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+3+1] = (((float)quadList[i].bottomLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+3+2] = 0.0f;
 		vertexBufferUV[uvIndex+2] = quadList[i].textureBottomLeftX;
 		vertexBufferUV[uvIndex+2+1] = quadList[i].textureBottomLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+6] = (((float)quadList[i].bottomRightX)/winW)*2.0 -1.0;
-		vertexBufferPositions[vertexIndex+6+1] = (((float)quadList[i].bottomRightY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+6+2] = 0.0;
+		vertexBufferPositions[vertexIndex+6] = (((float)quadList[i].bottomRightX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+6+1] = (((float)quadList[i].bottomRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+6+2] = 0.0f;
 		vertexBufferUV[uvIndex+4] = quadList[i].textureBottomRightX;
 		vertexBufferUV[uvIndex+4+1] = quadList[i].textureBottomRightY;
 
 		////////second triangle of quad
 
 		//top left vertex
-		vertexBufferPositions[vertexIndex+9] = (((float)quadList[i].topLeftX)/winW)*2.0 -1.0;
-		vertexBufferPositions[vertexIndex+9+1] = (((float)quadList[i].topLeftY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+9+2] = 0.0;
+		vertexBufferPositions[vertexIndex+9] = (((float)quadList[i].topLeftX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+9+1] = (((float)quadList[i].topLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+9+2] = 0.0f;
 		vertexBufferUV[uvIndex+6] = quadList[i].textureTopLeftX;
 		vertexBufferUV[uvIndex+6+1] = quadList[i].textureTopLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+12] = (((float)quadList[i].bottomRightX)/winW)*2.0 -1.0;
-		vertexBufferPositions[vertexIndex+12+1] = (((float)quadList[i].bottomRightY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+12+2] = 0.0;
+		vertexBufferPositions[vertexIndex+12] = (((float)quadList[i].bottomRightX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+12+1] = (((float)quadList[i].bottomRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+12+2] = 0.0f;
 		vertexBufferUV[uvIndex+8] = quadList[i].textureBottomRightX;
 		vertexBufferUV[uvIndex+8+1] = quadList[i].textureBottomRightY;
 
 		//top right vertex
-		vertexBufferPositions[vertexIndex+15] = (((float)quadList[i].topRightX)/winW)*2.0 -1.0;
-		vertexBufferPositions[vertexIndex+15+1] = (((float)quadList[i].topRightY)/winH)*2.0 - 1.0;
-		vertexBufferPositions[vertexIndex+15+2] = 0.0;
+		vertexBufferPositions[vertexIndex+15] = (((float)quadList[i].topRightX)/winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+15+1] = (((float)quadList[i].topRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+15+2] = 0.0f;
 		vertexBufferUV[uvIndex+10] = quadList[i].textureTopRightX;
 		vertexBufferUV[uvIndex+10+1] = quadList[i].textureTopRightY;
 	}
@@ -596,7 +596,7 @@ float CFontLibrary::AdjustForKerningPairs(std::string font, std::string textToDr
 	CGLFont* currFont = GetFontPointer(font);
 	if(!currFont) return 0;
 
-	if(ascii1 <= currFont->m_highestKerningFirst && ascii2 <=currFont->m_highestKerningSecond)
+	if(ascii1 <= (int)currFont->m_highestKerningFirst && ascii2 <= (int)currFont->m_highestKerningSecond)
 		return currFont->m_kernings[ascii1][ascii2];
 
 	return 0;
@@ -606,7 +606,7 @@ float CFontLibrary::GetWidthOfString(std::string textToDraw, std::string font, f
 {
 	float retVal = 0;
 
-	for(int i=0; i<textToDraw.length(); i++)
+	for(unsigned int i=0; i<textToDraw.length(); i++)
 	{
 		retVal+=GetWidthOfChar(textToDraw.at(i), font)*scale;
 
@@ -635,7 +635,7 @@ unsigned int CFontLibrary::GetWidthOfChar(char ch, std::string font)
 	stringToTest.push_back(ch);
 
 	int ascii = GetTextChar(stringToTest, 0);
-	if(ascii >= 0 && ascii < currfont->m_highestASCIIChar) //sanity check
+	if(ascii >= 0 && ascii < (int)currfont->m_highestASCIIChar) //sanity check
 		retVal = currfont->m_fontCharInfo[ascii]->m_xadvance;
 
 	return retVal;
@@ -658,13 +658,13 @@ CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw
 
 	int cursor = 0;
 
-	for(int i=0; i<textToDraw.length(); i++)
+	for(unsigned int i=0; i<textToDraw.length(); i++)
 	{
 		int ascii = GetTextChar(textToDraw, i);
 
 		//check if current character is in our font
 		// if not, then set it to the default char
-		if(ascii <= currfont->m_highestASCIIChar)
+		if(ascii <= (int)currfont->m_highestASCIIChar)
 		{
 			if(currfont->m_fontCharInfo[ascii] == nullptr)
 				ascii = defaultChar;
@@ -684,41 +684,41 @@ CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw
 		//top left
 		quadList[i].textureTopLeftX = (float) charX / (float) currfont->m_textureW;
 		quadList[i].textureTopLeftY = (float) charY / (float) currfont->m_textureH;
-		quadList[i].topLeftX = cursor + (offsetX)*scale + x;
-		quadList[i].topLeftY = y + (base - offsetY)*scale;
+		quadList[i].topLeftX = cursor + (int)((offsetX)*scale) + x;
+		quadList[i].topLeftY = y + (int)((base - offsetY)*scale);
 
 		//top right
 		quadList[i].textureTopRightX = (float) (charX+width) / (float) currfont->m_textureW;
 		quadList[i].textureTopRightY = (float) charY / (float) currfont->m_textureH;
-		quadList[i].topRightX = (width + offsetX)*scale + x + cursor;
-		quadList[i].topRightY = y + (base - offsetY)*scale;
+		quadList[i].topRightX = (int)((width + offsetX)*scale) + x + cursor;
+		quadList[i].topRightY = y + (int)((base - offsetY)*scale);
 
 		//bottom right
 		quadList[i].textureBottomRightX = (float) (charX+width) / (float) currfont->m_textureW;
 		quadList[i].textureBottomRightY = (float) (charY+height) / (float) currfont->m_textureH;
-		quadList[i].bottomRightX = (width + offsetX)*scale + x + cursor;
-		quadList[i].bottomRightY = y + (base - offsetY - height)*scale;
+		quadList[i].bottomRightX = (int)((width + offsetX)*scale) + x + cursor;
+		quadList[i].bottomRightY = y + (int)((base - offsetY - height)*scale);
 
 		//bottom left
 		quadList[i].textureBottomLeftX = (float) charX / (float) currfont->m_textureW;
 		quadList[i].textureBottomLeftY = (float) (charY+height) / (float) currfont->m_textureH;
-		quadList[i].bottomLeftX = (offsetX)*scale + x + cursor;
-		quadList[i].bottomLeftY = y + (base - offsetY - height)*scale;
+		quadList[i].bottomLeftX = (int)((offsetX)*scale) + x + cursor;
+		quadList[i].bottomLeftY = y + (int)((base - offsetY - height)*scale);
 
 		//calc kerning depending on current and next character in the string to draw
-		int kerning = 0;
+		float kerning = 0.0f;
 		if(i>0 && i<textToDraw.length()-1)
 		{
-			if(ascii <= currfont->m_highestKerningFirst)
+			if(ascii <= (int)currfont->m_highestKerningFirst)
 			{
 				int asciiNext = textToDraw[i+1];
-				if(asciiNext <= currfont->m_highestKerningSecond)
+				if(asciiNext <= (int)currfont->m_highestKerningSecond)
 					kerning = currfont->m_kernings[ascii][asciiNext];
 			}
 		}
 
 		//get cursor position in x-direction for next character in string
-		cursor += (currfont->m_fontCharInfo[ascii]->m_xadvance + kerning)*scale;
+		cursor += (currfont->m_fontCharInfo[ascii]->m_xadvance + (int)kerning)*(int)scale;
 	}
 
 	return quadList;

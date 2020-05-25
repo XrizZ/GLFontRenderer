@@ -74,7 +74,7 @@ bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string*
 		return false; //we have not found the value we are looking for in the given buffer
 
 	size_t seperatorPos1 = 0;
-	for(int i=0; i<m_seperators.size(); i++)
+	for(unsigned int i=0; i<m_seperators.size(); i++)
 	{
 		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
 		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -86,21 +86,21 @@ bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string*
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
-	int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+	unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 	seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
 	int beginValue = firstPos + string.length();
 
 	//retrieve string between beginValue and seperatorPos
 	value->clear();
-	for(int i=beginValue; i<seperatorPos; i++)
+	for(unsigned int i=beginValue; i<seperatorPos; i++)
 	{
 		value->push_back(m_bufferString.at(i));
 	}
 
 	//remove the "
 	FindAndReplaceAll(*value, "\"", "");
-	FindAndReplaceAll(*value, "\>", "");
+	FindAndReplaceAll(*value, ">", "");
 
 	return true;
 }
@@ -113,7 +113,7 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 
 	//size_t seperatorPos1 = m_bufferString.find(m_seperator, firstPos+string.length());
 	size_t seperatorPos1 = 0;
-	for(int i=0; i<m_seperators.size(); i++)
+	for(unsigned int i=0; i<m_seperators.size(); i++)
 	{
 		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
 		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -124,7 +124,7 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
-	int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+	unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 	seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
 	int beginValue = firstPos + string.length();
@@ -133,7 +133,7 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 
 	//remove the "
 	FindAndReplaceAll(*value, "\"", "");
-	FindAndReplaceAll(*value, "\>", "");
+	FindAndReplaceAll(*value, ">", "");
 
 	return seperatorPos;
 }
@@ -152,7 +152,7 @@ bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_l
 
 		//size_t seperatorPos1 = m_bufferString.find(m_seperator, beginValue);
 		size_t seperatorPos1 = 0;
-		for(int i=0; i<m_seperators.size(); i++)
+		for(unsigned int i=0; i<m_seperators.size(); i++)
 		{
 			size_t tempPos = m_bufferString.find(m_seperators.at(i), beginValue);
 			if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -163,18 +163,18 @@ bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_l
 		size_t seperatorPos2 = m_bufferString.find("\n", beginValue);
 		size_t seperatorPos3 = m_bufferString.find("\r", beginValue);
 
-		int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+		unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 		seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
 		//retrieve string between beginValue and seperatorPos
 		std::string currValue;
-		for(int i=beginValue; i<seperatorPos; i++)
+		for(unsigned int i=beginValue; i<seperatorPos; i++)
 		{
 			currValue.push_back(m_bufferString.at(i));
 		}
 		//remove the "
 		FindAndReplaceAll(currValue, "\"", "");
-		FindAndReplaceAll(currValue, "\>", "");
+		FindAndReplaceAll(currValue, ">", "");
 		values->push_front(currValue);
 
 		currPos = m_bufferString.find(string, beginValue + currValue.length());
@@ -203,7 +203,7 @@ int CFontFileParser::GetHighestSupportedChar()
 		std::string currString = *it;
 		//remove the "
 		FindAndReplaceAll(currString, "\"", "");
-		FindAndReplaceAll(currString, "\>", "");
+		FindAndReplaceAll(currString, ">", "");
 		int currAsciiID = atoi(currString.c_str());
 		if(currAsciiID > retVal)
 			retVal = currAsciiID;
@@ -250,7 +250,7 @@ CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
 	//-------------
 	std::string amountVal;
 	*startSearchPos = GetValueFromBufferStartingAt(amountString, &amountVal, start);
-	newKerning->m_amount = atof(amountVal.c_str());
+	newKerning->m_amount = (float)atof(amountVal.c_str());
 
 	return newKerning;
 }
@@ -356,7 +356,7 @@ bool CFontFileParser::LoadCharInfos(CGLFont* newFont)
 	bool success = true;
 
 	//init the array with null
-	for(int i=0; i <= newFont->m_highestASCIIChar; i++)
+	for(unsigned int i=0; i <= newFont->m_highestASCIIChar; i++)
 		newFont->m_fontCharInfo[i] = nullptr;
 
 	std::string totalNumberOfCharInfosString;
@@ -421,8 +421,8 @@ bool CFontFileParser::LoadKernings(CGLFont* newFont)
 	bool success = true;
 
 	//init the array with null
-	for(int f=0; f<=newFont->m_highestKerningFirst; f++)
-		for(int s=0; s<=newFont->m_highestKerningSecond; s++)
+	for(unsigned int f=0; f<=newFont->m_highestKerningFirst; f++)
+		for(unsigned int s=0; s<=newFont->m_highestKerningSecond; s++)
 			newFont->m_kernings[f][s] = 0.0f;
 
 	std::string totalNumberOfKerningsString;
