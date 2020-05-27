@@ -117,7 +117,7 @@ public:
 
 	//functions:
 	bool ParseAllFontsInFolder();
-	bool InitGLFonts();
+	bool InitGLFonts(bool compressNonSDFTextures = false);
 	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
 	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
 	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);

@@ -241,7 +241,7 @@ CGLFont* CFontLibrary::ParseFont(std::string fileName)
 
 //returns false on errors, true otherwise
 //only call this function once per instance!
-bool CFontLibrary::InitGLFonts()
+bool CFontLibrary::InitGLFonts(bool compressNonSDFTextures/* = false*/)
 {
 	bool success = true;
 
@@ -250,8 +250,15 @@ bool CFontLibrary::InitGLFonts()
 	{
 		//load texture for current font
 		CGLFont* currFont = it.second;
+		if(!currFont)
+		{
+			success = false;
+			continue;
+		}
 
-		if(!currFont || !CGLTexture::LoadTextureFromFile(currFont->m_bitmapFileName, currFont->m_fontTextures))
+		bool compressCurrTex = currFont->m_sdfType == 0 ? compressNonSDFTextures : false;
+
+		if(!CGLTexture::LoadTextureFromFile(currFont->m_bitmapFileName, currFont->m_fontTextures, compressCurrTex))
 		{
 			std::string err = "Font not found or could not load font texture.";
 			std::cout << err;

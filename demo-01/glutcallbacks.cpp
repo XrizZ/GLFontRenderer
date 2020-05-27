@@ -266,7 +266,8 @@ void Init(void)
 
 	if(m_fontLibrary)
 	{
-		bool success = m_fontLibrary->InitGLFonts();
+		bool compressNonSDFTextures = true;
+		bool success = m_fontLibrary->InitGLFonts(compressNonSDFTextures);
 		if(!success)
 			return; //ERROR!
 	}

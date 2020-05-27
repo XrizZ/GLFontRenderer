@@ -45,7 +45,7 @@ bool CGLTexture::GetTextureSizeFromFile(std::string strFileName, float &w, float
 	return true;
 }
 
-bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &texture)
+bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &texture, bool compressTexture /*=false*/)
 {
 	if(!strFileName.length())
 		return false;
@@ -78,16 +78,34 @@ bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &text
 	if(pImage->m_channels == 3)
 		textureType = GL_RGB;
 
-	//set mipmapping
+	bool mipmapping = true;
+
+	//set texture filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-	if(pImage->m_channels == 3)
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB8, pImage->m_sizeX, pImage->m_sizeY, textureType, GL_UNSIGNED_BYTE, pImage->m_data);
+	if(!compressTexture)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, pImage->m_channels == 3 ? GL_RGB8 : GL_RGBA8, pImage->m_sizeX, pImage->m_sizeY, 0 , textureType, GL_UNSIGNED_BYTE, pImage->m_data);
+	}
 	else
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, pImage->m_sizeX, pImage->m_sizeY, textureType, GL_UNSIGNED_BYTE, pImage->m_data);
+	{
+		GLenum format = pImage->m_channels == 3 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, pImage->m_sizeX, pImage->m_sizeY, 0, textureType, GL_UNSIGNED_BYTE, pImage->m_data);
+
+		GLint compressed = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_ARB, &compressed);
+		if(!compressed)
+		{
+			//could not load texture with DXT compression
+			return false;
+		}
+	}
+
+	if(mipmapping)
+		glGenerateMipmapEXT(GL_TEXTURE_2D);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 

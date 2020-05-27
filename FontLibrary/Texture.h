@@ -33,7 +33,7 @@ public:
 	CGLTexture(){};
 	~CGLTexture(){};
 
-	static bool LoadTextureFromFile(std::string strFileName, unsigned int& texID);
+	static bool LoadTextureFromFile(std::string strFileName, unsigned int& texID, bool compressTexture =false);
 	static bool GetTextureSizeFromFile(std::string strFileName, float &w, float &h);
 	
 private:
