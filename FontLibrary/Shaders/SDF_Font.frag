@@ -8,6 +8,8 @@ R"(
 	uniform float pxRange;
 	uniform vec4 fgColor;
 	uniform vec4 bgColor;
+	uniform vec4 outlineColor;
+	uniform int outline;
 
 	out vec4 FragColor;
 
@@ -25,7 +27,11 @@ R"(
 			vec4 col = fgColor;
 			float mask = texture(u_FontTexture, uv).a;
 			float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, mask);
-			FragColor = vec4(col.rgb, col.a * alpha);
+
+			if(outline > 0 && mask > (0.5 - outline*0.075) && mask <= 0.51)
+				FragColor = outlineColor;
+			else
+				FragColor = vec4(col.rgb, col.a * alpha);
 		}
 		else //multi channel sdf
 		{
@@ -34,7 +40,11 @@ R"(
 			float sigDist = median(sample.r, sample.g, sample.b) - 0.5;
 			sigDist *= dot(msdfUnit, 0.5/fwidth(uv));
 			float opacity = clamp(sigDist + 0.5, 0.0, 1.0);
-			FragColor = mix(bgColor, fgColor, opacity);
+
+			if(outline > 0 && sigDist > (-0.5 - outline*0.5) && sigDist <= 1.0)
+				FragColor = outlineColor;
+			else
+				FragColor = mix(bgColor, fgColor, opacity);
 		}
 	}
 )";

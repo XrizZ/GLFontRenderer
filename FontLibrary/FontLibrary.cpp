@@ -303,7 +303,7 @@ bool CFontLibrary::InitGLFonts(bool compressNonSDFTextures/* = false*/)
 	return success;
 }
 
-void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, float bgColor[4])
+void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int outline , float outlineColor[4], float bgColor[4])
 {
 	CDrawString* volatileString = new CDrawString(0, font, textToDraw, x, y, color, scale);
 	volatileString->m_winH = winH;
@@ -317,7 +317,7 @@ void CFontLibrary::DrawString(std::string textToDraw, int x, int y, float color[
 	}
 	PopulateVertexBuffers(volatileString);
 
-	DrawTriangles(font, color, volatileString, bgColor);
+	DrawTriangles(font, color, volatileString, outline, outlineColor, bgColor);
 	delete volatileString;
 }
 
@@ -380,22 +380,22 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 		//first triangle of quad
 
 		//top left vertex
-		vertexBufferPositions[vertexIndex] = (((float)quadList[i].topLeftX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+1] = (((float)quadList[i].topLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+2] = 0.0f;
 		vertexBufferUV[uvIndex] = quadList[i].textureTopLeftX;
 		vertexBufferUV[uvIndex+1] = quadList[i].textureTopLeftY;
 
 		//bottom left vertex
-		vertexBufferPositions[vertexIndex+3] = (((float)quadList[i].bottomLeftX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+3+1] = (((float)quadList[i].bottomLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+3] = ((quadList[i].bottomLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+3+1] = ((quadList[i].bottomLeftY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+3+2] = 0.0f;
 		vertexBufferUV[uvIndex+2] = quadList[i].textureBottomLeftX;
 		vertexBufferUV[uvIndex+2+1] = quadList[i].textureBottomLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+6] = (((float)quadList[i].bottomRightX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+6+1] = (((float)quadList[i].bottomRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+6] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+6+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+6+2] = 0.0f;
 		vertexBufferUV[uvIndex+4] = quadList[i].textureBottomRightX;
 		vertexBufferUV[uvIndex+4+1] = quadList[i].textureBottomRightY;
@@ -403,22 +403,22 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 		////////second triangle of quad
 
 		//top left vertex
-		vertexBufferPositions[vertexIndex+9] = (((float)quadList[i].topLeftX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+9+1] = (((float)quadList[i].topLeftY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+9] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+9+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+9+2] = 0.0f;
 		vertexBufferUV[uvIndex+6] = quadList[i].textureTopLeftX;
 		vertexBufferUV[uvIndex+6+1] = quadList[i].textureTopLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+12] = (((float)quadList[i].bottomRightX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+12+1] = (((float)quadList[i].bottomRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+12] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+12+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+12+2] = 0.0f;
 		vertexBufferUV[uvIndex+8] = quadList[i].textureBottomRightX;
 		vertexBufferUV[uvIndex+8+1] = quadList[i].textureBottomRightY;
 
 		//top right vertex
-		vertexBufferPositions[vertexIndex+15] = (((float)quadList[i].topRightX)/winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+15+1] = (((float)quadList[i].topRightY)/winH)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+15] = ((quadList[i].topRightX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+15+1] = ((quadList[i].topRightY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferPositions[vertexIndex+15+2] = 0.0f;
 		vertexBufferUV[uvIndex+10] = quadList[i].textureTopRightX;
 		vertexBufferUV[uvIndex+10+1] = quadList[i].textureTopRightY;
@@ -445,7 +445,7 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 	delete[] quadList;
 }
 
-void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, float bgColor[4])
+void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int outline , float outlineColor[4], float bgColor[4])
 {
 	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
@@ -459,7 +459,8 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 			(bgColor && (bgColor[0] != savedString->m_bgColor[0] || bgColor[1] != savedString->m_bgColor[1] || bgColor[2] != savedString->m_bgColor[2] || bgColor[3] != savedString->m_bgColor[3])) ||
 			(scale != savedString->m_scale) ||
 			(winW != savedString->m_winW) || 
-			(winH != savedString->m_winH)
+			(winH != savedString->m_winH) || 
+			(outline != savedString->m_outline) && (outlineColor[0] != savedString->m_outlineColor[0] || outlineColor[1] != savedString->m_outlineColor[1] || outlineColor[2] != savedString->m_outlineColor[2] || outlineColor[3] != savedString->m_outlineColor[3])
 			)
 		{
 			savedString->m_color[0] = color[0];
@@ -472,6 +473,14 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 				savedString->m_bgColor[1] = bgColor[1];
 				savedString->m_bgColor[2] = bgColor[2];
 				savedString->m_bgColor[3] = bgColor[3];
+			}
+			savedString->m_outline = outline;
+			if(outline)
+			{
+				savedString->m_outlineColor[0] = outlineColor[0];
+				savedString->m_outlineColor[1] = outlineColor[1];
+				savedString->m_outlineColor[2] = outlineColor[2];
+				savedString->m_outlineColor[3] = outlineColor[3];
 			}
 			savedString->m_x = x;
 			savedString->m_y = y;
@@ -496,6 +505,14 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 			savedString->m_bgColor[2] = bgColor[2];
 			savedString->m_bgColor[3] = bgColor[3];
 		}
+		if(outline)
+		{
+			savedString->m_outline = outline;
+			savedString->m_outlineColor[0] = outlineColor[0];
+			savedString->m_outlineColor[1] = outlineColor[1];
+			savedString->m_outlineColor[2] = outlineColor[2];
+			savedString->m_outlineColor[3] = outlineColor[3];
+		}
 	}
 
 	if(found == m_glStringList.end() && savedString)
@@ -503,12 +520,12 @@ void CFontLibrary::DrawString(unsigned int ID, std::string textToDraw, int x, in
 
 	PopulateVertexBuffers(savedString);
 
-	DrawTriangles(font, color, savedString, bgColor);
+	DrawTriangles(font, color, savedString, outline, outlineColor, bgColor);
 }
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline , float outlineColor[4])
 {
 	std::map<unsigned int, CDrawString*>::const_iterator found = m_glStringList.find(ID);
 	CDrawString* savedString = nullptr;
@@ -523,9 +540,18 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 			(maxLines != savedString->m_maxLines) ||
 			(lineWidth != savedString->m_lineWidth) ||
 			(winW != savedString->m_winW) || 
-			(winH != savedString->m_winH)
+			(winH != savedString->m_winH) ||
+			(outline != savedString->m_outline) && (outlineColor[0] != savedString->m_outlineColor[0] || outlineColor[1] != savedString->m_outlineColor[1] || outlineColor[2] != savedString->m_outlineColor[2] || outlineColor[3] != savedString->m_outlineColor[3])
 			)
 		{
+			savedString->m_outline = outline;
+			if(outline)
+			{
+				savedString->m_outlineColor[0] = outlineColor[0];
+				savedString->m_outlineColor[1] = outlineColor[1];
+				savedString->m_outlineColor[2] = outlineColor[2];
+				savedString->m_outlineColor[3] = outlineColor[3];
+			}
 			savedString->m_color[0] = color[0];
 			savedString->m_color[1] = color[1];
 			savedString->m_color[2] = color[2];
@@ -547,6 +573,14 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 		savedString = new CDrawString(ID, font, textToDraw, x, y, color, scale);
 		savedString->m_lineWidth = lineWidth;
 		savedString->m_maxLines = maxLines;
+		if(outline)
+		{
+			savedString->m_outline = outline;
+			savedString->m_outlineColor[0] = outlineColor[0];
+			savedString->m_outlineColor[1] = outlineColor[1];
+			savedString->m_outlineColor[2] = outlineColor[2];
+			savedString->m_outlineColor[3] = outlineColor[3];
+		}
 	}
 
 	if(found == m_glStringList.end() && savedString)
@@ -554,12 +588,12 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, std::string textToD
 
 	PopulateVertexBuffers(savedString);
 
-	DrawTriangles(font, color, savedString);
+	DrawTriangles(font, color, savedString, outline, outlineColor);
 }
 
 //draws the string until lineWidth(pixels) then cuts it off there and draws the rest underneath and so forth till the last character in the string has been drawn
 //draws only the text up to the specified line, if maxLines parameter is zero, it means there is no limit
-void CFontLibrary::DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines)
+void CFontLibrary::DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline , float outlineColor[4])
 {
 	CDrawString* volatileString = new CDrawString(0, font, textToDraw, x, y, color, scale);
 	volatileString->m_lineWidth = lineWidth;
@@ -598,20 +632,20 @@ float CFontLibrary::AdjustForKerningPairs(std::string font, std::string textToDr
 {
 	int ascii1 = GetTextChar(textToDraw, first);
 	int ascii2 = GetTextChar(textToDraw, second);
-	if( ascii1 <= 0 || ascii2 <= 0 ) return 0;
+	if( ascii1 <= 0 || ascii2 <= 0 ) return 0.0f;
 
 	CGLFont* currFont = GetFontPointer(font);
-	if(!currFont) return 0;
+	if(!currFont) return 0.0f;
 
 	if(ascii1 <= (int)currFont->m_highestKerningFirst && ascii2 <= (int)currFont->m_highestKerningSecond)
 		return currFont->m_kernings[ascii1][ascii2];
 
-	return 0;
+	return 0.0f;
 }
 
 float CFontLibrary::GetWidthOfString(std::string textToDraw, std::string font, float scale, bool ignoreKerning)
 {
-	float retVal = 0;
+	float retVal = 0.0f;
 
 	for(unsigned int i=0; i<textToDraw.length(); i++)
 	{
@@ -663,7 +697,7 @@ CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw
 
 	int defaultChar = 63; //'?', default for unknown characters is the question mark
 
-	int cursor = 0;
+	float cursor = 0;
 
 	for(unsigned int i=0; i<textToDraw.length(); i++)
 	{
@@ -689,28 +723,29 @@ CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw
 		int base = currfont->m_base;
 
 		//top left
-		quadList[i].textureTopLeftX = (float) charX / (float) currfont->m_textureW;
-		quadList[i].textureTopLeftY = (float) charY / (float) currfont->m_textureH;
-		quadList[i].topLeftX = cursor + (int)((offsetX)*scale) + x;
-		quadList[i].topLeftY = y + (int)((base - offsetY)*scale);
+ 		quadList[i].textureTopLeftX = (float) charX / (float) currfont->m_textureW;
+ 		quadList[i].textureTopLeftY = (float) charY / (float) currfont->m_textureH;
+		quadList[i].topLeftX = cursor + ((offsetX)*scale) + x;
+		quadList[i].topLeftY = y + ((base - offsetY)*scale);
+ 
+ 		//top right
+ 		quadList[i].textureTopRightX = (float) (charX+width) / (float) currfont->m_textureW;
+ 		quadList[i].textureTopRightY = (float) charY / (float) currfont->m_textureH;
+		quadList[i].topRightX = ((width + offsetX)*scale) + x + cursor;
+		quadList[i].topRightY = y + ((base - offsetY)*scale);
+ 
+ 		//bottom right
+ 		quadList[i].textureBottomRightX = (float) (charX+width) / (float) currfont->m_textureW;
+ 		quadList[i].textureBottomRightY = (float) (charY+height) / (float) currfont->m_textureH;
+		quadList[i].bottomRightX = ((width + offsetX)*scale) + x + cursor;
+		quadList[i].bottomRightY = y + ((base - offsetY - height)*scale);
+ 
+ 		//bottom left
+ 		quadList[i].textureBottomLeftX = (float) charX / (float) currfont->m_textureW;
+ 		quadList[i].textureBottomLeftY = (float) (charY+height) / (float) currfont->m_textureH;
+		quadList[i].bottomLeftX = ((offsetX)*scale) + x + cursor;
+		quadList[i].bottomLeftY = y + ((base - offsetY - height)*scale);
 
-		//top right
-		quadList[i].textureTopRightX = (float) (charX+width) / (float) currfont->m_textureW;
-		quadList[i].textureTopRightY = (float) charY / (float) currfont->m_textureH;
-		quadList[i].topRightX = (int)((width + offsetX)*scale) + x + cursor;
-		quadList[i].topRightY = y + (int)((base - offsetY)*scale);
-
-		//bottom right
-		quadList[i].textureBottomRightX = (float) (charX+width) / (float) currfont->m_textureW;
-		quadList[i].textureBottomRightY = (float) (charY+height) / (float) currfont->m_textureH;
-		quadList[i].bottomRightX = (int)((width + offsetX)*scale) + x + cursor;
-		quadList[i].bottomRightY = y + (int)((base - offsetY - height)*scale);
-
-		//bottom left
-		quadList[i].textureBottomLeftX = (float) charX / (float) currfont->m_textureW;
-		quadList[i].textureBottomLeftY = (float) (charY+height) / (float) currfont->m_textureH;
-		quadList[i].bottomLeftX = (int)((offsetX)*scale) + x + cursor;
-		quadList[i].bottomLeftY = y + (int)((base - offsetY - height)*scale);
 
 		//calc kerning depending on current and next character in the string to draw
 		float kerning = 0.0f;
@@ -725,7 +760,7 @@ CGLQuad2D* CFontLibrary::TextToQuadList(std::string font, std::string textToDraw
 		}
 
 		//get cursor position in x-direction for next character in string
-		cursor += (currfont->m_fontCharInfo[ascii]->m_xadvance + (int)kerning)*(int)scale;
+		cursor += ((float)currfont->m_fontCharInfo[ascii]->m_xadvance + kerning)*scale;
 	}
 
 	return quadList;
@@ -744,7 +779,7 @@ int CFontLibrary::GetTextChar(std::string textToDraw, int pos)
 	return ch;
 }
 
-void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, float bgColor[4])
+void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, int outline/* = 0*/, float outlineColor[4]/* = {0}*/, float bgColor[4]/* = {0}*/)
 {
 	CGLFont* currFont = GetFontPointer(font);
 	if (!currFont || !stringObject)
@@ -804,6 +839,17 @@ void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* 
 		GLint fgColorLoc = glGetUniformLocation(programID, "fgColor");
 		if(fgColorLoc >= 0)
 			glUniform4f(fgColorLoc, color[0], color[1], color[2], color[3]);
+
+		GLint outlineLoc = glGetUniformLocation(programID, "outline");
+		if(outlineLoc >= 0)
+			glUniform1i(outlineLoc, outline);
+
+		if(outline)
+		{
+			GLint outlineColorLoc = glGetUniformLocation(programID, "outlineColor");
+			if(outlineColorLoc >= 0)
+				glUniform4f(outlineColorLoc, outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3]);
+		}
 
 		if(currFont->m_sdfType == SDF_MULTI)
 		{

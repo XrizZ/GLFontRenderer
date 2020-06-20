@@ -5,6 +5,7 @@ This font rendering library was designed with ease of use and render performance
 ![Demo Project Screenshot](Documentation/SDFComparison.png "Screenshot from the Demo project.")
 
 # Changelog
+- June 20th 2020: Added Outline option for SDF fonts
 - May 27th 2020: Added DXT texture compression for non SDF fonts to improve render performance and decrease GPU memory usage
 - May 6th 2020: GetWidthOfString() function now can take kernings into consideration, its disabled by default though for performance reasons
 - April 30th 2020: fixed a bug with colors in single channel SDFs, added SDF comparison

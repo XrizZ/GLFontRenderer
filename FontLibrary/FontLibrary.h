@@ -31,14 +31,14 @@
 class CGLQuad2D
 {
 public:
-	int topLeftX = 0;
-	int topLeftY = 0;
-	int topRightX = 0;
-	int topRightY = 0;
-	int bottomRightX = 0;
-	int bottomRightY = 0;
-	int bottomLeftX = 0;
-	int bottomLeftY = 0;
+	float topLeftX = 0;
+	float topLeftY = 0;
+	float topRightX = 0;
+	float topRightY = 0;
+	float bottomRightX = 0;
+	float bottomRightY = 0;
+	float bottomLeftX = 0;
+	float bottomLeftY = 0;
 
 	float textureTopLeftX = 0;
 	float textureTopLeftY = 0;
@@ -53,13 +53,7 @@ public:
 class CDrawString
 {
 public:
-	CDrawString()
-	{
-		m_color[0] = 0.0f;
-		m_color[1] = 0.0f;
-		m_color[2] = 0.0f;
-		m_color[3] = 0.0f;
-	};
+	CDrawString(){};
 
 	CDrawString(unsigned int ID, std::string font, std::string textToDraw, int x, int y, float color[4], float scale)
 	{
@@ -91,7 +85,7 @@ public:
 	std::string		m_text;
 	int				m_x = 0;
 	int				m_y = 0;
-	float			m_color[4];
+	float			m_color[4] = {0};
 	float			m_scale = 1.0;
 	int				m_lineWidth = 0;
 	int				m_maxLines = 0;
@@ -102,6 +96,8 @@ public:
 	std::string		m_font = GLFONT_ARIAL20;
 	unsigned int	m_numVerticies = 0;
 	float			m_bgColor[4] = {0};
+	int				m_outline = 0; //can be 0, for no outline 1 or higher
+	float			m_outlineColor[4] = {0};
 };
 
 class CFontLibrary
@@ -118,10 +114,10 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts(bool compressNonSDFTextures = false);
-	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
-	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines);
+	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
+	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
 	unsigned int GetNewDrawStringID();
 	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f, bool ignoreKerning = true);
 	unsigned int GetLineHeight(std::string font);
@@ -131,7 +127,7 @@ private:
 	float AdjustForKerningPairs(std::string font, std::string textToDraw, int first, char second, float scale);
 	CGLFont* ParseFont(std::string fileName);
 	CGLQuad2D* TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale);
-	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, float bgColor[4] = {0});
+	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, int outline = 0, float outlineColor[4] = {0}, float bgColor[4] = {0});
 	CGLFont* GetFontPointer(std::string fontName);
 	int GetTextChar(std::string textToDraw, int pos);
 	unsigned int GetWidthOfChar(char ch, std::string font);
