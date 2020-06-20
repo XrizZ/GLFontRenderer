@@ -94,6 +94,8 @@ unsigned int m_sdf11DisplayListID = 0;
 unsigned int m_sdf12DisplayListID = 0;
 unsigned int m_sdf13DisplayListID = 0;
 unsigned int m_sdf14DisplayListID = 0;
+unsigned int m_sdf15DisplayListID = 0;
+unsigned int m_sdf16DisplayListID = 0;
 
 GLuint m_cubeVertexArrayID = 0;
 
@@ -294,6 +296,8 @@ void DrawFontStressTest()
 	std::string explanation3 = "scale: 4.0    - RGBA texture | SDF texture | Multi-Channel SDF texture";
 	std::string explanation4 = "scale: 8.0    -     SDF texture        |         Multi-Channel SDF texture";
 	std::string sample = "a";
+	std::string outlineS = "Outlined";
+	std::string outlineM = "Outlined";
 
 	int top = m_height-60;
 
@@ -364,6 +368,15 @@ void DrawFontStressTest()
 			if(m_sdf14DisplayListID == 0)
 				m_sdf14DisplayListID = m_fontLibrary->GetNewDrawStringID();
 			m_fontLibrary->DrawString(m_sdf14DisplayListID, sample, m_width/2 + 190, top - 800, blue, GLFONT_COURIERNEW_MSDF, m_width, m_height, 8.0);
+
+			//OUTLINE DEMONSTRATION:
+			if(m_sdf15DisplayListID == 0)
+				m_sdf15DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf15DisplayListID, outlineS, 30, top - 500, white, GLFONT_COURIERNEW_SDF, m_width, m_height, 0.281, 1, red);
+
+			if(m_sdf16DisplayListID == 0)
+				m_sdf16DisplayListID = m_fontLibrary->GetNewDrawStringID();
+			m_fontLibrary->DrawString(m_sdf16DisplayListID, outlineM, 30, top - 580, white, GLFONT_COURIERNEW_MSDF, m_width, m_height, 1.0, 1, red);
 		}
 		else
 		{
