@@ -16,7 +16,7 @@ This font rendering library was designed with ease of use and render performance
 - March 30th 2020: added a demo app, to be compiled using Visual Studio 2012 or later. The app teaches and benchmarks the use of the Font Library and shows how every single exposed function is intented to be used.
 
 # Plans
-- I'm considering to implement glow, dropshadow and outline for the SDF fonts.
+- I'm considering to implement glow and dropshadow for the SDF fonts.
 - Adding a Make Script.
 - Lastly, I'm planning on porting this to Vulkan.
 
