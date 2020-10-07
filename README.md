@@ -47,7 +47,7 @@ For each character in the string, a quad is created and added to the final quad-
 To make this drawing fast enough, all information about the characters and character-relations(like kerning), as well as the textures are loaded on program start. The texts can be stored so that vertex buffers don't have to be created on each render loop iteration.
 
 # Adding Font Library to your Software
-This chapter is concerned with the integration of the font library into your own software.
+The easiest way to check how the library works and how you can use it in your project is by checking out the example implementation supplied with this repo. In case you need more information though, please read the rest of this chapter.
  
 ## Integrating font library
 You will need to copy the 10 files mentioned in the Overiew into your project folder.
@@ -74,7 +74,7 @@ Once this is done, the font library is ready to use, which means you can call th
 The header of the draw call reads:
 
 ```C++
-void DrawString(const std::string& textToDraw, int x, int y, float color[4], int contextID, const std::string& font, float scale = 1.0f);
+void DrawString(const std::string& textToDraw, int x, int y, float color[4], const std::string& font, float scale = 1.0f);
 ```
 The parameters are described below in the table.
 
