@@ -17,7 +17,7 @@ This font rendering library was designed with ease of use and render performance
 - October 7th 2020: optimized handling of strings (less copying)
 
 # Plans
-- I'm considering to implement glow, dropshadow and outline for the SDF fonts.
+- I'm considering to implement glow and dropshadow for the SDF fonts.
 - Adding a Make Script.
 - Lastly, I'm planning on porting this to Vulkan.
 
