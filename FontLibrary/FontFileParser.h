@@ -14,7 +14,7 @@ class CFontFileParser
 {
 public:
 	//constructor + destructor:
-	CFontFileParser(std::string fileName);
+	CFontFileParser(const std::string& fileName);
 	~CFontFileParser(void);
 
 	//functions:
@@ -22,15 +22,15 @@ public:
 	bool LoadCharInfos(CGLFont* newFont);
 	bool LoadKernings(CGLFont* newFont);
 	int GetHighestSupportedChar();
-	bool GetValueFromBufferOfFirst(std::string string, std::string* value);
-	bool GetValueFromBufferOfAll(std::string string, std::forward_list<std::string>* values);
-	int GetValueFromBufferStartingAt(std::string string, std::string* value, int startPos);
+	bool GetValueFromBufferOfFirst(const std::string& string, std::string* value);
+	bool GetValueFromBufferOfAll(const std::string& string, std::forward_list<std::string>* values);
+	int GetValueFromBufferStartingAt(const std::string& string, std::string* value, int startPos);
 	int GetKerningsFirstHighest();
 	int GetKerningsSecondHighest();
 
 private:
 	//functions:
-	void GetStringBetween(int begin, int end, std::string* value, std::string src);
+	void GetStringBetween(int begin, int end, std::string* value, const std::string& src);
 	void VectorToString(std::vector<char>* src, std::string* dst);
 	CCharInfo* GetNextCharInfo(int *startSearchPos);
 	CKerning* GetNextKerning(int *startSearchPos);

@@ -14,6 +14,7 @@ This font rendering library was designed with ease of use and render performance
 - April 14th 2020: moved project from MFC to standard libs
 - April 6th 2020: added SDF fonts from the famous Valve Paper: https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf, the font lib now supports the smoothing function as described in the paper, I have not implemented the outline,glow and dropshadow yet. This allows for very nice scaling of the SDF font, whereas scaling with the conventional method will result in pixelated and blurry text.
 - March 30th 2020: added a demo app, to be compiled using Visual Studio 2012 or later. The app teaches and benchmarks the use of the Font Library and shows how every single exposed function is intented to be used.
+- October 7th 2020: optimized handling of strings (less copying)
 
 # Plans
 - I'm considering to implement glow, dropshadow and outline for the SDF fonts.

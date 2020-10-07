@@ -12,7 +12,7 @@
 //										TEXTURE LOADER
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool CGLTexture::GetTextureSizeFromFile(std::string strFileName, float &w, float &h)
+bool CGLTexture::GetTextureSizeFromFile(const std::string& strFileName, float &w, float &h)
 {
 	if(!strFileName.length())
 		return false;
@@ -45,7 +45,7 @@ bool CGLTexture::GetTextureSizeFromFile(std::string strFileName, float &w, float
 	return true;
 }
 
-bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &texture, bool compressTexture /*=false*/)
+bool CGLTexture::LoadTextureFromFile(const std::string& strFileName, unsigned int &texture, bool compressTexture /*=false*/)
 {
 	if(!strFileName.length())
 		return false;
@@ -124,7 +124,7 @@ bool CGLTexture::LoadTextureFromFile(std::string strFileName, unsigned int &text
 //										PNG LOADER
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-CRawTexture* CGLTexture::LoadPNG(std::string strFileName)
+CRawTexture* CGLTexture::LoadPNG(const std::string& strFileName)
 {
 	unsigned int width = 0;
 	unsigned int height = 0;
@@ -153,7 +153,7 @@ CRawTexture* CGLTexture::LoadPNG(std::string strFileName)
 #define TGA_A		 3
 #define TGA_RLE		10
 
-CRawTexture* CGLTexture::LoadTGA(std::string strFileName)
+CRawTexture* CGLTexture::LoadTGA(const std::string& strFileName)
 {
 	CRawTexture *pImageData = nullptr;
 	WORD width = 0, height = 0;

@@ -33,11 +33,11 @@ public:
 	CGLTexture(){};
 	~CGLTexture(){};
 
-	static bool LoadTextureFromFile(std::string strFileName, unsigned int& texID, bool compressTexture =false);
-	static bool GetTextureSizeFromFile(std::string strFileName, float &w, float &h);
+	static bool LoadTextureFromFile(const std::string& strFileName, unsigned int& texID, bool compressTexture =false);
+	static bool GetTextureSizeFromFile(const std::string& strFileName, float &w, float &h);
 	
 private:
 	// This Loads And Returns The TGA Image Data
-	static CRawTexture *LoadTGA(std::string strFileName);
-	static CRawTexture *LoadPNG(std::string strFileName);
+	static CRawTexture *LoadTGA(const std::string& strFileName);
+	static CRawTexture *LoadPNG(const std::string& strFileName);
 };

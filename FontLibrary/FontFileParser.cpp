@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 
-CFontFileParser::CFontFileParser(std::string fileName)
+CFontFileParser::CFontFileParser(const std::string& fileName)
 {
 	//open file stream and write it into a buffer
 	std::ifstream file;
@@ -52,7 +52,7 @@ void CFontFileParser::VectorToString(std::vector<char>* src, std::string* dst)
 	}
 }
 
-void FindAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+void FindAndReplaceAll(std::string & data, const std::string& toSearch, const std::string& replaceStr)
 {
 	// Get the first occurrence
 	size_t pos = data.find(toSearch);
@@ -67,7 +67,7 @@ void FindAndReplaceAll(std::string & data, std::string toSearch, std::string rep
 	}
 }
 
-bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string* value)
+bool CFontFileParser::GetValueFromBufferOfFirst(const std::string& string, std::string* value)
 {
 	size_t firstPos = m_bufferString.find(string);
 	if(firstPos == std::string::npos)
@@ -105,7 +105,7 @@ bool CFontFileParser::GetValueFromBufferOfFirst(std::string string, std::string*
 	return true;
 }
 
-int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::string* value, int startPos)
+int CFontFileParser::GetValueFromBufferStartingAt(const std::string& string, std::string* value, int startPos)
 {
 	size_t firstPos = m_bufferString.find(string, startPos);
 	if(firstPos == std::string::npos)
@@ -138,7 +138,7 @@ int CFontFileParser::GetValueFromBufferStartingAt(std::string string, std::strin
 	return seperatorPos;
 }
 
-bool CFontFileParser::GetValueFromBufferOfAll(std::string string, std::forward_list<std::string>* values)
+bool CFontFileParser::GetValueFromBufferOfAll(const std::string& string, std::forward_list<std::string>* values)
 {
 	values->clear();
 
@@ -212,7 +212,7 @@ int CFontFileParser::GetHighestSupportedChar()
 	return retVal;
 }
 
-void CFontFileParser::GetStringBetween(int begin, int end, std::string* value, std::string src)
+void CFontFileParser::GetStringBetween(int begin, int end, std::string* value, const std::string& src)
 {
 	value->clear();
 	for(int i=begin; i<end; i++)

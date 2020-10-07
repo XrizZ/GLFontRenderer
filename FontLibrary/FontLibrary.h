@@ -55,7 +55,7 @@ class CDrawString
 public:
 	CDrawString(){};
 
-	CDrawString(unsigned int ID, std::string font, std::string textToDraw, int x, int y, float color[4], float scale)
+	CDrawString(unsigned int ID, const std::string& font, const std::string& textToDraw, int x, int y, float color[4], float scale)
 	{
 		m_ID = ID;
 		m_text = textToDraw;
@@ -104,7 +104,7 @@ class CFontLibrary
 {
 public:
 	//constructor + destructor:
-	CFontLibrary(std::string folder);
+	CFontLibrary(const std::string& folder);
 	~CFontLibrary(void);
 
 	//variables:
@@ -114,23 +114,23 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts(bool compressNonSDFTextures = false);
-	void DrawString(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawString(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawStringWithLineBreaks(std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
-	void DrawStringWithLineBreaks(unsigned int ID, std::string textToDraw, int x, int y, float color[4], std::string font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
+	void DrawString(const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawString(unsigned int ID, const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawStringWithLineBreaks(const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
+	void DrawStringWithLineBreaks(unsigned int ID, const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
 	unsigned int GetNewDrawStringID();
-	float GetWidthOfString(std::string textToDraw, std::string font, float scale = 1.0f, bool ignoreKerning = true);
-	unsigned int GetLineHeight(std::string font);
+	float GetWidthOfString(const std::string& textToDraw, const std::string& font, float scale = 1.0f, bool ignoreKerning = true);
+	unsigned int GetLineHeight(const std::string& font);
 
 private:
 	//functions:
-	float AdjustForKerningPairs(std::string font, std::string textToDraw, int first, char second, float scale);
-	CGLFont* ParseFont(std::string fileName);
-	CGLQuad2D* TextToQuadList(std::string font, std::string textToDraw, int x, int y, float scale);
-	void CFontLibrary::DrawTriangles(std::string font, float color[4], CDrawString* stringObject, int outline = 0, float outlineColor[4] = {0}, float bgColor[4] = {0});
-	CGLFont* GetFontPointer(std::string fontName);
-	int GetTextChar(std::string textToDraw, int pos);
-	unsigned int GetWidthOfChar(char ch, std::string font);
+	float AdjustForKerningPairs(const std::string& font, const std::string& textToDraw, int first, char second, float scale);
+	CGLFont* ParseFont(const std::string& fileName);
+	CGLQuad2D* TextToQuadList(const std::string& font, const std::string& textToDraw, int x, int y, float scale);
+	void CFontLibrary::DrawTriangles(const std::string& font, float color[4], CDrawString* stringObject, int outline = 0, float outlineColor[4] = {0}, float bgColor[4] = {0});
+	CGLFont* GetFontPointer(const std::string& fontName);
+	int GetTextChar(const std::string& textToDraw, int pos);
+	unsigned int GetWidthOfChar(char ch, const std::string& font);
 	void PopulateVertexBuffers(CDrawString* stringObject);
 
 	//variables:
