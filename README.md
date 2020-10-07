@@ -74,17 +74,17 @@ Once this is done, the font library is ready to use, which means you can call th
 The header of the draw call reads:
 
 ```C++
-void DrawString(CString textToDraw, int x, int y, float color[4], int contextID, CString font, float scale = 1.0f);
+void DrawString(const std::string& textToDraw, int x, int y, float color[4], int contextID, const std::string& font, float scale = 1.0f);
 ```
 The parameters are described below in the table.
 
 | Parameter        | Description |
 | ------------- |:-------------:|
-| std::string textToDraw     | The string to draw as std::string, not recognized characters are drawn as '?'. Which characters are valid depends on the font used and can be defined when creating the font-bitmap. |
+| const std::string& textToDraw     | The string to draw as std::string, not recognized characters are drawn as '?'. Which characters are valid depends on the font used and can be defined when creating the font-bitmap. |
 | int x      | X-Position of the beginning of the string in screen coordinates. 0 - width     |
 | int y | Y-Position of the beginning of the string in screen coordinates. 0 - height    |
 | float color[4] | float array containing the color information that will be used to modulate the texture. Color information are values from 0.0 to 1.0(inclusive), in the following standard order: {R, G, B, Alpha} obviously.. |
-|std::string font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that. |
+|const std::string& font | This parameter defines the font type to use. Only font types can be used that are in the Folder and were there at loading time. You may pass in the file name of that font, without the extension or for more code readability and safety use the define from file: FontLibrary.h. Note: if you want to print bold or italic, then you have to use a font that is setup to do that. |
 | float scale | For RGBA textures it is highly recommended to use the default: 1.0f. You can scale up or down, but it should be clear that this will result in blur. However, with SDF and MSDF you should be able to scale up and down further before seeing artifacts. |
 
 Note that there are more functions with additional features, such as automatic line breaks. See font library header file.
