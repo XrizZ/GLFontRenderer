@@ -21,10 +21,10 @@ struct CRawTexture
 		}
 	}
 
-	int m_channels = 0;
-	int m_sizeX = 0;
-	int m_sizeY = 0;
-	unsigned char *m_data = nullptr;
+	uint16_t m_channels = 0;
+	uint16_t m_sizeX = 0;
+	uint16_t m_sizeY = 0;
+	uint8_t *m_data = nullptr;
 };
 
 class CGLTexture
@@ -33,7 +33,7 @@ public:
 	CGLTexture(){};
 	~CGLTexture(){};
 
-	static bool LoadTextureFromFile(const std::string& strFileName, unsigned int& texID, bool compressTexture =false);
+	static bool LoadTextureFromFile(const std::string& strFileName, uint32_t& texID, bool compressTexture = false);
 	static bool GetTextureSizeFromFile(const std::string& strFileName, float &w, float &h);
 	
 private:

@@ -21,19 +21,19 @@ public:
 	bool IsInitialized();
 	bool LoadCharInfos(CGLFont* newFont);
 	bool LoadKernings(CGLFont* newFont);
-	int GetHighestSupportedChar();
+	uint32_t GetHighestSupportedChar();
 	bool GetValueFromBufferOfFirst(const std::string& string, std::string* value);
 	bool GetValueFromBufferOfAll(const std::string& string, std::forward_list<std::string>* values);
-	int GetValueFromBufferStartingAt(const std::string& string, std::string* value, int startPos);
-	int GetKerningsFirstHighest();
-	int GetKerningsSecondHighest();
+	uint32_t GetValueFromBufferStartingAt(const std::string& string, std::string* value, uint32_t startPos);
+	uint32_t GetKerningsFirstHighest();
+	uint32_t GetKerningsSecondHighest();
 
 private:
 	//functions:
-	void GetStringBetween(int begin, int end, std::string* value, const std::string& src);
+	void GetStringBetween(uint32_t begin, uint32_t end, std::string* value, const std::string& src);
 	void VectorToString(std::vector<char>* src, std::string* dst);
-	CCharInfo* GetNextCharInfo(int *startSearchPos);
-	CKerning* GetNextKerning(int *startSearchPos);
+	CCharInfo* GetNextCharInfo(uint32_t *startSearchPos);
+	CKerning* GetNextKerning(uint32_t *startSearchPos);
 
 	//variables:
 	std::vector<std::string> m_seperators = {" ", "/"}; //separators: whitespace (for standard text file) and slash (for XML)

@@ -30,6 +30,6 @@ private:
 
 	// HELPER FUNTIONS FOR CREATING SHADER PROGRAM
 	GLuint		CompileShader(GLenum aShaderType, const char* aShaderSource);
-	bool		CheckForErrors(std::string aFile = __FILE__, int aLine = __LINE__);
+	bool		CheckForErrors(std::string aFile = __FILE__, int32_t aLine = __LINE__);
 	std::string		LoadCompleteFile(std::string aFileName);
 };

@@ -33,23 +33,23 @@
 class CGLQuad2D
 {
 public:
-	float topLeftX = 0;
-	float topLeftY = 0;
-	float topRightX = 0;
-	float topRightY = 0;
-	float bottomRightX = 0;
-	float bottomRightY = 0;
-	float bottomLeftX = 0;
-	float bottomLeftY = 0;
+	GLfloat topLeftX = 0;
+	GLfloat topLeftY = 0;
+	GLfloat topRightX = 0;
+	GLfloat topRightY = 0;
+	GLfloat bottomRightX = 0;
+	GLfloat bottomRightY = 0;
+	GLfloat bottomLeftX = 0;
+	GLfloat bottomLeftY = 0;
 
-	float textureTopLeftX = 0;
-	float textureTopLeftY = 0;
-	float textureTopRightX = 0;
-	float textureTopRightY = 0;
-	float textureBottomRightX = 0;
-	float textureBottomRightY = 0;
-	float textureBottomLeftX = 0;
-	float textureBottomLeftY = 0;
+	GLfloat textureTopLeftX = 0;
+	GLfloat textureTopLeftY = 0;
+	GLfloat textureTopRightX = 0;
+	GLfloat textureTopRightY = 0;
+	GLfloat textureBottomRightX = 0;
+	GLfloat textureBottomRightY = 0;
+	GLfloat textureBottomLeftX = 0;
+	GLfloat textureBottomLeftY = 0;
 };
 
 class CDrawString
@@ -57,7 +57,7 @@ class CDrawString
 public:
 	CDrawString(){};
 
-	CDrawString(unsigned int ID, const std::string& font, const std::string& textToDraw, int x, int y, float color[4], float scale)
+	CDrawString(uint16_t ID, const std::string& font, const std::string& textToDraw, int16_t x, int16_t y, GLfloat color[4], float scale)
 	{
 		m_ID = ID;
 		if(textToDraw.size() > MAX_STRING_LENGTH)
@@ -85,25 +85,25 @@ public:
 		m_uvBuffer = 0;
 	};
 
-	unsigned int	m_ID = 0;
+	uint16_t		m_ID = 0;
 	bool			m_needsChange = true;
 	std::string		m_text;
-	int				m_x = 0;
-	int				m_y = 0;
-	float			m_color[4] = {0};
-	float			m_scale = 1.0;
-	int				m_lineWidth = 0;
-	int				m_maxLines = 0;
+	int16_t			m_x = 0;
+	int16_t			m_y = 0;
+	GLfloat			m_color[4] = {0};
+	float			m_scale = 1.0f;
+	uint16_t		m_lineWidth = 0;
+	uint16_t		m_maxLines = 0;
 	uint16_t		m_winW = 1; //window width of application
 	uint16_t		m_winH = 1; //window height of application
 	GLuint			m_vertexbuffer = 0; //stores verticies positions
 	GLuint			m_uvBuffer =  0; //stores texture UVs for each vert
 	std::string		m_font = GLFONT_ARIAL20;
-	unsigned int	m_numVerticies = 0;
-	unsigned int	m_numIndices = 0;
-	float			m_bgColor[4] = {0};
-	int				m_outline = 0; //can be 0, for no outline 1 or higher
-	float			m_outlineColor[4] = {0};
+	uint16_t		m_numVerticies = 0;
+	uint16_t		m_numIndices = 0;
+	GLfloat			m_bgColor[4] = {0.0f};
+	uint16_t		m_outline = 0; //can be 0, for no outline 1 or higher
+	GLfloat			m_outlineColor[4] = {0.0f};
 };
 
 class CFontLibrary
@@ -120,29 +120,29 @@ public:
 	//functions:
 	bool ParseAllFontsInFolder();
 	bool InitGLFonts(bool compressNonSDFTextures = false);
-	void DrawString(const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawString(unsigned int ID, const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale = 1.0f, int outline = 0, float outlineColor[4] = {0}, float bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
-	void DrawStringWithLineBreaks(const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
-	void DrawStringWithLineBreaks(unsigned int ID, const std::string& textToDraw, int x, int y, float color[4], const std::string& font, unsigned int winW, unsigned int winH, float scale, int lineWidth, int maxLines, int outline = 0, float outlineColor[4] = {0});
-	unsigned int GetNewDrawStringID();
+	void DrawString(const std::string& textToDraw, int16_t x, int16_t y, GLfloat color[4], const std::string& font, uint16_t winW, uint16_t winH, GLfloat scale = 1.0f, uint16_t outline = 0, GLfloat outlineColor[4] = {0}, GLfloat bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawString(uint16_t ID, const std::string& textToDraw, int16_t x, int16_t y, GLfloat color[4], const std::string& font, uint16_t winW, uint16_t winH, float scale = 1.0f, uint16_t outline = 0, GLfloat outlineColor[4] = {0}, GLfloat bgcolor[4] = {0}); //bgColor is only taken into account when using multi channel SDFs
+	void DrawStringWithLineBreaks(const std::string& textToDraw, int16_t x, int16_t y, GLfloat color[4], const std::string& font, uint16_t winW, uint16_t winH, float scale, uint16_t lineWidth, uint16_t maxLines, uint16_t outline = 0, GLfloat outlineColor[4] = {0});
+	void DrawStringWithLineBreaks(uint16_t ID, const std::string& textToDraw, int16_t x, int16_t y, GLfloat color[4], const std::string& font, uint16_t winW,uint16_t winH, float scale, uint16_t lineWidth, uint16_t maxLines, uint16_t outline = 0, GLfloat outlineColor[4] = {0});
+	uint16_t GetNewDrawStringID();
 	float GetWidthOfString(const std::string& textToDraw, const std::string& font, float scale = 1.0f, bool ignoreKerning = true);
-	unsigned int GetLineHeight(const std::string& font);
+	uint16_t GetLineHeight(const std::string& font);
 
 private:
 	//functions:
-	float AdjustForKerningPairs(const std::string& font, const std::string& textToDraw, int first, char second, float scale);
+	float AdjustForKerningPairs(const std::string& font, const std::string& textToDraw, uint16_t first, char second, float scale);
 	CGLFont* ParseFont(const std::string& fileName);
-	CGLQuad2D* TextToQuadList(const std::string& font, const std::string& textToDraw, int x, int y, float scale);
-	void CFontLibrary::DrawTriangles(const std::string& font, float color[4], CDrawString* stringObject, int outline = 0, float outlineColor[4] = {0}, float bgColor[4] = {0});
+	CGLQuad2D* TextToQuadList(const std::string& font, const std::string& textToDraw, int16_t x, int16_t y, float scale);
+	void CFontLibrary::DrawTriangles(const std::string& font, GLfloat color[4], CDrawString* stringObject, uint16_t outline = 0, GLfloat outlineColor[4] = {0}, GLfloat bgColor[4] = {0});
 	CGLFont* GetFontPointer(const std::string& fontName);
-	int GetTextChar(const std::string& textToDraw, int pos);
-	unsigned int GetWidthOfChar(char ch, const std::string& font);
+	uint32_t GetTextChar(const std::string& textToDraw, uint32_t pos);
+	uint16_t GetWidthOfChar(char ch, const std::string& font);
 	void PopulateVertexBuffers(CDrawString* stringObject);
 
 	//variables:
 	CGLShaderProgram* m_sdfShaderProgram = nullptr;
 	CGLShaderProgram* m_defaultShaderProgram = nullptr;
-	std::map<unsigned int, CDrawString*> m_glStringList;
-	unsigned int m_IDCounter = 1;
+	std::map<uint16_t, CDrawString*> m_glStringList;
+	uint16_t m_IDCounter = 1;
 	GLuint m_vertexArrayID = 0; // Our Vertex Array Object, once for all!
 };

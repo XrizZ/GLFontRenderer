@@ -21,7 +21,7 @@ CGLFont::~CGLFont()
 
 	if(m_kernings)
 	{
-		for(unsigned int i = 0; i <= m_highestKerningFirst; i++)
+		for(uint32_t i = 0; i <= m_highestKerningFirst; i++)
 		{
 			delete[] m_kernings[i];
 		}

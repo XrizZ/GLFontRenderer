@@ -23,8 +23,8 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
-extern int m_width;
-extern int m_height;
+extern uint16_t m_width;
+extern uint16_t m_height;
 
 extern CFontLibrary* m_fontLibrary;
 
@@ -70,32 +70,32 @@ bool m_dyntext = false;
 
 CHighPerformanceCounter m_fpsCounter;
 
-unsigned int m_fovDisplayListID = 0;
-unsigned int m_escDisplayListID = 0;
-unsigned int m_stressDisplayListID = 0;
-unsigned int m_dispDisplayListID = 0;
-unsigned int m_fpsDisplayListID = 0;
-unsigned int m_loremDisplayListID = 0;
-unsigned int m_rotXDisplayListID = 0;
-unsigned int m_rotYDisplayListID = 0;
-unsigned int m_dynDisplayListID = 0;
-unsigned int m_sdf0DisplayListID = 0;
-unsigned int m_sdf1DisplayListID = 0;
-unsigned int m_sdf2DisplayListID = 0;
-unsigned int m_sdf3DisplayListID = 0;
-unsigned int m_sdf4DisplayListID = 0;
-unsigned int m_sdf5DisplayListID = 0;
-unsigned int m_sdf6DisplayListID = 0;
-unsigned int m_sdf7DisplayListID = 0;
-unsigned int m_sdf8DisplayListID = 0;
-unsigned int m_sdf9DisplayListID = 0;
-unsigned int m_sdf10DisplayListID = 0;
-unsigned int m_sdf11DisplayListID = 0;
-unsigned int m_sdf12DisplayListID = 0;
-unsigned int m_sdf13DisplayListID = 0;
-unsigned int m_sdf14DisplayListID = 0;
-unsigned int m_sdf15DisplayListID = 0;
-unsigned int m_sdf16DisplayListID = 0;
+uint32_t m_fovDisplayListID = 0;
+uint32_t m_escDisplayListID = 0;
+uint32_t m_stressDisplayListID = 0;
+uint32_t m_dispDisplayListID = 0;
+uint32_t m_fpsDisplayListID = 0;
+uint32_t m_loremDisplayListID = 0;
+uint32_t m_rotXDisplayListID = 0;
+uint32_t m_rotYDisplayListID = 0;
+uint32_t m_dynDisplayListID = 0;
+uint32_t m_sdf0DisplayListID = 0;
+uint32_t m_sdf1DisplayListID = 0;
+uint32_t m_sdf2DisplayListID = 0;
+uint32_t m_sdf3DisplayListID = 0;
+uint32_t m_sdf4DisplayListID = 0;
+uint32_t m_sdf5DisplayListID = 0;
+uint32_t m_sdf6DisplayListID = 0;
+uint32_t m_sdf7DisplayListID = 0;
+uint32_t m_sdf8DisplayListID = 0;
+uint32_t m_sdf9DisplayListID = 0;
+uint32_t m_sdf10DisplayListID = 0;
+uint32_t m_sdf11DisplayListID = 0;
+uint32_t m_sdf12DisplayListID = 0;
+uint32_t m_sdf13DisplayListID = 0;
+uint32_t m_sdf14DisplayListID = 0;
+uint32_t m_sdf15DisplayListID = 0;
+uint32_t m_sdf16DisplayListID = 0;
 
 GLuint m_cubeVertexArrayID = 0;
 
@@ -450,8 +450,8 @@ void DrawOnScreenDisplay()
 	else
 		dyn.append(" (disabled)");
 
-	unsigned int lHeight = m_fontLibrary->GetLineHeight(GLFONT_ARIAL20);
-	unsigned int boarderPadding = 10;
+	uint16_t lHeight = m_fontLibrary->GetLineHeight(GLFONT_ARIAL20);
+	uint16_t boarderPadding = 10;
 	float strWidth = m_fontLibrary->GetWidthOfString(esc, GLFONT_ARIAL20);
 	float dynStrWidth = m_fontLibrary->GetWidthOfString(dyn, GLFONT_ARIAL20);
 
@@ -507,7 +507,7 @@ void CalculateFrameRate(LARGE_INTEGER newVal)
 
 	m_frameCounter[m_frame] = newVal;
 
-	int frameDiff = m_frame+1;
+	uint8_t frameDiff = m_frame+1;
 	if(frameDiff > 99)
 		frameDiff = 0;
 

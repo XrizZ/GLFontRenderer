@@ -74,7 +74,7 @@ bool CFontFileParser::GetValueFromBufferOfFirst(const std::string& string, std::
 		return false; //we have not found the value we are looking for in the given buffer
 
 	size_t seperatorPos1 = 0;
-	for(unsigned int i=0; i<m_seperators.size(); i++)
+	for(uint32_t i=0; i<m_seperators.size(); i++)
 	{
 		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
 		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -86,14 +86,14 @@ bool CFontFileParser::GetValueFromBufferOfFirst(const std::string& string, std::
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
-	unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+	uint32_t seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 	seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
-	int beginValue = firstPos + string.length();
+	uint32_t beginValue = firstPos + string.length();
 
 	//retrieve string between beginValue and seperatorPos
 	value->clear();
-	for(unsigned int i=beginValue; i<seperatorPos; i++)
+	for(uint32_t i=beginValue; i<seperatorPos; i++)
 	{
 		value->push_back(m_bufferString.at(i));
 	}
@@ -105,7 +105,7 @@ bool CFontFileParser::GetValueFromBufferOfFirst(const std::string& string, std::
 	return true;
 }
 
-int CFontFileParser::GetValueFromBufferStartingAt(const std::string& string, std::string* value, int startPos)
+uint32_t CFontFileParser::GetValueFromBufferStartingAt(const std::string& string, std::string* value, uint32_t startPos)
 {
 	size_t firstPos = m_bufferString.find(string, startPos);
 	if(firstPos == std::string::npos)
@@ -113,7 +113,7 @@ int CFontFileParser::GetValueFromBufferStartingAt(const std::string& string, std
 
 	//size_t seperatorPos1 = m_bufferString.find(m_seperator, firstPos+string.length());
 	size_t seperatorPos1 = 0;
-	for(unsigned int i=0; i<m_seperators.size(); i++)
+	for(uint32_t i=0; i<m_seperators.size(); i++)
 	{
 		size_t tempPos = m_bufferString.find(m_seperators.at(i), firstPos+string.length());
 		if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -124,10 +124,10 @@ int CFontFileParser::GetValueFromBufferStartingAt(const std::string& string, std
 	size_t seperatorPos2 = m_bufferString.find("\n", firstPos+string.length());
 	size_t seperatorPos3 = m_bufferString.find("\r", firstPos+string.length());
 
-	unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+	uint32_t seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 	seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
-	int beginValue = firstPos + string.length();
+	uint32_t beginValue = firstPos + string.length();
 	//retrieve string between beginValue and seperatorPos
 	GetStringBetween(beginValue, seperatorPos, value, m_bufferString);
 
@@ -148,11 +148,11 @@ bool CFontFileParser::GetValueFromBufferOfAll(const std::string& string, std::fo
 
 	while(currPos > 0 && currPos < m_bufferString.length())
 	{
-		int beginValue = currPos + string.length();
+		int32_t beginValue = currPos + string.length();
 
 		//size_t seperatorPos1 = m_bufferString.find(m_seperator, beginValue);
 		size_t seperatorPos1 = 0;
-		for(unsigned int i=0; i<m_seperators.size(); i++)
+		for(uint32_t i=0; i<m_seperators.size(); i++)
 		{
 			size_t tempPos = m_bufferString.find(m_seperators.at(i), beginValue);
 			if(tempPos != std::string::npos && (tempPos < seperatorPos1 || i == 0))
@@ -163,12 +163,12 @@ bool CFontFileParser::GetValueFromBufferOfAll(const std::string& string, std::fo
 		size_t seperatorPos2 = m_bufferString.find("\n", beginValue);
 		size_t seperatorPos3 = m_bufferString.find("\r", beginValue);
 
-		unsigned int seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
+		uint32_t seperatorPos = seperatorPos1 >= seperatorPos2 ? seperatorPos2 : seperatorPos1;
 		seperatorPos = seperatorPos3 >= seperatorPos ? seperatorPos : seperatorPos3;
 
 		//retrieve string between beginValue and seperatorPos
 		std::string currValue;
-		for(unsigned int i=beginValue; i<seperatorPos; i++)
+		for(uint32_t i=beginValue; i<seperatorPos; i++)
 		{
 			currValue.push_back(m_bufferString.at(i));
 		}
@@ -185,9 +185,9 @@ bool CFontFileParser::GetValueFromBufferOfAll(const std::string& string, std::fo
 
 //returns the highest number(ascii) of char, supported by the font
 //-1 if failure
-int CFontFileParser::GetHighestSupportedChar()
+uint32_t CFontFileParser::GetHighestSupportedChar()
 {
-	int retVal = -1;
+	uint32_t retVal = 0;
 
 	if(m_buffer.size() <= 0)
 		return -1;
@@ -204,7 +204,7 @@ int CFontFileParser::GetHighestSupportedChar()
 		//remove the "
 		FindAndReplaceAll(currString, "\"", "");
 		FindAndReplaceAll(currString, ">", "");
-		int currAsciiID = atoi(currString.c_str());
+		uint32_t currAsciiID = atoi(currString.c_str());
 		if(currAsciiID > retVal)
 			retVal = currAsciiID;
 	}
@@ -212,16 +212,16 @@ int CFontFileParser::GetHighestSupportedChar()
 	return retVal;
 }
 
-void CFontFileParser::GetStringBetween(int begin, int end, std::string* value, const std::string& src)
+void CFontFileParser::GetStringBetween(uint32_t begin, uint32_t end, std::string* value, const std::string& src)
 {
 	value->clear();
-	for(int i=begin; i<end; i++)
+	for(uint32_t i=begin; i<end; i++)
 	{
 		value->push_back(src.at(i));
 	}
 }
 
-CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
+CKerning* CFontFileParser::GetNextKerning(uint32_t *startSearchPos)
 {
 	CKerning* newKerning = new CKerning();
 
@@ -229,7 +229,7 @@ CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
 	std::string secondString("second=");
 	std::string amountString("amount=");
 
-	int start = *startSearchPos;
+	uint32_t start = *startSearchPos;
 
 	//-------------
 	//Get first ascii
@@ -255,7 +255,7 @@ CKerning* CFontFileParser::GetNextKerning(int *startSearchPos)
 	return newKerning;
 }
 
-CCharInfo* CFontFileParser::GetNextCharInfo(int *startSearchPos)
+CCharInfo* CFontFileParser::GetNextCharInfo(uint32_t *startSearchPos)
 {
 	CCharInfo* newCharInfo = new CCharInfo();
 
@@ -270,15 +270,15 @@ CCharInfo* CFontFileParser::GetNextCharInfo(int *startSearchPos)
 	//std::string pageString;
 	//std::string channelString;
 
-	int start = *startSearchPos;
+	uint32_t start = *startSearchPos;
 
-	int furthestSearchPos = start;
+	uint32_t furthestSearchPos = start;
 
 	//-------------
 	//Get ID
 	//-------------
 	std::string idVal;
-	int pos = GetValueFromBufferStartingAt(idString, &idVal, start);
+	uint32_t pos = GetValueFromBufferStartingAt(idString, &idVal, start);
 	if(pos > furthestSearchPos)
 		furthestSearchPos = pos;
 	newCharInfo->m_ID = atoi(idVal.c_str());
@@ -356,16 +356,16 @@ bool CFontFileParser::LoadCharInfos(CGLFont* newFont)
 	bool success = true;
 
 	//init the array with null
-	for(unsigned int i=0; i <= newFont->m_highestASCIIChar; i++)
+	for(uint32_t i=0; i <= newFont->m_highestASCIIChar; i++)
 		newFont->m_fontCharInfo[i] = nullptr;
 
 	std::string totalNumberOfCharInfosString;
 	GetValueFromBufferOfFirst("chars count=", &totalNumberOfCharInfosString);
-	int totalNumberOfCharInfos = atoi(totalNumberOfCharInfosString.c_str());
+	uint32_t totalNumberOfCharInfos = atoi(totalNumberOfCharInfosString.c_str());
 
 	//find all char info lines and save them at the current CGLfont
-	int startSearchPos = 0;
-	for(int i=0; i<totalNumberOfCharInfos; i++)
+	uint32_t startSearchPos = 0;
+	for(uint32_t i=0; i<totalNumberOfCharInfos; i++)
 	{
 		CCharInfo* currCharInfo = GetNextCharInfo(&startSearchPos);
 		if(currCharInfo != nullptr)
@@ -380,9 +380,9 @@ bool CFontFileParser::LoadCharInfos(CGLFont* newFont)
 	return success;
 }
 
-int CFontFileParser::GetKerningsFirstHighest()
+uint32_t CFontFileParser::GetKerningsFirstHighest()
 {
-	int retVal = 0;
+	uint32_t retVal = 0;
 
 	std::forward_list<std::string> values;
 	GetValueFromBufferOfAll("first=", &values);
@@ -390,7 +390,7 @@ int CFontFileParser::GetKerningsFirstHighest()
 	for (auto it = values.cbegin(); it != values.cend(); it++)
 	{
 		std::string currString = *it;
-		int currFirst = atoi(currString.c_str());
+		uint32_t currFirst = atoi(currString.c_str());
 		if(currFirst > retVal)
 			retVal = currFirst;
 	}
@@ -398,9 +398,9 @@ int CFontFileParser::GetKerningsFirstHighest()
 	return retVal;
 }
 
-int CFontFileParser::GetKerningsSecondHighest()
+uint32_t CFontFileParser::GetKerningsSecondHighest()
 {
-	int retVal = 0;
+	uint32_t retVal = 0;
 
 	std::forward_list<std::string> values;
 	GetValueFromBufferOfAll("second=", &values);
@@ -408,7 +408,7 @@ int CFontFileParser::GetKerningsSecondHighest()
 	for (auto it = values.cbegin(); it != values.cend(); it++)
 	{
 		std::string currString = *it;
-		int currSecond = atoi(currString.c_str());
+		uint32_t currSecond = atoi(currString.c_str());
 		if(currSecond > retVal)
 			retVal = currSecond;
 	}
@@ -421,17 +421,17 @@ bool CFontFileParser::LoadKernings(CGLFont* newFont)
 	bool success = true;
 
 	//init the array with null
-	for(unsigned int f=0; f<=newFont->m_highestKerningFirst; f++)
-		for(unsigned int s=0; s<=newFont->m_highestKerningSecond; s++)
+	for(uint32_t f=0; f<=newFont->m_highestKerningFirst; f++)
+		for(uint32_t s=0; s<=newFont->m_highestKerningSecond; s++)
 			newFont->m_kernings[f][s] = 0.0f;
 
 	std::string totalNumberOfKerningsString;
 	GetValueFromBufferOfFirst("kernings count=", &totalNumberOfKerningsString);
-	int totalNumberOfKernings = atoi(totalNumberOfKerningsString.c_str());
+	uint32_t totalNumberOfKernings = atoi(totalNumberOfKerningsString.c_str());
 
 	//find all char info lines and save them at the current CGLfont
-	int startSearchPos = 0;
-	for(int i=0; i<totalNumberOfKernings; i++)
+	uint32_t startSearchPos = 0;
+	for(uint32_t i=0; i<totalNumberOfKernings; i++)
 	{
 		CKerning* currKerning = GetNextKerning(&startSearchPos);
 		if(currKerning != nullptr)

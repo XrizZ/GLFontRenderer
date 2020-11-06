@@ -53,7 +53,7 @@ GLuint CGLShaderProgram::CompileShader(GLenum aShaderType, const char* aShaderSo
 
 	GLenum errorCode = glGetError();
 
-	int compiled = 0;
+	int32_t compiled = 0;
 	glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &compiled);
 
 	if(!compiled)
@@ -104,12 +104,12 @@ bool CGLShaderProgram::InitFromString(const std::string& vertexShaderSourceCode,
 
 	CheckForErrors();
 
-	int linked = 0;
+	int32_t linked = 0;
 	glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &linked);
 
 	if(!linked)
 	{
-		int infoLength;
+		int32_t infoLength;
 		glGetProgramiv(m_shaderProgram, GL_INFO_LOG_LENGTH, &infoLength);
 
 		if(infoLength)
@@ -117,7 +117,7 @@ bool CGLShaderProgram::InitFromString(const std::string& vertexShaderSourceCode,
 			char* infoBuffer = new char[infoLength + 2];
 			glGetProgramInfoLog(m_shaderProgram, infoLength + 1, 0, infoBuffer);
 
-			int n = 10; //number of first few characters of shadercode to show in error message
+			int8_t n = 10; //number of first few characters of shadercode to show in error message
 			std::cout << "GLSL Linker Error in " << vertexShaderSourceCode.substr(0,n).c_str() << " " << fragmentShaderSourceCode.substr(0, n).c_str() << ": " << infoBuffer;
 			delete []infoBuffer;
 		}
@@ -158,12 +158,12 @@ bool CGLShaderProgram::InitFromFile(const std::string& aVertexFileName, const st
 
 	CheckForErrors();
 
-	int linked = 0;
+	int32_t linked = 0;
 	glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &linked);
 
 	if(!linked)
 	{
-		int infoLength;
+		int32_t infoLength;
 		glGetProgramiv(m_shaderProgram, GL_INFO_LOG_LENGTH, &infoLength);
 
 		if(infoLength)
@@ -183,11 +183,11 @@ bool CGLShaderProgram::InitFromFile(const std::string& aVertexFileName, const st
 	return true;
 }
 
-bool CGLShaderProgram::CheckForErrors(std::string aFile, int aLine)
+bool CGLShaderProgram::CheckForErrors(std::string aFile, int32_t aLine)
 {
 	GLenum errorID = GL_NO_ERROR;
 	std::string error;
-	int errorCount = 0;
+	uint32_t errorCount = 0;
 
 	while ((errorID = glGetError()) != GL_NO_ERROR)
 	{
