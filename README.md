@@ -179,7 +179,7 @@ You may convert the tga to png with another tool, just remember to change the fi
 This is a 3 step process.
  
 #### BMFont
-First, use the BMFont Generator, as described above, however, the use the following settings that may differ form what you've used before.
+First, use the BMFont Generator as described above. However, then use the following settings that may differ form what you've used before.
 - font size: 400px
 - bitmap size: 8192x4096
 - smoothing enabled
