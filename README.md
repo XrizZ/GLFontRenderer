@@ -19,6 +19,7 @@ This font rendering library was designed with ease of use and render performance
 
 # Plans
 - I'm considering to implement glow and dropshadow for the SDF fonts.
+- Batching all draw calls.
 - Adding a Make Script.
 - Lastly, I'm planning on porting this to Vulkan.
 
