@@ -5,6 +5,7 @@ This font rendering library was designed with ease of use and render performance
 ![Demo Project Screenshot](Documentation/SDFComparison.png "Screenshot from the Demo project.")
 
 # Changelog
+- November 5th 2020: reduced memory footprint by using 2 floats per vertex position instead of 3 (z was always zero)
 - October 7th 2020: optimized handling of strings (less copying)
 - June 20th 2020: Added Outline option for SDF fonts
 - May 27th 2020: Added DXT texture compression for non SDF fonts to improve render performance and decrease GPU memory usage
@@ -88,6 +89,7 @@ The parameters are described below in the table.
 | float scale | For RGBA textures it is highly recommended to use the default: 1.0f. You can scale up or down, but it should be clear that this will result in blur. However, with SDF and MSDF you should be able to scale up and down further before seeing artifacts. |
 
 Note that there are more functions with additional features, such as automatic line breaks. See font library header file.
+Also note that the string to draw will be cut off after 10922 characters. If you need more character for whatever odd reason, simply use additional draw calls and split the string into parts.
 
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.

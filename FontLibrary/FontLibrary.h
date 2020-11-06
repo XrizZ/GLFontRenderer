@@ -15,6 +15,8 @@
 #include "GLShaderProgram.h"
 #include <map>
 
+#define MAX_STRING_LENGTH 10922 //because thats limiting our indicies buffer to 16bit: 65535 entries, divided by 6 vertices(2 triangles per quad aka. text char to render), this way we don't have to use 32bit integer
+
 //font type defines, string must match the filename without extension in the "\Fonts" folder!
 
 #define GLFONT_COURIERNEW_MSDF "CourierNew_msdf"
@@ -58,7 +60,10 @@ public:
 	CDrawString(unsigned int ID, const std::string& font, const std::string& textToDraw, int x, int y, float color[4], float scale)
 	{
 		m_ID = ID;
-		m_text = textToDraw;
+		if(textToDraw.size() > MAX_STRING_LENGTH)
+			m_text = textToDraw.substr(0, MAX_STRING_LENGTH);
+		else
+			m_text = textToDraw;
 		m_x = x;
 		m_y = y;
 		m_color[0] = color[0];
@@ -89,12 +94,13 @@ public:
 	float			m_scale = 1.0;
 	int				m_lineWidth = 0;
 	int				m_maxLines = 0;
-	unsigned int	m_winW = 1; //window width of application
-	unsigned int	m_winH = 1; //window height of application
+	uint16_t		m_winW = 1; //window width of application
+	uint16_t		m_winH = 1; //window height of application
 	GLuint			m_vertexbuffer = 0; //stores verticies positions
 	GLuint			m_uvBuffer =  0; //stores texture UVs for each vert
 	std::string		m_font = GLFONT_ARIAL20;
 	unsigned int	m_numVerticies = 0;
+	unsigned int	m_numIndices = 0;
 	float			m_bgColor[4] = {0};
 	int				m_outline = 0; //can be 0, for no outline 1 or higher
 	float			m_outlineColor[4] = {0};
