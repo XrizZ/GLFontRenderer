@@ -366,77 +366,71 @@ void CFontLibrary::PopulateVertexBuffers(CDrawString* stringObject)
 
 	int numVerticies = numQuads*6;
 
-	GLfloat* vertexBufferPositions = new GLfloat[numVerticies*3]; //each quad has two triangles á 3 coordinate values: x,y,z, meaning 18 entries per char total
-	GLfloat* vertexBufferUV = new GLfloat[numVerticies*2]; //each quad has two triangles á 3 coordinate values: x,y,z, meaning 18 entries per char total
+	GLfloat* vertexBufferPositions = new GLfloat[numVerticies*2]; //each quad has 4 verticies á 2 coordinate values: x,y, meaning 8 entries per char total
+	GLfloat* vertexBufferUV = new GLfloat[numVerticies*2]; //each quad has four UV coordinates per vertex: u,v meaning 8 entries per char total
 
 	int winW = stringObject->m_winW;
 	int winH = stringObject->m_winH;
 	
 	for(unsigned int i=0; i<numQuads; i++)
 	{
-		unsigned int vertexIndex = i*18;
+		unsigned int vertexIndex = i*12;
 		unsigned int uvIndex = i*12;
 
-		//first triangle of quad
-
-		//top left vertex
-		vertexBufferPositions[vertexIndex] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+2] = 0.0f;
-		vertexBufferUV[uvIndex] = quadList[i].textureTopLeftX;
-		vertexBufferUV[uvIndex+1] = quadList[i].textureTopLeftY;
+		////////first triangle of quad
 
 		//bottom left vertex
-		vertexBufferPositions[vertexIndex+3] = ((quadList[i].bottomLeftX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+3+1] = ((quadList[i].bottomLeftY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+3+2] = 0.0f;
-		vertexBufferUV[uvIndex+2] = quadList[i].textureBottomLeftX;
-		vertexBufferUV[uvIndex+2+1] = quadList[i].textureBottomLeftY;
+		vertexBufferPositions[vertexIndex] = ((quadList[i].bottomLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+1] = ((quadList[i].bottomLeftY)/(float)winH)*2.0f - 1.0f;
+		vertexBufferUV[uvIndex] = quadList[i].textureBottomLeftX;
+		vertexBufferUV[uvIndex+1] = quadList[i].textureBottomLeftY;
+
+		//top left vertex
+		vertexBufferPositions[vertexIndex+2] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+2+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
+		vertexBufferUV[uvIndex+2] = quadList[i].textureTopLeftX;
+		vertexBufferUV[uvIndex+2+1] = quadList[i].textureTopLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+6] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+6+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+6+2] = 0.0f;
-		vertexBufferUV[uvIndex+4] = quadList[i].textureBottomRightX;
-		vertexBufferUV[uvIndex+4+1] = quadList[i].textureBottomRightY;
+ 		vertexBufferPositions[vertexIndex+4] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
+ 		vertexBufferPositions[vertexIndex+4+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
+ 		vertexBufferUV[uvIndex+4] = quadList[i].textureBottomRightX;
+ 		vertexBufferUV[uvIndex+4+1] = quadList[i].textureBottomRightY;
 
 		////////second triangle of quad
 
 		//top left vertex
-		vertexBufferPositions[vertexIndex+9] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+9+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+9+2] = 0.0f;
+		vertexBufferPositions[vertexIndex+6] = ((quadList[i].topLeftX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+6+1] = ((quadList[i].topLeftY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferUV[uvIndex+6] = quadList[i].textureTopLeftX;
 		vertexBufferUV[uvIndex+6+1] = quadList[i].textureTopLeftY;
 
 		//bottom right vertex
-		vertexBufferPositions[vertexIndex+12] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+12+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+12+2] = 0.0f;
+		vertexBufferPositions[vertexIndex+8] = ((quadList[i].bottomRightX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+8+1] = ((quadList[i].bottomRightY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferUV[uvIndex+8] = quadList[i].textureBottomRightX;
 		vertexBufferUV[uvIndex+8+1] = quadList[i].textureBottomRightY;
 
 		//top right vertex
-		vertexBufferPositions[vertexIndex+15] = ((quadList[i].topRightX)/(float)winW)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+15+1] = ((quadList[i].topRightY)/(float)winH)*2.0f - 1.0f;
-		vertexBufferPositions[vertexIndex+15+2] = 0.0f;
+		vertexBufferPositions[vertexIndex+10] = ((quadList[i].topRightX)/(float)winW)*2.0f - 1.0f;
+		vertexBufferPositions[vertexIndex+10+1] = ((quadList[i].topRightY)/(float)winH)*2.0f - 1.0f;
 		vertexBufferUV[uvIndex+10] = quadList[i].textureTopRightX;
 		vertexBufferUV[uvIndex+10+1] = quadList[i].textureTopRightY;
 	}
-
+ 
 	stringObject->m_numVerticies = numVerticies;
 
 	glBindVertexArray(m_vertexArrayID); // Bind our Vertex Array Object so we can use it
 
 	if(!stringObject->m_vertexbuffer)
 		glGenBuffers(1, &stringObject->m_vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, stringObject->m_vertexbuffer); // This will talk about our 'vertexbuffer' buffer
-	glBufferData(GL_ARRAY_BUFFER, numVerticies*3*sizeof(GLfloat), vertexBufferPositions, GL_DYNAMIC_DRAW); // Give our vertices to OpenGL.
+	glBindBuffer(GL_ARRAY_BUFFER, stringObject->m_vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, numVerticies*2*sizeof(GLfloat), vertexBufferPositions, GL_DYNAMIC_DRAW); // Give our vertices to OpenGL.
 
 	if(!stringObject->m_uvBuffer)
 		glGenBuffers(1, &stringObject->m_uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, stringObject->m_uvBuffer); // This will talk about our 'vertexbuffer' buffer
-	glBufferData(GL_ARRAY_BUFFER, numVerticies*2*sizeof(GLfloat), vertexBufferUV, GL_DYNAMIC_DRAW); // Give our vertices to OpenGL.
+	glBindBuffer(GL_ARRAY_BUFFER, stringObject->m_uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, numVerticies*2*sizeof(GLfloat), vertexBufferUV, GL_DYNAMIC_DRAW); // Give our uv's to OpenGL.
 
 	stringObject->m_needsChange = false;
 
@@ -453,7 +447,7 @@ void CFontLibrary::DrawString(unsigned int ID, const std::string& textToDraw, in
 	{
 		savedString = found->second;
 
-		if(savedString->m_text.compare(textToDraw) != 0 || 
+		if(savedString->m_text.compare(textToDraw.substr(0, MAX_STRING_LENGTH)) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(bgColor && (bgColor[0] != savedString->m_bgColor[0] || bgColor[1] != savedString->m_bgColor[1] || bgColor[2] != savedString->m_bgColor[2] || bgColor[3] != savedString->m_bgColor[3])) ||
@@ -533,7 +527,7 @@ void CFontLibrary::DrawStringWithLineBreaks(unsigned int ID, const std::string& 
 	{
 		savedString = found->second;
 
-		if(savedString->m_text.compare(textToDraw) != 0 || 
+		if(savedString->m_text.compare(textToDraw.substr(0, MAX_STRING_LENGTH)) != 0 || 
 			(savedString->m_x != x || savedString->m_y != y) ||
 			(color[0] != savedString->m_color[0] || color[1] != savedString->m_color[1] || color[2] != savedString->m_color[2] || color[3] != savedString->m_color[3]) ||
 			(scale != savedString->m_scale) ||
@@ -746,7 +740,6 @@ CGLQuad2D* CFontLibrary::TextToQuadList(const std::string& font, const std::stri
 		quadList[i].bottomLeftX = ((offsetX)*scale) + x + cursor;
 		quadList[i].bottomLeftY = y + ((base - offsetY - height)*scale);
 
-
 		//calc kerning depending on current and next character in the string to draw
 		float kerning = 0.0f;
 		if(i>0 && i<textToDraw.length()-1)
@@ -802,10 +795,10 @@ void CFontLibrary::DrawTriangles(const std::string& font, float color[4], CDrawS
 
 	glVertexAttribPointer(
 		0,					// attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,					// size
+		2,					// size
 		GL_FLOAT,			// type
 		GL_FALSE,			// normalized?
-		3*sizeof(GLfloat),	// stride, can be 0 for tightly packed array, or user specified: 3*sizeof(GLfloat)
+		0,					// stride, can be 0 for tightly packed array, or user specified: 3*sizeof(GLfloat)
 		(void*)0			// array buffer offset
 	);
 
@@ -817,7 +810,7 @@ void CFontLibrary::DrawTriangles(const std::string& font, float color[4], CDrawS
 		2,					// size
 		GL_FLOAT,			// type
 		GL_FALSE,			// normalized?
-		2*sizeof(GLfloat),	// stride, can be 0 for tightly packed array, or user specified: 3*sizeof(GLfloat)
+		0,					// stride, can be 0 for tightly packed array, or user specified: 2*sizeof(GLfloat)
 		(void*)0			// array buffer offset
 	);
 
