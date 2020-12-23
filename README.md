@@ -1,4 +1,4 @@
-# GLFontLibrary
+# GLFontRenderer
 
 This code allows you to render high performance text in your own OpenGL application. The font rendering library was designed with ease of use and render performance in mind. I've written it in ~2012 and updated it every now and then. The font files read by this library follow the format developed for the BM Font Generator: http://angelcode.com/products/bmfont/. The font file is accompanied by a texture file. The library supports standard RGBA textures, as well as single channel SDF, and even multi channel SDFs.
 
