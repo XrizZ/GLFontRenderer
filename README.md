@@ -123,7 +123,7 @@ As a first step, open the Font-Settings, by clicking on Options → Font Setting
 6. If you like, select bold or Italic, but keep in mind, if these are selected, it can not be changed once the bitmap is created.
 7. Font Smoothing should definitely be selected!
 8. Super sampling - don't, unless you want blurry images, the application for this is fairly rare.
-9. Under effects there is “Outline thickness” usually this should be zero, however in some cases we want to show the outlines of a font, e.g. white text with black outline. We created such a font for the caption of the video tags for Singapore, because it yields a high readability on changing backgrounds like a video.
+9. Under effects there is “Outline thickness” usually this should be zero, however in some cases we want to show the outlines of a font, e.g. white text with black outline.
     
 After you made these setups, close the Font Settings window and proceed to the next step.
 
