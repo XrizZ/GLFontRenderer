@@ -95,7 +95,7 @@ Also note that the string to draw will be cut off after 10922 characters. If you
 # Adding new Fonts
 This chapter is concerned with adding your own fonts to the font library.
 
-Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. You can still use that tool, but you will need to perform a post processing step with tools like this ImageMagick. Tutorial below.
+Note that I focus on non-SDF fonts here. The steps for SDF fonts are quite similar, however Bm-Font-Gen does not suffice. You can still use that tool, but you will need to perform a post processing step with tools like ImageMagick. Tutorial below.
 
 Only three steps are necessary to integrate a new font:
     1. Create the font-config and font-bitmap using BM-Font-Generator
