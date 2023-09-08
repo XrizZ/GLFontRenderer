@@ -206,7 +206,7 @@ This will tell the Font Lib to use the single channel SDF shader when this font 
 ##### Notes
 - This method will work, there is a known issue with the font scale though. Once the font is used by the FontLibrary, the scale will be off by a factor of 0.275. Meaning to get 100% scale you need to supply 0.275 as input.
 - I have added a sample SDF where this works fine though (DINNextLTProMED_SDF), this font was created using a different method though. If I have time, I'll investigate how to create single channel SDFs properly. 
-- Do not be alarmed that the output png or tga from imageMagick has black text instead of white, the shader will note care either way.
+- Do not be alarmed that the output png or tga from imageMagick has black text instead of white, the shader will not care either way.
 - Due to the above issues, I suggest to use Multi-Channel SDFs instead - easier to use and scale works correctly.
 
 ## Multi-Channel SDF Fonts
